@@ -2,12 +2,15 @@
 :root {
   --cocoa: #501A1D;
   --umber: #2E1012;
-  --ground: #B2968A;
-  --soft: #A88B7F;
+  --ground: #CDB4A6;
+  --soft: #C4A99B;
+  --lift: linear-gradient(rgba(246, 236, 227, .34), rgba(246, 236, 227, .34));
   --linen: #F3EEE9;
   --muted: #4A2426;
   --display: 'Italiana', 'Didot', 'Bodoni 72', serif;
   --serif: 'Cormorant Garamond', 'Garamond', 'Times New Roman', serif;
+  --title: 'Bodoni Moda', 'Didot', 'Bodoni 72', serif;
+  --sans: 'Jost', 'Futura', 'Helvetica Neue', sans-serif;
   --gutter: clamp(16px, 4vw, 56px);
   color-scheme: light;
 }
@@ -24,7 +27,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 body.inner { display: flex; flex-direction: column; min-height: 100%; height: auto; }
-body.wall { background: var(--ground) url('images/wall_tile.jpg') top center / 100% auto repeat-y; }
+body.wall { background: var(--lift), url('images/wall_tile.jpg') top center / 100% auto repeat-y, var(--ground); }
 img { max-width: 100%; display: block; }
 [hidden] { display: none !important; }
 a { color: inherit; text-decoration: none; }
@@ -61,7 +64,7 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--cocoa); outline
 .home h1 em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -.01em; }
 
 /* Home: feature section on the clay wall */
-.feature { background: var(--ground) url('images/wall_tile.jpg') top center / 100% auto repeat-y; }
+.feature { background: var(--lift), url('images/wall_tile.jpg') top center / 100% auto repeat-y, var(--ground); }
 .feature_in { max-width: 1360px; margin: 0 auto; padding: clamp(80px, 11vw, 160px) var(--gutter) clamp(80px, 10vw, 140px); display: flex; flex-direction: column; }
 .feature_head { display: flex; flex-direction: column; gap: 20px; max-width: 900px; }
 .statement { margin: 0; font-family: var(--serif); font-style: italic; font-weight: 400; font-size: clamp(30px, 3.6vw, 52px); line-height: 1.2; color: var(--cocoa); text-wrap: balance; }
@@ -69,8 +72,8 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--cocoa); outline
 
 /* Shared inner layout */
 main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padding-inline: var(--gutter); padding-block: clamp(24px, 5vw, 72px) clamp(80px, 10vw, 140px); }
-.eyebrow { font-style: italic; color: var(--muted); font-size: 18px; }
-.title { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(56px, 7vw, 104px); line-height: 1; text-wrap: balance; }
+.eyebrow { font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+.title { margin: 0; font-family: var(--title); font-weight: 400; letter-spacing: -.01em; font-size: clamp(56px, 7vw, 104px); line-height: 1; text-wrap: balance; }
 
 /* Shop */
 .shop_head { display: flex; flex-direction: column; gap: 16px; max-width: 640px; }
@@ -83,9 +86,9 @@ main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padd
 .card:hover .img img { transform: scale(1.03); }
 .card .slot { font-style: italic; color: var(--muted); opacity: .7; }
 .card .row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-inline: 4px; }
-.card .name { font-family: var(--display); font-size: 26px; line-height: 1.1; }
+.card .name { font-family: var(--title); font-size: 24px; font-weight: 400; line-height: 1.15; }
 .card .price { font-size: 19px; font-variant-numeric: tabular-nums; }
-.card .sub { color: var(--muted); font-style: italic; margin-top: -8px; padding-inline: 4px; }
+.card .sub { font-family: var(--sans); font-size: 14px; letter-spacing: .04em; color: var(--muted); margin-top: -8px; padding-inline: 4px; }
 
 /* Product */
 .product { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(40px, 7vw, 120px); align-items: start; }
@@ -106,13 +109,13 @@ main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padd
 .price_big { font-size: 26px; font-variant-numeric: tabular-nums; margin-top: -10px; }
 .desc { margin: 0; max-width: 58ch; }
 .actions { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
-.status { margin: 0; font-style: italic; font-size: 20px; color: var(--muted); }
+.status { margin: 0; font-family: var(--sans); font-size: 14px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
 .pill { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding-inline: 34px; border-radius: 999px; font: inherit; font-size: 13px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; cursor: pointer; transition: background .5s ease, color .5s ease, border-color .5s ease; }
 .pill.main { background: transparent; color: var(--cocoa); border: 1px solid rgba(80, 26, 29, .45); }
 .pill.main:hover { background: var(--cocoa); color: var(--linen); border-color: var(--cocoa); }
 .note { margin: 0; font-style: italic; color: var(--muted); min-height: 1.6em; }
 .notes { display: flex; flex-direction: column; gap: 20px; max-width: 58ch; }
-.notes h2 { margin: 0 0 4px; font-family: var(--display); font-weight: 400; font-size: 24px; }
+.notes h2 { margin: 0 0 6px; font-family: var(--sans); font-weight: 500; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--cocoa); }
 .notes p { margin: 0; color: var(--muted); }
 
 /* About */
@@ -133,7 +136,7 @@ main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padd
 .footer .contact { display: inline-flex; align-items: center; height: 38px; padding-inline: 20px; border-radius: 999px; background: rgba(243, 238, 233, .22); color: var(--cocoa); font-style: italic; transition: background .3s; }
 .footer .contact:hover { background: rgba(243, 238, 233, .4); }
 
-@media (max-width: 900px) { body.wall, .feature { background-size: 200% auto; } }
+@media (max-width: 900px) { body.wall, .feature { background-size: auto, 200% auto; } }
 @media (max-width: 900px) {
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .product { grid-template-columns: minmax(0, 1fr); }
