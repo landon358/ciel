@@ -2,6 +2,7 @@
    Shopify conventions:
    - tag "ciel-studio" = our own design, "curated" = the edit. Only these appear on the site.
    - tag "featured" = shown in the home page collection.
+   - shop page order = the "Shop" collection (manual sort) in Shopify admin.
    - tag "line:Made in Ghana" = the small line under the card.
    - description: first paragraph is the intro; each <h4> starts a notes section. */
 (function () {
@@ -79,9 +80,15 @@
     grid.innerHTML = skeleton(featured ? 4 : 6);
     grid.setAttribute('aria-busy', 'true');
     var q = featured ? 'tag:featured' : 'tag:ciel-studio OR tag:curated';
-    gql('query($q: String!) { products(first: 50, sortKey: CREATED_AT, query: $q) { nodes { ' + FIELDS + ' } } }', { q: q })
+    var byTag = 'products(first: 50, sortKey: CREATED_AT, query: $q) { nodes { ' + FIELDS + ' } }';
+    /* Shop order comes from the "Shop" collection's manual sort in Shopify admin */
+    var query = featured
+      ? 'query($q: String!) { ' + byTag + ' }'
+      : 'query($q: String!) { collection(handle: "shop") { products(first: 50, sortKey: COLLECTION_DEFAULT) { nodes { ' + FIELDS + ' } } } ' + byTag + ' }';
+    gql(query, { q: q })
       .then(function (d) {
-        var list = d.products.nodes.filter(function (p) { return has(p, 'ciel-studio') || has(p, 'curated'); });
+        var nodes = d.collection && d.collection.products.nodes.length ? d.collection.products.nodes : d.products.nodes;
+        var list = nodes.filter(function (p) { return has(p, 'ciel-studio') || has(p, 'curated'); });
         if (featured) list = list.slice(0, 4);
         grid.innerHTML = list.length ? list.map(function (p, i) { return card(p, i > 2, i); }).join('') : '<p class="grid_note">New pieces are on their way.</p>';
         fadeImages(grid);
