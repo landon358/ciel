@@ -86,7 +86,11 @@
     document.querySelectorAll('.bag').forEach(function (b) {
       var c = b.querySelector('.bag_count');
       if (!c) { c = document.createElement('span'); c.className = 'bag_count'; b.appendChild(c); }
+      var prev = Number(c.textContent) || 0;
       c.textContent = count || '';
+      if (prev && count && prev !== count && c.animate && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        c.animate([{ transform: 'scale(1.15)' }, { transform: 'scale(1)' }], { duration: 160, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' });
+      }
       c.hidden = !count;
       b.setAttribute('aria-label', count ? 'Shopping bag, ' + count + (count === 1 ? ' item' : ' items') : 'Shopping bag');
     });

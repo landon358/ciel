@@ -34,7 +34,10 @@ body.wall { background: var(--lift), url('images/wall_tile.jpg') top center / 10
 img { max-width: 100%; display: block; }
 [hidden] { display: none !important; }
 a { color: inherit; text-decoration: none; }
-a:focus-visible, button:focus-visible { outline: 1px solid var(--cocoa); outline-offset: 4px; border-radius: 999px; }
+a, button, summary { -webkit-tap-highlight-color: transparent; }
+a:focus-visible, button:focus-visible { outline: 1px solid var(--cocoa); outline-offset: 4px; border-radius: 4px; }
+.pill:focus-visible, .bag:focus-visible, .thumbs button:focus-visible, .footer .contact:focus-visible { border-radius: 999px; }
+.card:focus-visible { border-radius: 22px; outline-offset: 6px; }
 
 /* Header */
 .header {
@@ -59,7 +62,7 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--cocoa); outline
 @media (hover: hover) and (pointer: fine) { .nav a:hover::after { transform: scaleX(1); } }
 .nav { align-items: center; }
 .nav .bag { position: relative; display: inline-flex; padding: 6px; margin: -6px; border: 0; background: none; color: inherit; cursor: pointer; }
-.bag_count { position: absolute; top: 0; right: -2px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 999px; background: var(--cocoa); color: var(--linen); font: 500 10px/17px var(--sans); text-align: center; }
+.bag_count { position: absolute; top: 0; right: -2px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 999px; background: var(--cocoa); color: var(--linen); font: 500 10px/17px var(--sans); text-align: center;  transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out);}
 .nav .bag::after { content: none; }
 
 /* Home */
@@ -92,13 +95,26 @@ main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padd
 .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 1040px; }
 .card { display: flex; flex-direction: column; gap: 14px; }
 .card .img { aspect-ratio: 4 / 5; background: var(--soft); border-radius: 22px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-.card .img img { width: 100%; height: 100%; object-fit: cover; transition: transform 600ms var(--ease-out); }
+.card .img img { width: 100%; height: 100%; object-fit: cover; transition: transform 600ms var(--ease-out), opacity 250ms ease; }
 @media (hover: hover) and (pointer: fine) { .card:hover .img img { transform: scale(1.03); } }
 .card .slot { font-style: italic; color: var(--muted); opacity: .7; }
 .card .row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-inline: 4px; }
 .card .name { font-family: var(--title); font-size: 23px; font-weight: 400; line-height: 1.2; color: var(--tan); }
 .card .price { font-size: 19px; font-variant-numeric: tabular-nums; }
 .card .sub { font-family: var(--sans); font-size: 14px; letter-spacing: .04em; color: var(--cocoa); margin-top: -8px; padding-inline: 4px; }
+
+/* Arrivals: images fade in once loaded; cards and product info enter once */
+img.fade { opacity: 0; }
+img.fade.loaded { opacity: 1; }
+.card.enter { transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out); transition-delay: calc(var(--i, 0) * 40ms); }
+.info.enter { transition: opacity 250ms var(--ease-out), transform 250ms var(--ease-out); }
+@starting-style {
+  .card.enter, .info.enter { opacity: 0; transform: translateY(6px); }
+  .preorder_form { opacity: 0; transform: translateY(-4px); }
+  .bag_count { opacity: 0; transform: scale(0.85); }
+}
+.gallery .main img { transition: opacity 250ms ease, filter 120ms ease; }
+.gallery .main img.swapping { opacity: .4; filter: blur(2px); }
 
 /* Loading + empty states */
 .card.is_loading .img, .gallery .main.is_loading { animation: ciel_pulse 1.6s ease-in-out infinite; }
@@ -133,7 +149,7 @@ main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padd
 .actions { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
 .status { margin: 0; font-family: var(--sans); font-size: 14px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--cocoa); }
 .pill { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding-inline: 30px; border-radius: 999px; font-family: var(--sans); font-size: 15px; font-weight: 500; letter-spacing: .02em; text-transform: none; cursor: pointer; transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, transform 160ms ease-out; }
-.pill:active { transform: scale(0.97); }
+.pill:active:not(:disabled) { transform: scale(0.97); }
 .pill.main { background: transparent; color: var(--cocoa); border: 1.5px solid var(--cocoa); }
 .pill.solid { background: transparent; color: var(--cocoa); border: 1.5px solid var(--cocoa); }
 @media (hover: hover) and (pointer: fine) {
@@ -178,13 +194,21 @@ main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padd
 .legal_body p { margin: 0 0 8px; color: var(--cocoa); }
 
 /* Preorder */
-.preorder_form { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 440px; }
+.preorder_form { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 440px; transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out); }
+.preorder_form.leaving { opacity: 0; transition-duration: 150ms; }
 .preorder_label { font: 500 12px var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--cocoa); }
 .preorder_row { display: flex; gap: 10px; }
 .preorder_row input { flex: 1; min-width: 0; height: 48px; padding: 0 20px; border: 1px solid rgba(80, 26, 29, .45); border-radius: 999px; background: rgba(243, 238, 233, .5); color: var(--cocoa); font: 17px var(--serif); }
 .preorder_row input::placeholder { color: var(--muted); opacity: .7; }
 .preorder_row input:focus-visible { outline: 1px solid var(--cocoa); outline-offset: 3px; }
 .preorder_fine { margin: 0; font-size: 16px; font-style: italic; color: var(--muted); }
+
+/* Dropdown height: progressive, Chromium only; elsewhere sections open instantly */
+@supports (interpolate-size: allow-keywords) and selector(::details-content) {
+  .notes { interpolate-size: allow-keywords; }
+  .notes details::details-content { height: 0; overflow: clip; transition: height 200ms var(--ease-out), content-visibility 200ms allow-discrete; }
+  .notes details[open]::details-content { height: auto; }
+}
 
 /* Bag drawer */
 .bag_lock, .bag_lock body { overflow: hidden; }
@@ -249,9 +273,12 @@ main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padd
   .nav a::after, .notes summary::after, .card .img img, .bag_panel { transition: none; }
   .card:hover .img img, .card .img img { transform: none !important; }
   .thumbs button { transition: opacity 150ms ease; }
-  .thumbs button[aria-pressed="true"], .pill:active { transform: none; }
+  .thumbs button[aria-pressed="true"], .pill:active:not(:disabled) { transform: none; }
   .pill { transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease; }
   .bag_scrim, .bag_drawer:not(.open) .bag_scrim { transition: opacity 150ms ease; }
   .footer .links a, .footer .contact { transition-duration: 150ms; }
   .card.is_loading .img, .gallery .main.is_loading { animation: none; }
+  .card.enter, .info.enter, .preorder_form, .bag_count { transition: opacity 150ms ease; transition-delay: 0ms; }
+  .notes details::details-content { transition: none; }
+  .gallery .main img.swapping { filter: none; }
 }

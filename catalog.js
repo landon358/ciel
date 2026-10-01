@@ -44,12 +44,23 @@
   }
   function href(p) { return CUSTOM_PAGES[p.handle] || 'item.html?h=' + encodeURIComponent(p.handle); }
 
-  function card(p, lazy) {
+  var REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Images fade in once decoded instead of drawing in over the placeholder */
+  function fadeImages(root) {
+    root.querySelectorAll('img.fade:not(.loaded)').forEach(function (img) {
+      function done() { img.classList.add('loaded'); }
+      if (img.complete && img.naturalWidth) done();
+      else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }
+    });
+  }
+
+  function card(p, lazy, i) {
     var img = p.featuredImage
-      ? '<img src="' + esc(sized(p.featuredImage.url, 900)) + '" alt="' + esc(p.featuredImage.altText || p.title) + '"' + (lazy ? ' loading="lazy"' : '') + '>'
+      ? '<img class="fade" src="' + esc(sized(p.featuredImage.url, 900)) + '" alt="' + esc(p.featuredImage.altText || p.title) + '"' + (lazy ? ' loading="lazy"' : '') + '>'
       : '<span class="slot">Image to come</span>';
     var sub = line(p);
-    return '<a class="card" href="' + esc(href(p)) + '">' +
+    return '<a class="card enter" style="--i:' + Math.min(i || 0, 8) + '" href="' + esc(href(p)) + '">' +
       '<div class="img">' + img + '</div>' +
       '<div class="row"><span class="name">' + esc(p.title) + '</span><span class="price">' + money(p.priceRange.minVariantPrice.amount) + '</span></div>' +
       (sub ? '<span class="sub">' + esc(sub) + '</span>' : '') +
@@ -72,7 +83,8 @@
       .then(function (d) {
         var list = d.products.nodes.filter(function (p) { return has(p, 'ciel-studio') || has(p, 'curated'); });
         if (featured) list = list.slice(0, 4);
-        grid.innerHTML = list.length ? list.map(function (p, i) { return card(p, i > 2); }).join('') : '<p class="grid_note">New pieces are on their way.</p>';
+        grid.innerHTML = list.length ? list.map(function (p, i) { return card(p, i > 2, i); }).join('') : '<p class="grid_note">New pieces are on their way.</p>';
+        fadeImages(grid);
       })
       .catch(function () {
         grid.innerHTML = '<p class="grid_note">The collection could not be loaded. Please refresh the page.</p>';
@@ -114,7 +126,7 @@
 
     var imgs = p.images.nodes;
     var gallery = imgs.length
-      ? '<div class="main tall"><img id="mainImg" src="' + esc(sized(imgs[0].url, 1400)) + '" alt="' + esc(imgs[0].altText || p.title) + '"></div>' +
+      ? '<div class="main tall"><img id="mainImg" class="fade" src="' + esc(sized(imgs[0].url, 1400)) + '" alt="' + esc(imgs[0].altText || p.title) + '"></div>' +
         (imgs.length > 1 ? '<div class="thumbs">' + imgs.map(function (im, i) {
           return '<button type="button" aria-pressed="' + (i === 0) + '" data-src="' + esc(sized(im.url, 1400)) + '" data-alt="' + esc(im.altText || p.title) + '" aria-label="View image ' + (i + 1) + '"><img src="' + esc(sized(im.url, 200)) + '" alt=""></button>';
         }).join('') + '</div>' : '')
@@ -125,7 +137,7 @@
 
     item.innerHTML =
       '<section class="gallery" aria-label="Product images">' + gallery + '</section>' +
-      '<section class="info">' +
+      '<section class="info enter">' +
         '<a class="eyebrow" href="shop.html">' + (studio ? 'Shop' : 'Shop / Curated') + '</a>' +
         '<h1 class="title">' + esc(p.title) + '</h1>' +
         '<div class="price_big">' + money(p.priceRange.minVariantPrice.amount) + '</div>' +
@@ -135,12 +147,29 @@
       '</section>';
     item.removeAttribute('aria-busy');
 
+    fadeImages(item);
+
+    /* Thumbnail swap: soften the old image, swap once the new one is decoded, then sharpen */
     var main = document.getElementById('mainImg');
     var thumbs = item.querySelectorAll('.thumbs button');
+    var swapId = 0;
     thumbs.forEach(function (b) {
       b.addEventListener('click', function () {
-        main.src = b.dataset.src; main.alt = b.dataset.alt;
+        if (b.getAttribute('aria-pressed') === 'true') return;
         thumbs.forEach(function (t) { t.setAttribute('aria-pressed', t === b ? 'true' : 'false'); });
+        var id = ++swapId;
+        main.classList.add('swapping');
+        var ready = new Promise(function (r) {
+          var next = new Image();
+          next.onload = next.onerror = r;
+          next.src = b.dataset.src;
+          setTimeout(r, 800); /* never wait longer than this */
+        });
+        Promise.all([ready, new Promise(function (r) { setTimeout(r, 120); })]).then(function () {
+          if (id !== swapId) return;
+          main.src = b.dataset.src; main.alt = b.dataset.alt;
+          main.classList.remove('swapping');
+        });
       });
     });
   }).catch(function () {

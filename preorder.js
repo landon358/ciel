@@ -50,13 +50,19 @@
     form.addEventListener('submit', function () {
       submit.disabled = true;
       submit.textContent = 'Reserving';
+      if (submit.animate) submit.animate([{ filter: 'blur(2px)', opacity: 0.7 }, { filter: 'blur(0)', opacity: 1 }], { duration: 150, easing: 'ease' });
       var done = false;
       function finish() {
         if (done) return;
         done = true;
-        form.hidden = true;
         var note = document.getElementById('note');
-        if (note) note.textContent = 'Thank you. You are on the preorder list for the ' + title + '. We will email you when it is ready to order.';
+        form.classList.add('leaving');
+        setTimeout(function () {
+          form.hidden = true;
+          if (!note) return;
+          note.textContent = 'Thank you. You are on the preorder list for the ' + title + '. We will email you when it is ready to order.';
+          if (note.animate) note.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, delay: 60, easing: 'ease', fill: 'backwards' });
+        }, 150);
       }
       sink.addEventListener('load', finish, { once: true });
       setTimeout(finish, 6000);
