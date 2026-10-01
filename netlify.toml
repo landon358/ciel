@@ -1,0 +1,34 @@
+# Static site: no build step, publish the repo root.
+[build]
+  publish = "."
+  command = ""
+
+# Old product URLs forward to the live product page.
+[[redirects]]
+  from = "/product_jug.html"
+  to = "/item.html?h=terracotta-jug"
+  status = 301
+[[redirects]]
+  from = "/product_senufo.html"
+  to = "/item.html?h=senufo-stool"
+  status = 301
+[[redirects]]
+  from = "/product_shayd.html"
+  to = "/item.html?h=shayd-table-lamp"
+  status = 301
+[[redirects]]
+  from = "/product_stand.html"
+  to = "/item.html?h=racine-stands"
+  status = 301
+[[redirects]]
+  from = "/product_teak.html"
+  to = "/item.html?h=teak-side-table"
+  status = 301
+[[redirects]]
+  from = "/product_sheepskin.html"
+  to = "/item.html?h=texel-sheepskin"
+  status = 301
+[[redirects]]
+  from = "/product_obelisk.html"
+  to = "/item.html?h=obelisk-floor-lamp"
+  status = 301
