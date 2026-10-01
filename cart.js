@@ -114,7 +114,20 @@
     drawer.querySelector('.bag_checkout').href = cart.checkoutUrl;
   }
 
+  var panel = drawer.querySelector('.bag_panel');
+  var hideTimer = null;
+  function hideIfClosed() {
+    clearTimeout(hideTimer);
+    hideTimer = null;
+    if (!drawer.classList.contains('open')) drawer.hidden = true;
+  }
+  panel.addEventListener('transitionend', function (e) {
+    if (e.target === panel && e.propertyName === 'transform') hideIfClosed();
+  });
+
   function open() {
+    clearTimeout(hideTimer);
+    hideTimer = null;
     lastFocus = document.activeElement;
     drawer.hidden = false;
     requestAnimationFrame(function () { drawer.classList.add('open'); });
@@ -124,7 +137,9 @@
   function close() {
     drawer.classList.remove('open');
     document.documentElement.classList.remove('bag_lock');
-    setTimeout(function () { drawer.hidden = true; }, 300);
+    /* Hidden on transitionend; the timer is a fallback (e.g. reduced motion, no transition) */
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(hideIfClosed, 400);
     if (lastFocus) lastFocus.focus();
   }
 
