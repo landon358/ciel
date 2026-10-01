@@ -107,6 +107,11 @@
       else intro += (intro ? '<br>' : '') + el.innerHTML;
     });
 
+    notes = notes.filter(function (n) { return n.h.trim().toLowerCase() !== 'shipping'; });
+    notes.push({ h: 'Shipping', body: studio
+      ? 'Built to order in our studio, so allow longer than our usual 2 to 4 weeks. We will confirm an estimated ship date when you order.'
+      : 'Ships in 2 to 4 weeks.' });
+
     var imgs = p.images.nodes;
     var gallery = imgs.length
       ? '<div class="main tall"><img id="mainImg" src="' + esc(sized(imgs[0].url, 1400)) + '" alt="' + esc(imgs[0].altText || p.title) + '"></div>' +
