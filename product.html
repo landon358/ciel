@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ciel Clock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&amp;family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="inner wall">
+<header class="header solid">
+  <a class="brand" href="index.html" aria-label="Ciel home"><img src="images/mark.svg" alt="Ciel"></a>
+  <nav class="nav" aria-label="Main">
+    <a aria-current="page" href="shop.html">Shop</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+<main class="flow product">
+  <section class="gallery" aria-label="Product images">
+    <div class="main">
+      <video id="mainVid" src="video/clock_sunset.mp4" poster="images/clock_sunset_poster.jpg" autoplay muted loop playsinline aria-label="The clock on the wall as the light shifts toward sunset"></video>
+      <img id="mainImg" src="images/clock_3.jpg" alt="Gloss black sculptural wall clock with three domed dials, hung above a walnut console" hidden>
+    </div>
+    <div class="thumbs">
+      <button type="button" aria-pressed="true" data-video="1" aria-label="Play sunset film"><img src="images/clock_sunset_poster.jpg" alt=""></button>
+      <button type="button" aria-pressed="false" data-src="images/clock_4.jpg" aria-label="View front"><img src="images/clock_4.jpg" alt=""></button>
+      <button type="button" aria-pressed="false" data-src="images/clock_3.jpg" aria-label="View first angle"><img src="images/clock_3.jpg" alt=""></button>
+      <button type="button" aria-pressed="false" data-src="images/clock_2.jpg" aria-label="View second angle"><img src="images/clock_2.jpg" alt=""></button>
+    </div>
+  </section>
+
+  <section class="info">
+    <a class="eyebrow" href="shop.html">Shop</a>
+    <h1 class="title">Onde Clock</h1>
+    <div class="price_big">$1,450</div>
+    <p class="desc">Gloss lacquer. Three domed dials.<br>Quiet, sculptural time.</p>
+    <div class="actions">
+      <p class="status">Sold out</p>
+      <button type="button" class="pill main" id="preorder">Preorder the next batch</button>
+      <p class="note" id="note" aria-live="polite"></p>
+    </div>
+    <div class="notes">
+      <div><h2>Details</h2><p>Hand finished gloss lacquer. Silent movement.</p></div>
+      <div><h2>Dimensions</h2><p>Available on request.</p></div>
+      <div><h2>Shipping</h2><p>Made to order. Ships with the next batch.</p></div>
+    </div>
+  </section>
+</main>
+<footer class="footer">
+  <span>&copy; 2026 Ciel</span>
+  <nav class="links" aria-label="Legal">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+  </nav>
+  <a class="contact" href="#">Contact</a>
+</footer>
+<script>
+(function () {
+  var main = document.getElementById('mainImg');
+  var vid = document.getElementById('mainVid');
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { vid.removeAttribute('autoplay'); vid.pause(); }
+  var thumbs = document.querySelectorAll('.thumbs button');
+  thumbs.forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.dataset.video) {
+        main.hidden = true; vid.hidden = false; vid.play().catch(function () {});
+      } else {
+        vid.pause(); vid.hidden = true; main.src = b.dataset.src; main.hidden = false;
+      }
+      thumbs.forEach(function (t) { t.setAttribute('aria-pressed', t === b ? 'true' : 'false'); });
+    });
+  });
+  document.getElementById('preorder').addEventListener('click', function () {
+    document.getElementById('note').textContent = 'You are on the list for the next batch.';
+  });
+})();
+</script>
+</body>
+</html>

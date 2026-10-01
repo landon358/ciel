@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ciel Senufo Stool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&amp;family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="inner wall">
+<header class="header solid">
+  <a class="brand" href="index.html" aria-label="Ciel home"><img src="images/mark.svg" alt="Ciel"></a>
+  <nav class="nav" aria-label="Main">
+    <a aria-current="page" href="shop.html">Shop</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+<main class="flow product">
+  <section class="gallery" aria-label="Product images">
+    <div class="main tall"><img id="mainImg" src="images/senufo_1.jpg" alt="Hand carved dark wood Senufo stool with a round seat and four legs"></div>
+    <div class="thumbs">
+      <button type="button" aria-pressed="true" data-src="images/senufo_1.jpg" aria-label="View stool"><img src="images/senufo_1.jpg" alt=""></button>
+      <button type="button" aria-pressed="false" data-src="images/senufo_2.jpg" aria-label="View styled with a vase"><img src="images/senufo_2.jpg" alt=""></button>
+      <button type="button" aria-pressed="false" data-src="images/senufo_3.jpg" aria-label="View seat detail"><img src="images/senufo_3.jpg" alt=""></button>
+    </div>
+  </section>
+
+  <section class="info">
+    <a class="eyebrow" href="shop.html">Shop / Curated</a>
+    <h1 class="title">Senufo Stool</h1>
+    <div class="price_big">$300</div>
+    <p class="desc">Handmade in Ghana using traditional carving techniques.<br>Each stool shaped by hand from a single piece of wood.<br>Seat and legs, one continuous form.</p>
+    <div class="actions">
+      <button type="button" class="pill main" id="addBtn">Add to bag</button>
+      <p class="note" id="note" aria-live="polite"></p>
+    </div>
+    <div class="notes">
+      <div><h2>Details</h2><p>Solid wood. Made in Ghana.<br>Approx. 12 to 14 in high, 8 to 10 in wide.<br>Dimensions are approximate, a sizing guide only.</p></div>
+      <div><h2>Use</h2><p>Accent stool, low side table, plant stand or sculptural object.</p></div>
+      <div><h2>Please note</h2><p>Each stool is carved by hand. No two are alike.<br>Expect variation in size, shape, tone, grain, seat thickness and leg spacing.<br>Cracks, splits, chips, knots, rough edges and carving marks are natural, not defects.<br>Wood moves with temperature and humidity. Small cracks may develop over time.<br>Not suited to anyone seeking a smooth, symmetrical, factory finish.<br>Your stool is chosen from current inventory and may differ from the photos.</p></div>
+    </div>
+  </section>
+</main>
+<footer class="footer">
+  <span>&copy; 2026 Ciel</span>
+  <nav class="links" aria-label="Legal">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+  </nav>
+  <a class="contact" href="#">Contact</a>
+</footer>
+<script>
+(function () {
+  var main = document.getElementById('mainImg');
+  var thumbs = document.querySelectorAll('.thumbs button');
+  thumbs.forEach(function (b) {
+    b.addEventListener('click', function () {
+      main.src = b.dataset.src;
+      thumbs.forEach(function (t) { t.setAttribute('aria-pressed', t === b ? 'true' : 'false'); });
+    });
+  });
+  document.getElementById('addBtn').addEventListener('click', function () {
+    document.getElementById('note').textContent = 'Added to bag.';
+  });
+})();
+</script>
+</body>
+</html>

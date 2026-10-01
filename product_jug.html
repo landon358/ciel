@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ciel Terracotta Jug</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&amp;family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="inner wall">
+<header class="header solid">
+  <a class="brand" href="index.html" aria-label="Ciel home"><img src="images/mark.svg" alt="Ciel"></a>
+  <nav class="nav" aria-label="Main">
+    <a aria-current="page" href="shop.html">Shop</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+<main class="flow product">
+  <section class="gallery" aria-label="Product images">
+    <div class="main tall"><img id="mainImg" src="images/jug_1.jpg" alt="Handmade terracotta jug with two handles in warm window light"></div>
+    <div class="thumbs">
+      <button type="button" aria-pressed="true" data-src="images/jug_1.jpg" aria-label="View in window light"><img src="images/jug_1.jpg" alt=""></button>
+      <button type="button" aria-pressed="false" data-src="images/jug_2.jpg" aria-label="View on grey"><img src="images/jug_2.jpg" alt=""></button>
+      <button type="button" aria-pressed="false" data-src="images/jug_3.jpg" aria-label="View styled on a console"><img src="images/jug_3.jpg" alt=""></button>
+    </div>
+  </section>
+
+  <section class="info">
+    <a class="eyebrow" href="shop.html">Shop / Curated</a>
+    <h1 class="title">Terracotta Jug</h1>
+    <div class="price_big">$289</div>
+    <p class="desc">Handmade in Turkey from terracotta.<br>Each one shaped and finished by hand.<br>A true statement piece.</p>
+    <div class="actions">
+      <button type="button" class="pill main" id="addBtn">Add to bag</button>
+      <p class="note" id="note" aria-live="polite"></p>
+    </div>
+    <div class="notes">
+      <div><h2>Details</h2><p>Terracotta. Made in Turkey.<br>Approx. 15 to 17 in high, 13 to 16 in wide.<br>Dimensions are approximate, a general guide only.<br>For decorative use.</p></div>
+      <div><h2>Use</h2><p>Console, buffet, hearth or entry table.<br>Alone as sculpture, or with dried branches.</p></div>
+      <div><h2>Please note</h2><p>Each pot is handmade. No two are alike.<br>Mouth, handles, shape, proportions and color vary, from two tone to uniform.<br>Expect wheel marks, chips, small edge losses, hairline cracks, uneven color and distressing.<br>These are part of its character, not defects.<br>Not suited to anyone seeking a smooth, symmetrical or uniform pot.<br>Your pot is chosen from current inventory and may differ from the photos.</p></div>
+    </div>
+  </section>
+</main>
+<footer class="footer">
+  <span>&copy; 2026 Ciel</span>
+  <nav class="links" aria-label="Legal">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+  </nav>
+  <a class="contact" href="#">Contact</a>
+</footer>
+<script>
+(function () {
+  var main = document.getElementById('mainImg');
+  var thumbs = document.querySelectorAll('.thumbs button');
+  thumbs.forEach(function (b) {
+    b.addEventListener('click', function () {
+      main.src = b.dataset.src;
+      thumbs.forEach(function (t) { t.setAttribute('aria-pressed', t === b ? 'true' : 'false'); });
+    });
+  });
+  document.getElementById('addBtn').addEventListener('click', function () {
+    document.getElementById('note').textContent = 'Added to bag.';
+  });
+})();
+</script>
+</body>
+</html>
