@@ -136,6 +136,14 @@ main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padd
 .about_text .big { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.25; color: var(--cocoa); text-wrap: balance; }
 .about_text .body { display: flex; flex-direction: column; gap: 20px; color: var(--muted); }
 
+/* Legal */
+.legal { display: flex; flex-direction: column; gap: clamp(40px, 6vw, 72px); }
+.legal_head { display: flex; flex-direction: column; gap: 16px; }
+.legal .updated { margin: 0; font-style: italic; color: var(--muted); }
+.legal_body { display: flex; flex-direction: column; gap: 36px; max-width: 64ch; }
+.legal_body h2 { margin: 0 0 10px; font-family: var(--sans); font-weight: 500; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--cocoa); }
+.legal_body p { margin: 0 0 8px; color: var(--cocoa); }
+
 /* Footer */
 .footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding: 28px var(--gutter) calc(32px + env(safe-area-inset-bottom, 0px)); font-size: 16px; color: var(--muted); }
 .footer .links { display: flex; gap: 28px; }
