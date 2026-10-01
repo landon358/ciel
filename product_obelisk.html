@@ -16,7 +16,7 @@
     <a href="index.html">Home</a>
     <a aria-current="page" href="shop.html">Shop</a>
     <a href="about.html">About</a>
-    <a class="bag" href="#" aria-label="Shopping bag"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.1 12.2a1 1 0 0 1-1 .8H7.1a1 1 0 0 1-1-.8L5 8z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></svg></a>
+    <button type="button" class="bag" aria-label="Shopping bag"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.1 12.2a1 1 0 0 1-1 .8H7.1a1 1 0 0 1-1-.8L5 8z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></svg></button>
   </nav>
 </header>
 <main class="flow product">
@@ -31,7 +31,7 @@
     <div class="price_big">$895</div>
     <p class="desc">An architectural column in black oak.<br>Crowned with a white linen shade.<br>Quiet, tall, sculptural light.</p>
     <div class="actions">
-      <button type="button" class="pill main" id="addBtn">Add to bag</button>
+      <button type="button" class="pill main" id="addBtn" data-variant="gid://shopify/ProductVariant/45294496940098">Add to bag</button>
       <p class="note" id="note" aria-live="polite"></p>
     </div>
     <div class="notes">
@@ -49,12 +49,6 @@
   </nav>
   <a class="contact" href="#">Contact</a>
 </footer>
-<script>
-(function () {
-  document.getElementById('addBtn').addEventListener('click', function () {
-    document.getElementById('note').textContent = 'Added to bag.';
-  });
-})();
-</script>
+<script src="cart.js"></script>
 </body>
 </html>
