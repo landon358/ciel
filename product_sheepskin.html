@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ciel Texel Sheepskin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&amp;family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="inner wall">
+<header class="header solid">
+  <a class="brand" href="index.html" aria-label="Ciel home"><img src="images/mark.svg" alt="Ciel"></a>
+  <nav class="nav" aria-label="Main">
+    <a aria-current="page" href="shop.html">Shop</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+<main class="flow product">
+  <section class="gallery" aria-label="Product images">
+    <!-- Images to come: add images/sheepskin_1.jpg etc. and restore the thumbs like the other product pages -->
+    <div class="main tall placeholder"><span class="slot">Image to come</span></div>
+  </section>
+
+  <section class="info">
+    <a class="eyebrow" href="shop.html">Shop / Curated</a>
+    <h1 class="title">Texel Sheepskin</h1>
+    <div class="price_big">$195</div>
+    <p class="desc">Undyed Texel wool from the Dutch coast.<br>Dense, plush and naturally lustrous.<br>No two hides alike.</p>
+    <div class="actions">
+      <button type="button" class="pill main" id="addBtn">Add to bag</button>
+      <p class="note" id="note" aria-live="polite"></p>
+    </div>
+    <div class="notes">
+      <div><h2>Details</h2><p>Texel sheepskin, undyed and unbleached. Made in the Netherlands.<br>Approx. 115 x 75 cm (45 x 30 in).<br>2.2 kg (4.9 lb).</p></div>
+      <div><h2>Use</h2><p>Armchair, sofa, bench or floor.</p></div>
+      <div><h2>Care</h2><p>Shake out and comb in the direction of the wool.<br>Spot clean only. Do not wash.<br>Keep out of direct sunlight.</p></div>
+      <div><h2>Please note</h2><p>A natural hide. Shape, size and tone vary.</p></div>
+      <div><h2>Packaging</h2><p>Plastic free and recyclable.</p></div>
+    </div>
+  </section>
+</main>
+<footer class="footer">
+  <span>&copy; 2026 Ciel</span>
+  <nav class="links" aria-label="Legal">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+  </nav>
+  <a class="contact" href="#">Contact</a>
+</footer>
+<script>
+(function () {
+  document.getElementById('addBtn').addEventListener('click', function () {
+    document.getElementById('note').textContent = 'Added to bag.';
+  });
+})();
+</script>
+</body>
+</html>

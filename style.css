@@ -92,6 +92,8 @@ main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padd
 .gallery { display: flex; flex-direction: column; gap: 20px; }
 .gallery .main { aspect-ratio: 1 / 1; border-radius: 28px; overflow: hidden; background: var(--soft); }
 .gallery .main.tall { aspect-ratio: 4 / 5; }
+.gallery .main.placeholder { display: flex; align-items: center; justify-content: center; }
+.gallery .main .slot { font-style: italic; color: var(--muted); opacity: .7; }
 .gallery .main img, .gallery .main video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .thumbs { display: flex; gap: 14px; }
 .thumbs button { width: 72px; height: 72px; padding: 0; border: 0; border-radius: 999px; overflow: hidden; cursor: pointer; background: var(--soft); opacity: .55; transition: opacity .3s, transform .3s; }
