@@ -21,8 +21,11 @@
 </header>
 <main class="flow product">
   <section class="gallery" aria-label="Product images">
-    <!-- Images to come: add images/obelisk_1.jpg etc. -->
-    <div class="main tall placeholder"><span class="slot">Image to come</span></div>
+    <div class="main tall"><img id="mainImg" src="images/obelisk_1.jpg" alt="Obelisk floor lamp in black oak with a white drum shade, glowing against a plaster wall"></div>
+    <div class="thumbs">
+      <button type="button" aria-pressed="true" data-src="images/obelisk_1.jpg" aria-label="View on its own"><img src="images/obelisk_1.jpg" alt=""></button>
+      <button type="button" aria-pressed="false" data-src="images/obelisk_2.jpg" aria-label="View styled in a room"><img src="images/obelisk_2.jpg" alt=""></button>
+    </div>
   </section>
 
   <section class="info">
@@ -49,6 +52,18 @@
   </nav>
   <a class="contact" href="#">Contact</a>
 </footer>
+<script>
+(function () {
+  var main = document.getElementById('mainImg');
+  var thumbs = document.querySelectorAll('.thumbs button');
+  thumbs.forEach(function (b) {
+    b.addEventListener('click', function () {
+      main.src = b.dataset.src;
+      thumbs.forEach(function (t) { t.setAttribute('aria-pressed', t === b ? 'true' : 'false'); });
+    });
+  });
+})();
+</script>
 <script src="cart.js"></script>
 </body>
 </html>
