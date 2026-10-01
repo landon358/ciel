@@ -65,6 +65,7 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--cocoa); outline
 .home .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 62% 50%; }
 .home .lead { position: absolute; left: max(var(--gutter), 8vw); top: 50%; transform: translateY(-50%); max-width: min(820px, 84vw); }
 .home h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(38px, 4.8vw, 80px); line-height: 1; text-wrap: balance; }
+.home .hero_cta { margin-top: clamp(24px, 3vw, 40px); }
 .home h1 em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -.01em; }
 
 /* Home: feature section on the clay wall */
@@ -117,6 +118,8 @@ main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padd
 .status { margin: 0; font-family: var(--sans); font-size: 14px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--cocoa); }
 .pill { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding-inline: 34px; border-radius: 999px; font: inherit; font-size: 13px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; cursor: pointer; transition: background .5s ease, color .5s ease, border-color .5s ease; }
 .pill.main { background: transparent; color: var(--cocoa); border: 1px solid rgba(80, 26, 29, .45); }
+.pill.solid { background: var(--cocoa); color: var(--linen); border: 1px solid var(--cocoa); }
+.pill.solid:hover { background: var(--umber); border-color: var(--umber); }
 .pill.main:hover { background: var(--cocoa); color: var(--linen); border-color: var(--cocoa); }
 .note { margin: 0; font-style: italic; color: var(--muted); min-height: 1.6em; }
 .notes { display: flex; flex-direction: column; gap: 20px; max-width: 58ch; }
@@ -155,6 +158,7 @@ main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padd
   .home .bg { object-position: 72% 50%; }
   .home .lead { top: calc(112px + env(safe-area-inset-top, 0px)); left: auto; right: var(--gutter); transform: none; text-align: right; }
   .home h1 { font-size: 34px; line-height: 1.1; }
+  .home .hero_cta { margin-top: 20px; height: 44px; padding-inline: 20px; font-size: 11px; letter-spacing: .18em; }
   .about_image { aspect-ratio: 4 / 3; }
   .footer { justify-content: center; text-align: center; }
 }
