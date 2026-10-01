@@ -131,7 +131,7 @@
         '<div class="price_big">' + money(p.priceRange.minVariantPrice.amount) + '</div>' +
         (intro ? '<p class="desc">' + intro + '</p>' : '') +
         '<div class="actions">' + action + '<p class="note" id="note" aria-live="polite"></p></div>' +
-        (notes.length ? '<div class="notes">' + notes.map(function (n) { return '<div><h2>' + esc(n.h) + '</h2><p>' + n.body + '</p></div>'; }).join('') + '</div>' : '') +
+        (notes.length ? '<div class="notes">' + notes.map(function (n) { return '<details><summary>' + esc(n.h) + '</summary><p>' + n.body + '</p></details>'; }).join('') + '</div>' : '') +
       '</section>';
     item.removeAttribute('aria-busy');
 

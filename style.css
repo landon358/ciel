@@ -105,24 +105,27 @@ main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padd
 .item_missing { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
 .item_missing p { margin: 0; }
 
-/* Product */
-.product { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(40px, 7vw, 120px); align-items: start; }
-.gallery { display: flex; flex-direction: column; gap: 20px; }
-.gallery .main { aspect-ratio: 1 / 1; border-radius: 28px; overflow: hidden; background: var(--soft); }
+/* Product: everything above the fold, sections as closed dropdowns */
+.flow.product { padding-block: clamp(4px, 1.2vw, 16px) clamp(56px, 7vw, 104px); }
+.product { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 88px); align-items: start; }
+.gallery { display: flex; flex-direction: column; gap: 14px; }
+.gallery .main { aspect-ratio: 1 / 1; border-radius: 24px; overflow: hidden; background: var(--soft); }
 .gallery .main.tall { aspect-ratio: 4 / 5; }
+.product .gallery .main { width: min(100%, calc((100svh - 250px) * .8)); }
+.product .gallery .main:not(.tall) { width: min(100%, calc(100svh - 250px)); }
 .gallery .main.placeholder { display: flex; align-items: center; justify-content: center; }
 .gallery .main .slot { font-style: italic; color: var(--muted); opacity: .7; }
 .gallery .main img, .gallery .main video { width: 100%; height: 100%; object-fit: cover; display: block; }
-.thumbs { display: flex; gap: 14px; }
-.thumbs button { width: 72px; height: 72px; padding: 0; border: 0; border-radius: 999px; overflow: hidden; cursor: pointer; background: var(--soft); opacity: .55; transition: opacity .3s, transform .3s; }
+.thumbs { display: flex; gap: 12px; }
+.thumbs button { width: 56px; height: 56px; padding: 0; border: 0; border-radius: 999px; overflow: hidden; cursor: pointer; background: var(--soft); opacity: .55; transition: opacity .3s, transform .3s; }
 .thumbs button img { width: 100%; height: 100%; object-fit: cover; }
 .thumbs button[aria-pressed="true"], .thumbs button:hover { opacity: 1; }
 .thumbs button[aria-pressed="true"] { transform: scale(1.06); }
 
-.info { display: flex; flex-direction: column; gap: 28px; position: sticky; top: calc(32px + env(safe-area-inset-top, 0px)); min-width: 0; padding-top: 8px; }
-.info .title { font-size: clamp(52px, 5.5vw, 84px); }
-.price_big { font-size: 26px; font-variant-numeric: tabular-nums; margin-top: -10px; }
-.desc { margin: 0; max-width: 58ch; }
+.info { display: flex; flex-direction: column; gap: 16px; position: sticky; top: calc(24px + env(safe-area-inset-top, 0px)); min-width: 0; }
+.info .title { font-size: clamp(36px, 3.4vw, 54px); line-height: 1.05; }
+.price_big { font-size: 22px; font-variant-numeric: tabular-nums; margin-top: -6px; }
+.desc { margin: 0; max-width: 52ch; font-size: 17px; line-height: 1.55; }
 .actions { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
 .status { margin: 0; font-family: var(--sans); font-size: 14px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--cocoa); }
 .pill { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding-inline: 34px; border-radius: 999px; font: inherit; font-size: 13px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; cursor: pointer; transition: background .5s ease, color .5s ease, border-color .5s ease; }
@@ -131,9 +134,23 @@ main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padd
 .pill.solid:hover { background: var(--umber); border-color: var(--umber); }
 .pill.main:hover { background: var(--cocoa); color: var(--linen); border-color: var(--cocoa); }
 .note { margin: 0; font-style: italic; color: var(--muted); min-height: 1.6em; }
-.notes { display: flex; flex-direction: column; gap: 20px; max-width: 58ch; }
+.product .pill { height: 44px; }
+.notes { max-width: 52ch; border-top: 1px solid rgba(80, 26, 29, .18); margin-top: 4px; }
+.notes details { border-bottom: 1px solid rgba(80, 26, 29, .18); }
+.notes summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 13px 0; cursor: pointer; list-style: none; font-family: var(--sans); font-weight: 500; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--cocoa); }
+.notes summary::-webkit-details-marker { display: none; }
+.notes summary::after { content: '+'; font-size: 16px; letter-spacing: 0; line-height: 1; transition: transform .3s ease; }
+.notes details[open] summary::after { transform: rotate(45deg); }
+.notes summary:focus-visible { outline: 1px solid var(--cocoa); outline-offset: 2px; border-radius: 4px; }
+.notes details p { margin: 0; padding: 0 0 16px; font-size: 16px; line-height: 1.6; color: var(--muted); }
 .notes h2 { margin: 0 0 6px; font-family: var(--sans); font-weight: 500; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--cocoa); }
-.notes p { margin: 0; color: var(--muted); }
+
+@media (min-width: 901px) and (max-height: 820px) {
+  .info { gap: 12px; }
+  .info .title { font-size: clamp(34px, 3vw, 42px); }
+  .desc { font-size: 16px; line-height: 1.5; }
+  .notes summary { padding: 10px 0; }
+}
 
 /* About */
 .about { display: flex; flex-direction: column; gap: clamp(56px, 8vw, 120px); }
@@ -200,7 +217,11 @@ main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padd
 @media (max-width: 900px) { body.wall { background-size: auto, 200% auto; } .feature { background-size: 200% auto; } }
 @media (max-width: 900px) {
   .grid, .grid.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .product { grid-template-columns: minmax(0, 1fr); }
+  .product { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .product .gallery .main, .product .gallery .main:not(.tall) { width: min(100%, calc(46svh * .8)); margin-inline: auto; }
+  .info { gap: 12px; }
+  .info .title { font-size: 36px; }
+  .product .thumbs { justify-content: center; }
   .info { position: static; }
   .about_text { grid-template-columns: minmax(0, 1fr); }
 }
