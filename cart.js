@@ -142,23 +142,23 @@
     b.addEventListener('click', function (e) { e.preventDefault(); render(); open(); });
   });
 
-  document.querySelectorAll('[data-variant]').forEach(function (btn) {
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-variant]');
+    if (!btn || btn.disabled) return;
     var note = document.getElementById('note');
     var label = btn.textContent;
-    btn.addEventListener('click', function () {
-      btn.disabled = true;
-      btn.textContent = 'Adding';
-      addLine(btn.dataset.variant).then(function (c) {
-        cart = c; render();
-        if (note) note.textContent = 'Added to bag.';
-        open();
-      }).catch(function (err) {
-        if (err.cart) { cart = err.cart; render(); }
-        if (note) note.textContent = err.message === 'unavailable'
-          ? 'Sorry, this piece can\u2019t be ordered online just yet. Please check back soon.'
-          : 'Something went wrong. Please try again.';
-      }).then(function () { btn.disabled = false; btn.textContent = label; });
-    });
+    btn.disabled = true;
+    btn.textContent = 'Adding';
+    addLine(btn.dataset.variant).then(function (c) {
+      cart = c; render();
+      if (note) note.textContent = 'Added to bag.';
+      open();
+    }).catch(function (err) {
+      if (err.cart) { cart = err.cart; render(); }
+      if (note) note.textContent = err.message === 'unavailable'
+        ? 'Sorry, this piece can\u2019t be ordered online just yet. Please check back soon.'
+        : 'Something went wrong. Please try again.';
+    }).then(function () { btn.disabled = false; btn.textContent = label; });
   });
 
   fetchCart().then(function (c) { cart = c; render(); }).catch(function () { render(); });

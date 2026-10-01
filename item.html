@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Ciel Shop</title>
+<title>Ciel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&amp;family=Marcellus&amp;family=Jost:wght@400;500&amp;family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&amp;display=swap">
@@ -19,12 +19,9 @@
     <button type="button" class="bag" aria-label="Shopping bag"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.1 12.2a1 1 0 0 1-1 .8H7.1a1 1 0 0 1-1-.8L5 8z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></svg></button>
   </nav>
 </header>
-<main class="flow">
-  <div class="shop_head">
-    <h1 class="title">Shop</h1>
-    <p>Our own designs, alongside a curated edit<br>from other makers and design houses.</p>
-  </div>
-  <div class="grid" data-catalog="shop"></div>
+<main class="flow product" id="item" aria-busy="true">
+  <section class="gallery"><div class="main tall is_loading"></div></section>
+  <section class="info"></section>
 </main>
 <footer class="footer">
   <span>&copy; 2026 Ciel</span>
