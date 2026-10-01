@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ciel Obelisk Floor Lamp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&amp;family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&amp;family=Jost:wght@400;500&amp;family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="inner wall">
+<header class="header solid">
+  <a class="brand" href="index.html" aria-label="Ciel home"><img src="images/mark.svg" alt="Ciel"></a>
+  <nav class="nav" aria-label="Main">
+    <a aria-current="page" href="shop.html">Shop</a>
+    <a href="about.html">About</a>
+    <a class="bag" href="#" aria-label="Shopping bag"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.1 12.2a1 1 0 0 1-1 .8H7.1a1 1 0 0 1-1-.8L5 8z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></svg></a>
+  </nav>
+</header>
+<main class="flow product">
+  <section class="gallery" aria-label="Product images">
+    <!-- Images to come: add images/obelisk_1.jpg etc. -->
+    <div class="main tall placeholder"><span class="slot">Image to come</span></div>
+  </section>
+
+  <section class="info">
+    <a class="eyebrow" href="shop.html">Shop / Curated</a>
+    <h1 class="title">Obelisk Floor Lamp</h1>
+    <div class="price_big">$895</div>
+    <p class="desc">An architectural column in black oak.<br>Crowned with a white linen shade.<br>Quiet, tall, sculptural light.</p>
+    <div class="actions">
+      <button type="button" class="pill main" id="addBtn">Add to bag</button>
+      <p class="note" id="note" aria-live="polite"></p>
+    </div>
+    <div class="notes">
+      <div><h2>Details</h2><p>Ash wood, black oak finish. Cotton linen shade.<br>19 x 19 x 63 in (48 x 48 x 160 cm).<br>29.8 lb (13.5 kg).</p></div>
+      <div><h2>Lighting</h2><p>In line step switch. Smart plug compatible.<br>Two E26 bulbs, 100W max. Bulbs not included.<br>10 ft black cord.</p></div>
+      <div><h2>Packaging</h2><p>Recyclable.</p></div>
+    </div>
+  </section>
+</main>
+<footer class="footer">
+  <span>&copy; 2026 Ciel</span>
+  <nav class="links" aria-label="Legal">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+  </nav>
+  <a class="contact" href="#">Contact</a>
+</footer>
+<script>
+(function () {
+  document.getElementById('addBtn').addEventListener('click', function () {
+    document.getElementById('note').textContent = 'Added to bag.';
+  });
+})();
+</script>
+</body>
+</html>
