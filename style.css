@@ -153,6 +153,15 @@ main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padd
 .legal_body h2 { margin: 0 0 10px; font-family: var(--sans); font-weight: 500; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--cocoa); }
 .legal_body p { margin: 0 0 8px; color: var(--cocoa); }
 
+/* Preorder */
+.preorder_form { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 440px; }
+.preorder_label { font: 500 12px var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--cocoa); }
+.preorder_row { display: flex; gap: 10px; }
+.preorder_row input { flex: 1; min-width: 0; height: 48px; padding: 0 20px; border: 1px solid rgba(80, 26, 29, .45); border-radius: 999px; background: rgba(243, 238, 233, .5); color: var(--cocoa); font: 17px var(--serif); }
+.preorder_row input::placeholder { color: var(--muted); opacity: .7; }
+.preorder_row input:focus-visible { outline: 1px solid var(--cocoa); outline-offset: 3px; }
+.preorder_fine { margin: 0; font-size: 16px; font-style: italic; color: var(--muted); }
+
 /* Bag drawer */
 .bag_lock, .bag_lock body { overflow: hidden; }
 .bag_drawer { position: fixed; inset: 0; z-index: 100; }

@@ -120,10 +120,8 @@
         }).join('') + '</div>' : '')
       : '<div class="main tall placeholder"><span class="slot">Image to come</span></div>';
 
-    var variant = p.variants.nodes[0];
-    var action = p.availableForSale && variant
-      ? '<button type="button" class="pill main" data-variant="' + esc(variant.id) + '">Add to bag</button>'
-      : '<p class="status">Sold out</p><button type="button" class="pill main" data-wait="' + (studio ? 'next' : 'back') + '">' + (studio ? 'Preorder the next batch' : 'Notify me when back') + '</button>';
+    /* Preorder mode: every piece takes preorders, no payment (see preorder.js) */
+    var action = '<button type="button" class="pill solid" data-preorder="' + esc(p.handle) + '" data-title="' + esc(p.title) + '">Preorder</button>';
 
     item.innerHTML =
       '<section class="gallery" aria-label="Product images">' + gallery + '</section>' +
@@ -144,12 +142,6 @@
         main.src = b.dataset.src; main.alt = b.dataset.alt;
         thumbs.forEach(function (t) { t.setAttribute('aria-pressed', t === b ? 'true' : 'false'); });
       });
-    });
-    var wait = item.querySelector('[data-wait]');
-    if (wait) wait.addEventListener('click', function () {
-      document.getElementById('note').textContent = wait.dataset.wait === 'next'
-        ? 'You are on the list for the next batch.'
-        : 'We will let you know when it is back.';
     });
   }).catch(function () {
     item.innerHTML = '<div class="item_missing"><p>This piece could not be loaded. Please refresh the page.</p></div>';

@@ -39,8 +39,7 @@
     <div class="price_big">$1,450</div>
     <p class="desc">Gloss lacquer. Three domed dials.<br>Quiet, sculptural time.</p>
     <div class="actions">
-      <p class="status">Sold out</p>
-      <button type="button" class="pill main" id="preorder">Preorder the next batch</button>
+      <button type="button" class="pill solid" data-preorder="onde-clock" data-title="Onde Clock">Preorder</button>
       <p class="note" id="note" aria-live="polite"></p>
     </div>
     <div class="notes">
@@ -74,11 +73,9 @@
       thumbs.forEach(function (t) { t.setAttribute('aria-pressed', t === b ? 'true' : 'false'); });
     });
   });
-  document.getElementById('preorder').addEventListener('click', function () {
-    document.getElementById('note').textContent = 'You are on the list for the next batch.';
-  });
 })();
 </script>
+<script src="preorder.js"></script>
 <script src="cart.js"></script>
 </body>
 </html>
