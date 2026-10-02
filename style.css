@@ -221,6 +221,7 @@ img.fade.loaded { opacity: 1; }
 .preorder_row input { flex: 1; min-width: 0; height: 48px; padding: 0 20px; border: 1px solid rgba(80, 26, 29, .45); border-radius: 999px; background: rgba(243, 238, 233, .5); color: var(--cocoa); font: 17px var(--serif); }
 .preorder_row input::placeholder { color: var(--muted); opacity: .7; }
 .preorder_row input:focus-visible { outline: 1px solid var(--cocoa); outline-offset: 3px; }
+.preorder_ship { margin: 0; max-width: 40ch; font-size: 16px; font-style: italic; font-weight: 300; line-height: 1.5; color: var(--muted); }
 .preorder_fine { margin: 0; font-size: 16px; font-style: italic; color: var(--muted); }
 
 /* Dropdown height: progressive, Chromium only; elsewhere sections open instantly */

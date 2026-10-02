@@ -140,7 +140,8 @@
       : '<div class="main tall placeholder"><span class="slot">Image to come</span></div>';
 
     /* Preorder mode: every piece takes preorders, no payment (see preorder.js) */
-    var action = '<button type="button" class="pill solid" data-preorder="' + esc(p.handle) + '" data-title="' + esc(p.title) + '">Preorder</button>';
+    var action = '<button type="button" class="pill solid" data-preorder="' + esc(p.handle) + '" data-title="' + esc(p.title) + '">Preorder</button>' +
+      '<p class="preorder_ship">Pre-ordered products will ship in 1&ndash;2 weeks once launched. Batches are limited, reserve now.</p>';
 
     item.innerHTML =
       '<section class="gallery" aria-label="Product images">' + gallery + '</section>' +
