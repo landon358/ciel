@@ -90,7 +90,27 @@ main.flow { flex: 1 0 auto; width: 100%; max-width: 1360px; margin: 0 auto; padd
 /* Shop */
 .shop_head { display: flex; flex-direction: column; gap: 16px; max-width: 640px; }
 .shop_head p { margin: 0; color: var(--muted); font-style: italic; }
-.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(40px, 5vw, 72px) clamp(20px, 3vw, 40px); padding-top: clamp(48px, 6vw, 88px); }
+.grid { --gap-r: clamp(48px, 6vw, 88px); --gap-c: clamp(20px, 3vw, 40px); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap-r) var(--gap-c); padding-top: clamp(48px, 6vw, 88px); }
+
+/* Thin rule between rows: each card draws its segment (bridging the column gap); the last row draws none */
+.grid > .card { position: relative; }
+.grid > .card::after { content: ''; position: absolute; left: 0; right: calc(-1 * var(--gap-c)); bottom: calc(-0.5 * var(--gap-r)); height: 1px; background: rgba(80, 26, 29, .18); pointer-events: none; }
+@media (min-width: 901px) {
+  .grid:not(.four) > .card:nth-child(3n)::after, .grid.four > .card:nth-child(4n)::after { right: 0; }
+  .grid:not(.four) > .card:nth-child(3n+1):nth-last-child(-n+3)::after,
+  .grid:not(.four) > .card:nth-child(3n+1):nth-last-child(-n+3) ~ .card::after,
+  .grid.four > .card:nth-child(4n+1):nth-last-child(-n+4)::after,
+  .grid.four > .card:nth-child(4n+1):nth-last-child(-n+4) ~ .card::after { display: none; }
+}
+@media (min-width: 561px) and (max-width: 900px) {
+  .grid > .card:nth-child(2n)::after { right: 0; }
+  .grid > .card:nth-child(2n+1):nth-last-child(-n+2)::after,
+  .grid > .card:nth-child(2n+1):nth-last-child(-n+2) ~ .card::after { display: none; }
+}
+@media (max-width: 560px) {
+  .grid > .card::after { right: 0; }
+  .grid > .card:last-child::after { display: none; }
+}
 .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 1040px; }
 .card { display: flex; flex-direction: column; gap: 14px; }
