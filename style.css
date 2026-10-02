@@ -238,6 +238,22 @@ img.fade.loaded { opacity: 1; }
 .bag_fine { margin: 0; font-size: 15px; font-style: italic; color: var(--muted); }
 .bag_checkout { margin-top: 8px; width: 100%; }
 
+/* Contact */
+.contact_page { display: flex; flex-direction: column; gap: clamp(32px, 4vw, 48px); }
+.contact_lede { margin: 0; max-width: 52ch; color: var(--muted); }
+.contact_sent { margin: 0; max-width: 52ch; font-size: 22px; font-style: italic; color: var(--cocoa); }
+.contact_form { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; width: 100%; max-width: 640px; }
+.field_row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; width: 100%; }
+.field { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.field label { font: 500 12px var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--cocoa); }
+.field input, .field select, .field textarea { width: 100%; padding: 12px 16px; border: 1.5px solid rgba(80, 26, 29, .35); border-radius: 14px; background: rgba(243, 238, 233, .5); color: var(--cocoa); font: 17px/1.5 var(--serif); transition: border-color 160ms ease; }
+.field input, .field select { height: 48px; }
+.field select { appearance: none; padding-right: 40px; background-image: linear-gradient(45deg, transparent 50%, var(--cocoa) 50%), linear-gradient(135deg, var(--cocoa) 50%, transparent 50%); background-position: calc(100% - 22px) 50%, calc(100% - 17px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+.field textarea { resize: vertical; min-height: 150px; }
+.field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible { outline: none; border-color: var(--cocoa); }
+a.inline { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 560px) { .field_row { grid-template-columns: minmax(0, 1fr); } }
+
 /* Footer */
 .footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding: 28px var(--gutter) calc(32px + env(safe-area-inset-bottom, 0px)); font-size: 16px; color: var(--muted); }
 .footer .links { display: flex; gap: 28px; }

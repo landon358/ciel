@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ciel Contact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&amp;family=Marcellus&amp;family=Jost:wght@400;500&amp;family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&amp;display=swap">
+<link rel="stylesheet" href="style.css?v=1790900087">
+</head>
+<body class="inner wall">
+<header class="header solid">
+  <a class="brand" href="index.html" aria-label="Ciel home"><img src="images/mark.svg" alt="Ciel"></a>
+  <nav class="nav" aria-label="Main">
+    <a href="index.html">Home</a>
+    <a href="shop.html">Shop</a>
+    <a href="about.html">About</a>
+    <button type="button" class="bag" aria-label="Shopping bag"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.1 12.2a1 1 0 0 1-1 .8H7.1a1 1 0 0 1-1-.8L5 8z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></svg></button>
+  </nav>
+</header>
+<main class="flow contact_page">
+  <div class="legal_head">
+    <span class="eyebrow">Contact</span>
+    <h1 class="title">Get in touch</h1>
+    <p class="contact_lede">Questions about a piece, a preorder, or an order you have placed. We reply within two business days.</p>
+  </div>
+
+  <p class="contact_sent" id="sent" hidden>Thank you. Your message has been sent, and we will be in touch soon.</p>
+
+  <form class="contact_form" name="contact" method="POST" action="/contact.html?sent=1" data-netlify="true" netlify-honeypot="bot-field">
+    <input type="hidden" name="form-name" value="contact">
+    <p class="contact_trap" hidden><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+
+    <div class="field_row">
+      <div class="field">
+        <label for="c_name">Name</label>
+        <input id="c_name" name="name" type="text" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="c_email">Email</label>
+        <input id="c_email" name="email" type="email" autocomplete="email" required>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="c_topic">Topic</label>
+      <select id="c_topic" name="topic">
+        <option>A piece or preorder</option>
+        <option>An order, return or warranty</option>
+        <option>Trade and press</option>
+        <option>Something else</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="c_message">Message</label>
+      <textarea id="c_message" name="message" rows="6" required></textarea>
+    </div>
+
+    <button type="submit" class="pill solid">Send message</button>
+  </form>
+</main>
+<script>
+(function () {
+  if (/[?&]sent=1/.test(location.search)) {
+    document.getElementById('sent').hidden = false;
+    document.querySelector('.contact_form').hidden = true;
+  }
+})();
+</script>
+<footer class="footer">
+  <span>&copy; 2026 Ciel</span>
+  <nav class="links" aria-label="Legal">
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+  </nav>
+  <a class="contact" href="contact.html">Contact</a>
+</footer>
+<script src="cart.js?v=1790900087"></script>
+</body>
+</html>
