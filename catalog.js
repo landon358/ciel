@@ -104,6 +104,44 @@
       .then(function () { grid.removeAttribute('aria-busy'); });
   });
 
+  /* Description: first paragraph(s) = intro; each <h4> starts a notes section. Shipping is standardised. */
+  function splitDescription(p, studio) {
+    var tmp = document.createElement('div');
+    tmp.innerHTML = p.descriptionHtml || '';
+    var intro = '', notes = [], cur = null;
+    Array.prototype.forEach.call(tmp.children, function (el) {
+      if (/^H[1-6]$/.test(el.tagName)) { cur = { h: el.textContent, body: '' }; notes.push(cur); }
+      else if (cur) cur.body += el.innerHTML;
+      else intro += (intro ? '<br>' : '') + el.innerHTML;
+    });
+    notes = notes.filter(function (n) { return n.h.trim().toLowerCase() !== 'shipping'; });
+    notes.push({ h: 'Shipping', body: studio
+      ? 'Built to order in our studio, so allow longer than our usual 2 to 4 weeks. We will confirm an estimated ship date when you order.'
+      : 'Ships in 2 to 4 weeks.' });
+    return { intro: intro, notes: notes };
+  }
+  function notesHtml(notes) {
+    return notes.map(function (n) {
+      return '<details' + (n.h.trim().toLowerCase() === 'details' ? ' open' : '') + '><summary>' + esc(n.h) + '</summary><p>' + n.body + '</p></details>';
+    }).join('');
+  }
+
+  /* Custom product pages (e.g. the Onde Clock, which has a film) keep their own gallery,
+     but their title, price, intro and sections come live from Shopify: <section class="info" data-live-handle="..."> */
+  var live = document.querySelector('[data-live-handle]');
+  if (live) {
+    gql('query($h: String!) { product(handle: $h) { ' + FIELDS + ' } }', { h: live.dataset.liveHandle }).then(function (d) {
+      var p = d.product;
+      if (!p) return;
+      var parts = splitDescription(p, has(p, 'ciel-studio'));
+      var t = live.querySelector('.title'); if (t) t.textContent = p.title;
+      var pr = live.querySelector('.price_big'); if (pr) pr.textContent = money(p.priceRange.minVariantPrice.amount);
+      var ds = live.querySelector('.desc'); if (ds && parts.intro) ds.innerHTML = parts.intro;
+      var nt = live.querySelector('.notes'); if (nt) nt.innerHTML = notesHtml(parts.notes);
+      document.title = p.title + ' | Ciel';
+    }).catch(function () { /* keep the page's built-in copy */ });
+  }
+
   /* Product page: /products/<handle> (Netlify rewrites to item.html); ?h=<handle> still works */
   var item = document.getElementById('item');
   if (!item) return;
@@ -124,20 +162,8 @@
     if (md && intro0(p)) md.setAttribute('content', intro0(p));
     var studio = has(p, 'ciel-studio');
 
-    /* Split description into intro + notes */
-    var tmp = document.createElement('div');
-    tmp.innerHTML = p.descriptionHtml || '';
-    var intro = '', notes = [], cur = null;
-    Array.prototype.forEach.call(tmp.children, function (el) {
-      if (/^H[1-6]$/.test(el.tagName)) { cur = { h: el.textContent, body: '' }; notes.push(cur); }
-      else if (cur) cur.body += el.innerHTML;
-      else intro += (intro ? '<br>' : '') + el.innerHTML;
-    });
-
-    notes = notes.filter(function (n) { return n.h.trim().toLowerCase() !== 'shipping'; });
-    notes.push({ h: 'Shipping', body: studio
-      ? 'Built to order in our studio, so allow longer than our usual 2 to 4 weeks. We will confirm an estimated ship date when you order.'
-      : 'Ships in 2 to 4 weeks.' });
+    var parts = splitDescription(p, studio);
+    var intro = parts.intro, notes = parts.notes;
 
     var imgs = p.images.nodes;
     var gallery = imgs.length
@@ -159,7 +185,7 @@
         '<div class="price_big">' + money(p.priceRange.minVariantPrice.amount) + '</div>' +
         (intro ? '<p class="desc">' + intro + '</p>' : '') +
         '<div class="actions">' + action + '<p class="note" id="note" aria-live="polite"></p></div>' +
-        (notes.length ? '<div class="notes">' + notes.map(function (n) { return '<details' + (n.h.trim().toLowerCase() === 'details' ? ' open' : '') + '><summary>' + esc(n.h) + '</summary><p>' + n.body + '</p></details>'; }).join('') + '</div>' : '') +
+        (notes.length ? '<div class="notes">' + notesHtml(notes) + '</div>' : '') +
       '</section>';
     item.removeAttribute('aria-busy');
 
