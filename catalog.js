@@ -8,7 +8,7 @@
 (function () {
   var SHOP = 'https://6n0zf6-2z.myshopify.com/api/2025-07/graphql.json';
   var TOKEN = '9e6e50b006ca52f39041196f55c47b0d';
-  var CUSTOM_PAGES = { 'onde-clock': 'product.html' };
+  var CUSTOM_PAGES = {}; /* onde-clock is served by its custom page via a Netlify rewrite */
 
   var FIELDS = 'handle title tags availableForSale descriptionHtml ' +
     'priceRange { minVariantPrice { amount } } ' +
@@ -38,12 +38,17 @@
   }
   function sized(url, w) { return url + (url.indexOf('?') > -1 ? '&' : '?') + 'width=' + w; }
   function has(p, tag) { return p.tags.indexOf(tag) > -1; }
+  function intro0(p) {
+    var d = document.createElement('div'); d.innerHTML = (p.descriptionHtml || '').replace(/<br\s*\/?>/gi, ' ');
+    var first = d.querySelector('p');
+    return first ? first.textContent.replace(/\s+/g, ' ').trim() : '';
+  }
+  /* Preorder mode: every piece takes preorders, so no "Sold out" labels */
   function line(p) {
-    if (!p.availableForSale) return 'Sold out';
     for (var i = 0; i < p.tags.length; i++) if (p.tags[i].indexOf('line:') === 0) return p.tags[i].slice(5);
     return '';
   }
-  function href(p) { return CUSTOM_PAGES[p.handle] || 'item.html?h=' + encodeURIComponent(p.handle); }
+  function href(p) { return CUSTOM_PAGES[p.handle] || '/products/' + encodeURIComponent(p.handle); }
 
   var REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -99,13 +104,14 @@
       .then(function () { grid.removeAttribute('aria-busy'); });
   });
 
-  /* Product page: item.html?h=handle */
+  /* Product page: /products/<handle> (Netlify rewrites to item.html); ?h=<handle> still works */
   var item = document.getElementById('item');
   if (!item) return;
-  var handle = new URLSearchParams(location.search).get('h');
+  var pathMatch = location.pathname.match(/\/products\/([^\/?#]+)/);
+  var handle = pathMatch ? decodeURIComponent(pathMatch[1]) : new URLSearchParams(location.search).get('h');
 
   function notFound() {
-    item.innerHTML = '<div class="item_missing"><h1 class="title">Not found</h1><p>This piece is no longer available.</p><a class="pill main" href="shop.html">Back to the shop</a></div>';
+    item.innerHTML = '<div class="item_missing"><h1 class="title">Not found</h1><p>This piece is no longer available.</p><a class="pill main" href="/shop">Back to the shop</a></div>';
     item.classList.remove('product');
   }
   if (!handle) { notFound(); return; }
@@ -113,7 +119,9 @@
   gql('query($h: String!) { product(handle: $h) { ' + FIELDS + ' } }', { h: handle }).then(function (d) {
     var p = d.product;
     if (!p) { notFound(); return; }
-    document.title = 'Ciel ' + p.title;
+    document.title = p.title + ' | Ciel';
+    var md = document.querySelector('meta[name=description]');
+    if (md && intro0(p)) md.setAttribute('content', intro0(p));
     var studio = has(p, 'ciel-studio');
 
     /* Split description into intro + notes */
@@ -146,7 +154,7 @@
     item.innerHTML =
       '<section class="gallery" aria-label="Product images">' + gallery + '</section>' +
       '<section class="info enter">' +
-        '<a class="eyebrow" href="shop.html">' + (studio ? 'Shop' : 'Shop / Curated') + '</a>' +
+        '<a class="eyebrow" href="/shop">' + (studio ? 'Shop' : 'Shop / Curated') + '</a>' +
         '<h1 class="title">' + esc(p.title) + '</h1>' +
         '<div class="price_big">' + money(p.priceRange.minVariantPrice.amount) + '</div>' +
         (intro ? '<p class="desc">' + intro + '</p>' : '') +

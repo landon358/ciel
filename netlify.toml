@@ -1,34 +1,59 @@
 # Static site: no build step, publish the repo root.
+# Netlify serves /shop, /about, /contact, /terms and /privacy from the matching .html files.
 [build]
   publish = "."
   command = ""
 
-# Old product URLs forward to the live product page.
+# Clean product URLs. The Onde Clock keeps its custom page (sunset film); every
+# other product renders from Shopify on item.html. Order matters: first match wins.
+[[redirects]]
+  from = "/products/onde-clock"
+  to = "/product.html"
+  status = 200
+
+[[redirects]]
+  from = "/products/:handle"
+  to = "/item.html"
+  status = 200
+
+# Old URLs forward permanently to the clean ones.
+[[redirects]]
+  from = "/item.html"
+  query = { h = ":h" }
+  to = "/products/:h"
+  status = 301
+
 [[redirects]]
   from = "/product_jug.html"
-  to = "/item.html?h=terracotta-jug"
+  to = "/products/terracotta-jug"
   status = 301
+
 [[redirects]]
   from = "/product_senufo.html"
-  to = "/item.html?h=senufo-stool"
+  to = "/products/senufo-stool"
   status = 301
+
 [[redirects]]
   from = "/product_shayd.html"
-  to = "/item.html?h=shayd-table-lamp"
+  to = "/products/shayd-table-lamp"
   status = 301
+
 [[redirects]]
   from = "/product_stand.html"
-  to = "/item.html?h=racine-stands"
+  to = "/products/racine-stands"
   status = 301
+
 [[redirects]]
   from = "/product_teak.html"
-  to = "/item.html?h=teak-side-table"
+  to = "/products/teak-side-table"
   status = 301
+
 [[redirects]]
   from = "/product_sheepskin.html"
-  to = "/item.html?h=texel-sheepskin"
+  to = "/products/texel-sheepskin"
   status = 301
+
 [[redirects]]
   from = "/product_obelisk.html"
-  to = "/item.html?h=obelisk-floor-lamp"
+  to = "/products/obelisk-floor-lamp"
   status = 301

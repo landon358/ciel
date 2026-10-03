@@ -96,7 +96,7 @@
     });
     var lines = cart ? cart.lines.nodes.filter(function (l) { return l.quantity > 0; }) : [];
     if (!lines.length) {
-      linesEl.innerHTML = '<p class="bag_empty">Your bag is empty.</p><a class="bag_browse" href="shop.html">Browse the shop</a>';
+      linesEl.innerHTML = '<p class="bag_empty">Your bag is empty.</p><a class="bag_browse" href="/shop">Browse the shop</a>';
       footEl.hidden = true;
       return;
     }
