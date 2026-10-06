@@ -7,7 +7,7 @@
   --mute: rgba(243, 238, 233, 0.58);
   --thatch: #b2968a;
   --serif: "Cormorant Garamond", Georgia, serif;
-  --sans: "Jost", system-ui, sans-serif;
+  --sans: "Inter Tight", system-ui, sans-serif;
   --display: "Bodoni Moda", "Cormorant Garamond", Georgia, serif;
   --tab: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -223,3 +223,20 @@ section { position: relative; }
   html { scroll-behavior: auto; }
   .reveal { transition: none; opacity: 1; transform: none; }
 }
+
+/* ---------- Accessibility ---------- */
+.skip {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  padding: 10px 14px;
+  background: var(--linen);
+  color: var(--ink);
+  font: 500 12px/1 "Inter Tight", system-ui, sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: translateY(-160%);
+}
+.skip:focus { transform: none; }
+:focus-visible { outline: 1px solid var(--linen); outline-offset: 4px; }

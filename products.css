@@ -380,3 +380,21 @@ button, input { font: inherit; color: inherit; }
   opacity: 0.55 !important;
 }
 @media (max-width: 800px) { .about_page { grid-template-columns: 1fr; align-content: start; } }
+
+/* ---------- Accessibility ---------- */
+.skip {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  padding: 10px 14px;
+  background: var(--linen);
+  color: var(--ink);
+  font: 500 12px/1 "Inter Tight", system-ui, sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: translateY(-160%);
+}
+.skip:focus { transform: none; }
+:focus-visible { outline: 1px solid var(--linen); outline-offset: 4px; }
+.about_body a.inline { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(243, 238, 233, 0.4); }
