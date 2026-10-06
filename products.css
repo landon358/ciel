@@ -235,7 +235,7 @@ button, input { font: inherit; color: inherit; }
   .rules i:nth-child(2) { border-right: 1px solid var(--rule); }
   .card .meta { flex-direction: column; align-items: flex-start; gap: 10px; }
   .card h2 { font-size: 20px; }
-  .rail_wrap > * { --tile: 78cqw; }
+  .rail_wrap > * { --tile: min(78cqw, 72svh); }
   .rail .stage { grid-column: span 1; height: var(--tile); }
   .pdp_info { grid-template-columns: 1fr; gap: 24px; padding-bottom: 32px; }
   .pdp_info > div:last-child { min-height: 0; }
@@ -398,3 +398,30 @@ button, input { font: inherit; color: inherit; }
 .skip:focus { transform: none; }
 :focus-visible { outline: 1px solid var(--linen); outline-offset: 4px; }
 .about_body a.inline { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(243, 238, 233, 0.4); }
+
+/* ---------- Touch and small screens ---------- */
+/* Bigger tap targets without changing the look */
+.tab, .site_foot a { display: inline-block; padding: 14px 0; margin: -14px 0; }
+.header > a:first-child { padding: 8px; margin: -8px; }
+/* Respect notches and the home indicator */
+.header { padding-left: max(var(--gut), env(safe-area-inset-left)); padding-right: max(var(--gut), env(safe-area-inset-right)); }
+.site_foot { padding-bottom: max(28px, env(safe-area-inset-bottom)); }
+
+@media (max-width: 900px) {
+  /* solid header so scrolled text never shows through */
+  .header { background: rgba(5, 5, 5, 0.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); padding-top: 18px; padding-bottom: 18px; }
+  .contact_body .header { background: rgba(5, 5, 5, 0.94); }
+
+  /* products: one full-width card, name right under the image */
+  .rules, .grid { grid-template-columns: 1fr; }
+  .rules i:nth-child(n+2) { display: none; }
+  .rules i:first-child { border-right: 1px solid var(--rule); }
+  .card { padding: 24px 20px 40px; }
+  .card .meta { flex-direction: row; align-items: baseline; margin-top: 24px; padding-top: 0; }
+  .card h2 { font-size: 24px; }
+
+  /* product page: images first, then the details */
+  .pdp { display: flex; flex-direction: column; }
+  .rail_wrap { order: -1; padding-top: 84px; padding-bottom: 8px; }
+  .pdp_info { padding-top: 28px; padding-bottom: max(40px, env(safe-area-inset-bottom)); }
+}
