@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Onde Clock | Ciel</title>
+<meta name="description" content="Onde Clock: gloss black lacquer, three domed dials, made in house by Ciel Studio.">
+<meta name="theme-color" content="#050505">
+<link rel="icon" href="/assets/ciel_mark_bold_white.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200;300;400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap">
+<link rel="stylesheet" href="/products.css?v=1791289371">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ciel" viewBox="0.1 0.1 148.387 168.8">
+    <g fill="currentColor"><path d="M141.628 22.373A84.4 84.4 0 1 0 148.487 139.537L133.779 126.886A65.0 65.0 0 1 1 128.497 36.654Z"/><path d="M53.008 38.679A55.6 55.6 0 0 0 37.712 54.463L53.869 64.835A36.4 36.4 0 0 1 63.883 54.502Z"/><path d="M32.057 66.032A55.6 55.6 0 0 0 45.877 124.495L59.214 110.684A36.4 36.4 0 0 1 50.167 72.409Z"/><path d="M122.561 125.031A55.6 55.6 0 0 0 117.961 40.096L106.406 55.43A36.4 36.4 0 0 1 109.418 111.034Z"/><path d="M111.711 82.3A27.3 27.3 0 1 0 110.539 92.7L92.985 92.7A11.8 11.8 0 1 1 96.093 82.3Z"/><path d="M72 77.2H97V82.3H72Z"/></g>
+  </symbol>
+</svg>
+
+<header class="header">
+  <a href="/" aria-label="Ciel home"><svg class="mark" viewBox="0.1 0.1 148.387 168.8"><use href="#ciel"/></svg></a>
+  <nav class="nav" aria-label="Main">
+    <a class="tab" href="/products">Products</a>
+    <a class="tab" href="/contact">Contact</a>
+  </nav>
+</header>
+
+<main class="pdp" data-live-handle="onde-clock">
+  <section class="pdp_info">
+    <div>
+      <h1 data-live="title">Onde Clock</h1>
+      <div class="pdp_price" data-live="price">$2,445</div>
+      <form class="notify" data-interest="onde-clock">
+        <label class="notify_field">
+          <input type="email" name="contact[email]" required placeholder="Your email" aria-label="Email address" autocomplete="email">
+          <button type="submit">I&rsquo;m interested <span aria-hidden="true">&rarr;</span></button>
+        </label>
+        <p class="buy_note" data-interest-note aria-live="polite"></p>
+      </form>
+    </div>
+    <div class="pdp_desc">
+      <p data-live="intro">Gloss lacquer. Three domed dials. Quiet, sculptural time.</p>
+      <p data-live="details">Designed, prototyped and made in house, one at a time. Hand finished in gloss black, with LED accent lighting for a soft glow and a silent movement. Three dials keep the hours, minutes and seconds.</p>
+    </div>
+    <div>
+      <details class="fold" name="pdp" open>
+        <summary>Details</summary>
+        <dl class="specs">
+          <div><dt>Dimensions</dt><dd data-live="dimensions">15 &times; 15 &times; 3 in (38 &times; 38 &times; 8 cm)</dd></div>
+          <div><dt>Finish</dt><dd>Gloss black lacquer</dd></div>
+          <div><dt>Movement</dt><dd>Silent, three dials</dd></div>
+          <div><dt>Light</dt><dd>LED accent lighting</dd></div>
+        </dl>
+      </details>
+      <details class="fold" name="pdp">
+        <summary>Shipping</summary>
+        <p data-live="shipping">Built to order in our studio, one at a time. Ships 2&ndash;4 weeks after launch, and we will confirm an estimated ship date when you preorder.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="rail_wrap" aria-label="Images">
+    <div class="rail" id="rail">
+      <figure class="stage"><img src="/assets/products/onde_stage.jpg?v=4" alt="The Onde clock face on, its contours lit by thin lines of light"></figure>
+      <figure><video src="/assets/products/on_dial.mp4?v=2" muted loop playsinline autoplay preload="metadata" aria-label="Close view of one dial: a single point of light orbiting inside the dome"></video></figure>
+      <figure><video src="/assets/products/on_film.mp4?v=2" muted loop playsinline autoplay preload="metadata" aria-label="The Onde film: lacquer flowing into the clock's contours"></video></figure>
+      <figure><img src="/assets/products/on_002.jpg" alt="Onde clock face on, rings of light tracing its contours" loading="lazy"></figure>
+      <figure><img src="/assets/products/on_006.jpg" alt="Onde clock above a console with a vase and plant" loading="lazy"></figure>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var rail = document.getElementById('rail');
+  // Mouse users: drag the row sideways, or use the scroll wheel over it
+  var drag = null;
+  rail.addEventListener('pointerdown', function (e) {
+    if (e.pointerType !== 'mouse') return;
+    drag = { x: e.clientX, left: rail.scrollLeft };
+    rail.classList.add('dragging');
+  });
+  window.addEventListener('pointermove', function (e) {
+    if (drag) rail.scrollLeft = drag.left - (e.clientX - drag.x);
+  });
+  window.addEventListener('pointerup', function () { drag = null; rail.classList.remove('dragging'); });
+  rail.addEventListener('wheel', function (e) {
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+    var max = rail.scrollWidth - rail.clientWidth;
+    if ((e.deltaY > 0 && rail.scrollLeft < max) || (e.deltaY < 0 && rail.scrollLeft > 0)) {
+      rail.scrollLeft += e.deltaY;
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  // One dropdown open at a time (fallback for browsers without <details name>)
+  var folds = document.querySelectorAll('.fold');
+  folds.forEach(function (f) {
+    f.addEventListener('toggle', function () {
+      if (f.open) folds.forEach(function (o) { if (o !== f) o.open = false; });
+    });
+  });
+
+  // Play rail videos only while they are on screen
+  var vio = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) e.target.play().catch(function () {}); else e.target.pause(); });
+  });
+  rail.querySelectorAll('video').forEach(function (v) { vio.observe(v); });
+
+})();
+</script>
+<script src="/shop.js?v=1791289371"></script>
+</body>
+</html>

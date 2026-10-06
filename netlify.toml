@@ -1,59 +1,68 @@
 # Static site: no build step, publish the repo root.
-# Netlify serves /shop, /about, /contact, /terms and /privacy from the matching .html files.
+# Netlify serves /products, /about, /contact, /terms and /privacy from the matching .html files.
 [build]
   publish = "."
   command = ""
 
-# Clean product URLs. The Onde Clock keeps its custom page (sunset film); every
-# other product renders from Shopify on item.html. Order matters: first match wins.
+# Product pages. The Onde Clock has its own page; its copy loads live from Shopify (shop.js).
 [[redirects]]
   from = "/products/onde-clock"
-  to = "/product.html"
+  to = "/onde-clock.html"
   status = 200
 
+# Any other product address (drafted or not yet designed) goes to the products page.
 [[redirects]]
   from = "/products/:handle"
-  to = "/item.html"
-  status = 200
+  to = "/products"
+  status = 302
 
-# Old URLs forward permanently to the clean ones.
+# Old pages and URLs from the previous site.
+[[redirects]]
+  from = "/shop"
+  to = "/products"
+  status = 301
+
+[[redirects]]
+  from = "/product.html"
+  to = "/products/onde-clock"
+  status = 301
+
 [[redirects]]
   from = "/item.html"
-  query = { h = ":h" }
-  to = "/products/:h"
+  to = "/products"
   status = 301
 
 [[redirects]]
   from = "/product_jug.html"
-  to = "/products/terracotta-jug"
+  to = "/products"
   status = 301
 
 [[redirects]]
   from = "/product_senufo.html"
-  to = "/products/senufo-stool"
+  to = "/products"
   status = 301
 
 [[redirects]]
   from = "/product_shayd.html"
-  to = "/products/shayd-table-lamp"
+  to = "/products"
   status = 301
 
 [[redirects]]
   from = "/product_stand.html"
-  to = "/products/racine-stands"
+  to = "/products"
   status = 301
 
 [[redirects]]
   from = "/product_teak.html"
-  to = "/products/teak-side-table"
+  to = "/products"
   status = 301
 
 [[redirects]]
   from = "/product_sheepskin.html"
-  to = "/products/texel-sheepskin"
+  to = "/products"
   status = 301
 
 [[redirects]]
   from = "/product_obelisk.html"
-  to = "/products/obelisk-floor-lamp"
+  to = "/products"
   status = 301

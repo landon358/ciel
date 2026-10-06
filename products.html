@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>About | Ciel</title>
-<meta name="description" content="Ciel is a design studio and a curated collection of pieces for the home.">
+<title>Products | Ciel</title>
+<meta name="description" content="Pieces designed in house by Ciel Studio, alongside a curated edit from makers we trust.">
 <meta name="theme-color" content="#050505">
 <link rel="icon" href="/assets/ciel_mark_bold_white.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,22 +20,28 @@
   </symbol>
 </svg>
 
+<div class="rules" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
 <header class="header">
   <a href="/" aria-label="Ciel home"><svg class="mark" viewBox="0.1 0.1 148.387 168.8"><use href="#ciel"/></svg></a>
   <nav class="nav" aria-label="Main">
-    <a class="tab" href="/products">Products</a>
+    <a class="tab" href="/products" aria-current="page">Products</a>
     <a class="tab" href="/contact">Contact</a>
   </nav>
 </header>
 
-<main class="about_page">
-  <div class="about_head">
-    <h1>A studio and a curated collection.</h1>
-    <p>In house designs, shown alongside pieces from makers and design houses we admire.</p>
+<main class="catalog">
+  <div class="catalog_head">
+    <h1>Products</h1>
   </div>
-  <div class="about_body">
-    <p>Our own pieces begin as a sketch. Shaped by hand and machine. Every outside piece chosen with the same care.</p>
-    <p class="about_soon">Our full story is coming soon.</p>
+  <div class="grid" data-catalog="shop">
+    <a class="card" href="/products/onde-clock">
+      <div class="frame">
+        <img src="/assets/products/onde_stage.jpg?v=4" alt="The Onde clock face on, its contours lit by thin lines of light">
+      </div>
+      <div class="meta"><h2>Onde Clock</h2><span class="price">$2,445</span></div>
+      <p class="type">Wall clock, Ciel Studio</p>
+    </a>
   </div>
 </main>
 
@@ -49,5 +55,6 @@
   </nav>
 </footer>
 
+<script src="/shop.js?v=1791289371"></script>
 </body>
 </html>

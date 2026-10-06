@@ -3,49 +3,50 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Ciel | Thoughtfully crafted, expertly curated</title>
-<meta name="description" content="Sculptural home pieces designed in house, alongside a curated edit from other makers and design houses.">
+<title>Ciel | Timelessly sculpted, intentionally designed</title>
+<meta name="description" content="Ciel: sculptural pieces for the home, designed and made in house. Home of the Onde Clock.">
+<meta name="theme-color" content="#050505">
+<link rel="icon" href="/assets/ciel_mark_bold_white.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&amp;family=Marcellus&amp;family=Jost:wght@400;500&amp;family=Cormorant+Garamond:ital,wght@0,400;0,600;1,300;1,400&amp;display=swap">
-<link rel="stylesheet" href="/style.css?v=1791058176">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=IBM+Plex+Mono:wght@400;500&family=Inter+Tight:wght@400;500&family=Jost:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="/style.css?v=1791289371">
 </head>
 <body>
-<main class="home">
-  <img class="bg" src="/images/hero.jpg" alt="Oak bench with a stoneware vase and a small lamp in warm afternoon light">
-  <header class="header">
-  <a class="brand" href="/" aria-label="Ciel home"><img src="/images/mark.svg" alt="Ciel"></a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ciel" viewBox="0.1 0.1 148.387 168.8">
+    <g fill="currentColor"><path d="M141.628 22.373A84.4 84.4 0 1 0 148.487 139.537L133.779 126.886A65.0 65.0 0 1 1 128.497 36.654Z"/><path d="M53.008 38.679A55.6 55.6 0 0 0 37.712 54.463L53.869 64.835A36.4 36.4 0 0 1 63.883 54.502Z"/><path d="M32.057 66.032A55.6 55.6 0 0 0 45.877 124.495L59.214 110.684A36.4 36.4 0 0 1 50.167 72.409Z"/><path d="M122.561 125.031A55.6 55.6 0 0 0 117.961 40.096L106.406 55.43A36.4 36.4 0 0 1 109.418 111.034Z"/><path d="M111.711 82.3A27.3 27.3 0 1 0 110.539 92.7L92.985 92.7A11.8 11.8 0 1 1 96.093 82.3Z"/><path d="M72 77.2H97V82.3H72Z"/></g>
+  </symbol>
+</svg>
+
+<header class="header" id="header">
   <nav class="nav" aria-label="Main">
-    <a aria-current="page" href="/">Home</a>
-    <a href="/shop">Shop</a>
-    <a href="/about">About</a>
-    <button type="button" class="bag" aria-label="Shopping bag"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.1 12.2a1 1 0 0 1-1 .8H7.1a1 1 0 0 1-1-.8L5 8z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></svg></button>
+    <a class="tab" href="/products">Products</a>
   </nav>
 </header>
-  <div class="lead">
-    <h1><em>Thoughtfully crafted,</em><br><em>Expertly curated.</em></h1>
-    <a class="pill solid hero_cta" href="/shop">Shop Luxury Home Goods</a>
-  </div>
-</main>
-<section class="feature" aria-labelledby="feature_title">
-  <div class="feature_in">
-    <div class="feature_head">
-      <span class="eyebrow">The collection</span>
-      <h2 id="feature_title" class="statement">Our own designs, alongside a curated edit from other makers and design houses.</h2>
+
+<main id="top">
+  <section class="hero">
+    <video id="film" src="/assets/hero_reel.mp4" poster="/assets/hero_poster.jpg" autoplay muted loop playsinline aria-label="Light runs across liquid black lacquer"></video>
+    <h1 class="hero_words">
+      <svg class="w mid hero_mark" viewBox="0.1 0.1 148.387 168.8" role="img" aria-label="Ciel"><use href="#ciel"/></svg>
+      <span class="w left r1">Timelessly</span>
+      <span class="w right r1">Sculpted</span>
+      <span class="w left r2">Intentionally</span>
+      <span class="w right r2">Designed</span>
+    </h1>
+    <div class="hero_time" aria-live="off">
+      <span class="date" id="heroDate"></span>
+      <span class="clock"><span id="heroHms">00:00:00</span><span class="ms" id="heroMs">.000</span> <span id="heroAmpm">AM</span></span>
     </div>
-    <div class="grid four" data-catalog="featured"></div>
-    <a class="pill main feature_cta" href="/shop">View the full shop</a>
-  </div>
-  <footer class="footer">
-    <span>&copy; 2026 Ciel</span>
-    <nav class="links" aria-label="Legal">
-      <a href="/privacy">Privacy</a>
-      <a href="/terms">Terms</a>
-    </nav>
-    <a class="contact" href="/contact">Contact</a>
-  </footer>
-</section>
-<script src="/catalog.js?v=1791058176"></script>
-<script src="/cart.js?v=1791058176"></script>
+    <a class="tab hero_contact" href="/contact">Contact</a>
+  </section>
+
+
+</main>
+
+
+<script src="/onde.js?v=1791289371"></script>
 </body>
 </html>
