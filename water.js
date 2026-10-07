@@ -20,11 +20,11 @@
   gl.getExtension('OES_texture_float_linear');
 
   var P = {
-    strength: 0.045,   // how far the film bends
-    radius: 0.035,     // drop size, fraction of the hero width
-    damping: 0.985,    // 1 = never calms, lower = calms faster
-    gloss: 0.35,       // crest highlight
-    force: 0.9         // drop height
+    strength: 0.11,   // how far the film bends
+    radius: 0.06,     // drop size, fraction of the hero width
+    damping: 0.987,    // 1 = never calms, lower = calms faster
+    gloss: 1,       // crest highlight
+    force: 1.4         // drop height
   };
 
   var VS = '#version 300 es\nin vec2 p; out vec2 uv; void main(){ uv = p * 0.5 + 0.5; gl_Position = vec4(p, 0.0, 1.0); }';
