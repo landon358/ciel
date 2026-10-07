@@ -21,7 +21,7 @@
 
   var P = {
     strength: 0.11,   // how far the film bends
-    radius: 0.06,     // drop size, fraction of the hero width
+    radius: 0.04,     // drop size, fraction of the hero width
     damping: 0.987,    // 1 = never calms, lower = calms faster
     gloss: 1,       // crest highlight
     force: 1.4         // drop height
