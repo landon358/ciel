@@ -11,10 +11,10 @@ Products, prices and descriptions on this site load live from the Ciel Shopify s
 
 ## About
 
-- [About Ciel](https://cieldesign.shop/about): A studio and a curated collection. In house designs, shown alongside pieces from makers and design houses we admire.
+- [About Ciel](https://cieldesign.shop/about): A design studio making sculptural pieces for the home, designed, prototyped and made in house.
 - [Contact](https://cieldesign.shop/contact): Questions about a piece, a preorder or an order. Replies within two business days.
 
 ## Policies
 
-- [Terms of Sale](https://cieldesign.shop/terms): Shipping times, returns (14 days, 20% restocking fee), warranty (up to one year on Ciel designs) and pricing in USD.
+- [Terms of Sale](https://cieldesign.shop/terms): Shipping times, returns (14 days, 20% restocking fee), warranty (up to one year) and pricing in USD.
 - [Privacy Policy](https://cieldesign.shop/privacy): What information Ciel collects and how it is used. Ciel does not sell personal information.

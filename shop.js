@@ -1,5 +1,5 @@
 /* Ciel x Shopify. Products load live from the Storefront API, same store and conventions as before:
-   - tag "ciel-studio" (own design) or "curated" is required for a product to appear on the site
+   - tag "ciel-studio" is required for a product to appear on the site
    - products page order = the "Shop" collection's manual sort in Shopify admin
    - only ACTIVE products published to the Ciel Headless channel are returned (drafts never show)
    - description: first paragraph = intro; each <h4> starts a section (Details, Dimensions, Shipping)
@@ -36,7 +36,7 @@
     return '$' + n.toLocaleString('en-US', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
   }
   function has(p, tag) { return p.tags.indexOf(tag) > -1; }
-  function maker(p) { return has(p, 'ciel-studio') ? 'Ciel Studio' : 'Curated'; }
+  function maker() { return 'Ciel Studio'; }
 
   /* Description -> { intro, sections: { details, dimensions, shipping, ... } } */
   function split(p) {
@@ -64,10 +64,10 @@
     var q = 'query($q: String!) { collection(handle: "shop") { products(first: 50, sortKey: COLLECTION_DEFAULT) { nodes { ' + FIELDS + ' } } } ' +
       'products(first: 50, sortKey: CREATED_AT, query: $q) { nodes { ' + FIELDS + ' } } }';
     grid.setAttribute('aria-busy', 'true');
-    gql(q, { q: 'tag:ciel-studio OR tag:curated' })
+    gql(q, { q: 'tag:ciel-studio' })
       .then(function (d) {
         var nodes = d.collection && d.collection.products.nodes.length ? d.collection.products.nodes : d.products.nodes;
-        var list = nodes.filter(function (p) { return has(p, 'ciel-studio') || has(p, 'curated'); });
+        var list = nodes.filter(function (p) { return has(p, 'ciel-studio'); });
         if (list.length) grid.innerHTML = list.map(card).join('');
       })
       .catch(function () { /* keep the static fallback card that ships in the HTML */ })
