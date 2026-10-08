@@ -153,7 +153,7 @@
       q('title').textContent = 'Not found';
       q('price').textContent = '';
       q('desc').innerHTML = '<p>This piece is no longer listed. <a class="inline" href="/products">See all products</a>.</p>';
-      var f = page.querySelector('form[data-interest]'); if (f) f.hidden = true;
+      var f = page.querySelector('form[data-interest]'); if (f) f.hidden = true; var bx = page.querySelector('[data-buy]'); if (bx) bx.hidden = true;
       return;
     }
     var parts = split(p), s = parts.sections, intro = flat(parts.intro);
@@ -213,19 +213,30 @@
     var sc = document.createElement('script'); sc.type = 'application/ld+json'; sc.textContent = JSON.stringify(ld); document.head.appendChild(sc);
   }
 
-  /* ---------- Buy now: <div data-buy> on product pages. Creates a Shopify cart and opens its checkout. ---------- */
+  /* ---------- Buy box: <div data-buy> on product pages.
+     "Add to bag" adds to the shared bag (cart.js); "Buy now" opens a one-item Shopify checkout. ---------- */
   function armBuy(p) {
     var box = document.querySelector('[data-buy]');
     if (!box || !p) return;
-    var btn = box.querySelector('button'), label = btn.querySelector('[data-buy-label]'), note = box.querySelector('[data-buy-note]');
+    var add = box.querySelector('[data-add]'), now = box.querySelector('[data-buy-now]');
+    var addLabel = add.querySelector('[data-add-label]'), nowLabel = now.querySelector('[data-buy-label]');
+    var note = box.querySelector('[data-buy-note]'), noteText = note ? note.textContent : '';
     var v = p.variants && p.variants.nodes[0];
     if (!v || !v.availableForSale || !(Number(p.priceRange.minVariantPrice.amount) > 0)) {
-      btn.disabled = true; label.textContent = 'Unavailable';
+      add.disabled = now.disabled = true; addLabel.textContent = 'Unavailable';
       return;
     }
-    btn.disabled = false;
-    btn.onclick = function () {
-      btn.disabled = true; label.textContent = 'Opening checkout';
+    add.disabled = now.disabled = false;
+    add.onclick = function () {
+      if (!window.CielCart) return;
+      add.disabled = true; addLabel.textContent = 'Adding';
+      if (note) note.textContent = noteText;
+      window.CielCart.add(v.id, 1)
+        .then(function () { addLabel.textContent = 'Added'; setTimeout(function () { addLabel.textContent = 'Add to bag'; add.disabled = false; }, 1200); })
+        .catch(function () { add.disabled = false; addLabel.textContent = 'Add to bag'; if (note) note.textContent = 'Could not add to your bag. Please try again.'; });
+    };
+    now.onclick = function () {
+      now.disabled = true; nowLabel.textContent = 'Opening checkout';
       gql('mutation($l: [CartLineInput!]!) { cartCreate(input: { lines: $l }) { cart { checkoutUrl } userErrors { message } } }',
         { l: [{ merchandiseId: v.id, quantity: 1 }] })
         .then(function (d) {
@@ -234,10 +245,12 @@
           throw new Error((c.userErrors[0] || {}).message || 'cart');
         })
         .catch(function () {
-          btn.disabled = false; label.textContent = 'Buy now';
+          now.disabled = false; nowLabel.textContent = 'Buy now';
           if (note) note.textContent = 'Checkout could not open. Please try again, or contact us.';
         });
     };
+    /* Back from checkout via the back button: the page comes from bfcache with "Opening checkout" frozen on it */
+    window.addEventListener('pageshow', function (e) { if (e.persisted) { now.disabled = false; nowLabel.textContent = 'Buy now'; } });
   }
 
   /* ---------- "I'm interested": <form data-interest="handle"> ---------- */

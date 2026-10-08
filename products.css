@@ -501,3 +501,6 @@ button, input { font: inherit; color: inherit; }
   .card[data-handle="halo-clock"] { grid-column: 3 / span 2; grid-row: 1 / span 2; }
   .card[data-handle="halo-clock"] h2 { font-size: clamp(28px, 2.4vw, 40px); }
 }
+.buy_row { display: flex; flex-wrap: wrap; gap: 10px; }
+.buy_btn.ghost { background: transparent; color: var(--linen); border-color: rgba(243, 238, 233, 0.45); }
+.buy_btn.ghost:hover:not(:disabled) { border-color: var(--linen); }

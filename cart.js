@@ -1,14 +1,16 @@
-/* Ciel bag: Shopify Storefront API cart with hosted checkout */
+/* Ciel bag: a Shopify Storefront cart that persists across pages (cart id in localStorage).
+   Adds a "Bag (n)" link to the header nav and a slide-in drawer on every page.
+   Product pages call window.CielCart.add(variantId) from shop.js. Checkout = the cart's Shopify checkoutUrl. */
 (function () {
-  var SHOP = 'https://6n0zf6-2z.myshopify.com/api/2025-07/graphql.json';
+  var API = 'https://6n0zf6-2z.myshopify.com/api/2025-07/graphql.json';
   var TOKEN = '9e6e50b006ca52f39041196f55c47b0d';
-  var KEY = 'ciel_cart_id';
-
-  var CART_FIELDS = 'id checkoutUrl totalQuantity cost { subtotalAmount { amount currencyCode } } ' +
-    'lines(first: 50) { nodes { id quantity merchandise { ... on ProductVariant { id product { title } image { url altText } price { amount } } } } }';
+  var KEY = 'ciel_cart';
+  var CART = 'id checkoutUrl totalQuantity cost { subtotalAmount { amount currencyCode } } ' +
+    'lines(first: 50) { nodes { id quantity cost { totalAmount { amount } } ' +
+    'merchandise { ... on ProductVariant { id availableForSale price { amount } image { url altText } product { title handle featuredImage { url altText } } } } } }';
 
   function gql(query, variables) {
-    return fetch(SHOP, {
+    return fetch(API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': TOKEN },
       body: JSON.stringify({ query: query, variables: variables || {} })
@@ -17,168 +19,170 @@
       return j.data;
     });
   }
-
-  function getId() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
-  function setId(id) { try { id ? localStorage.setItem(KEY, id) : localStorage.removeItem(KEY); } catch (e) {} }
-
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
   function money(a) {
     var n = Number(a);
     return '$' + n.toLocaleString('en-US', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
   }
+  function store(id) { try { if (id) localStorage.setItem(KEY, id); else localStorage.removeItem(KEY); } catch (e) {} }
+  function stored() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
 
-  var cart = null;
+  var cart = null, busy = false, lastFocus = null;
 
-  function fetchCart() {
-    var id = getId();
-    if (!id) return Promise.resolve(null);
-    return gql('query($id: ID!) { cart(id: $id) { ' + CART_FIELDS + ' } }', { id: id }).then(function (d) {
-      if (!d.cart) setId(null);
-      return d.cart;
-    });
-  }
+  /* ---------- UI ---------- */
+  var nav = document.querySelector('.header .nav');
+  var tab = document.createElement('button');
+  tab.type = 'button';
+  tab.className = 'tab bag_tab';
+  tab.setAttribute('aria-haspopup', 'dialog');
+  tab.setAttribute('aria-controls', 'bag');
+  tab.innerHTML = 'Bag <span class="bag_count" data-bag-count>0</span>';
+  if (nav) nav.appendChild(tab);
 
-  function addLine(variantId) {
-    var id = getId();
-    var lines = [{ merchandiseId: variantId, quantity: 1 }];
-    var p = id
-      ? gql('mutation($id: ID!, $lines: [CartLineInput!]!) { cartLinesAdd(cartId: $id, lines: $lines) { cart { ' + CART_FIELDS + ' } userErrors { message } warnings { code } } }', { id: id, lines: lines })
-          .then(function (d) { return d.cartLinesAdd; })
-      : gql('mutation($lines: [CartLineInput!]!) { cartCreate(input: { lines: $lines }) { cart { ' + CART_FIELDS + ' } userErrors { message } warnings { code } } }', { lines: lines })
-          .then(function (d) { return d.cartCreate; });
-    return p.then(function (res) {
-      if (res.userErrors && res.userErrors.length) throw new Error(res.userErrors[0].message);
-      if (!res.cart) { setId(null); throw new Error('Cart unavailable'); }
-      setId(res.cart.id);
-      var added = res.cart.lines.nodes.some(function (l) { return l.merchandise.id === variantId && l.quantity > 0; });
-      if (!added) { var err = new Error('unavailable'); err.cart = res.cart; throw err; }
-      return res.cart;
-    });
-  }
-
-  function updateLine(lineId, quantity) {
-    return gql('mutation($id: ID!, $lines: [CartLineUpdateInput!]!) { cartLinesUpdate(cartId: $id, lines: $lines) { cart { ' + CART_FIELDS + ' } userErrors { message } } }',
-      { id: getId(), lines: [{ id: lineId, quantity: quantity }] })
-      .then(function (d) { return d.cartLinesUpdate.cart; });
-  }
-
-  /* Drawer */
-  var drawer = document.createElement('div');
-  drawer.className = 'bag_drawer';
-  drawer.hidden = true;
-  drawer.innerHTML =
-    '<div class="bag_scrim" data-close></div>' +
-    '<aside class="bag_panel" role="dialog" aria-modal="true" aria-labelledby="bag_title">' +
-      '<div class="bag_head"><h2 id="bag_title">Your bag</h2><button type="button" class="bag_close" data-close aria-label="Close bag">Close</button></div>' +
-      '<div class="bag_lines"></div>' +
-      '<div class="bag_foot">' +
-        '<div class="bag_total"><span>Subtotal</span><span class="bag_sub"></span></div>' +
+  var root = document.createElement('div');
+  root.className = 'bag_root';
+  root.innerHTML =
+    '<div class="bag_scrim" data-bag-close></div>' +
+    '<aside class="bag" id="bag" role="dialog" aria-modal="true" aria-labelledby="bag_title" tabindex="-1">' +
+      '<div class="bag_head"><h2 id="bag_title">Bag</h2><button type="button" class="bag_close" data-bag-close aria-label="Close bag">&times;</button></div>' +
+      '<div class="bag_body" data-bag-lines></div>' +
+      '<p class="bag_msg" data-bag-msg role="status" aria-live="polite"></p>' +
+      '<div class="bag_foot" data-bag-foot hidden>' +
+        '<div class="bag_total"><span>Subtotal</span><span data-bag-subtotal></span></div>' +
         '<p class="bag_fine">Shipping and taxes are calculated at checkout.</p>' +
-        '<a class="pill solid bag_checkout" href="#">Checkout</a>' +
+        '<a class="bag_checkout" data-bag-checkout href="#">Checkout <span aria-hidden="true">&rarr;</span></a>' +
       '</div>' +
     '</aside>';
-  document.body.appendChild(drawer);
-  var linesEl = drawer.querySelector('.bag_lines');
-  var footEl = drawer.querySelector('.bag_foot');
-  var lastFocus = null;
+  root.hidden = true;
+  document.body.appendChild(root);
 
-  function render() {
-    var count = cart ? cart.totalQuantity : 0;
-    document.querySelectorAll('.bag').forEach(function (b) {
-      var c = b.querySelector('.bag_count');
-      if (!c) { c = document.createElement('span'); c.className = 'bag_count'; b.appendChild(c); }
-      var prev = Number(c.textContent) || 0;
-      c.textContent = count || '';
-      if (prev && count && prev !== count && c.animate && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        c.animate([{ transform: 'scale(1.15)' }, { transform: 'scale(1)' }], { duration: 160, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' });
-      }
-      c.hidden = !count;
-      b.setAttribute('aria-label', count ? 'Shopping bag, ' + count + (count === 1 ? ' item' : ' items') : 'Shopping bag');
-    });
-    var lines = cart ? cart.lines.nodes.filter(function (l) { return l.quantity > 0; }) : [];
-    if (!lines.length) {
-      linesEl.innerHTML = '<p class="bag_empty">Your bag is empty.</p><a class="bag_browse" href="/shop">Browse the shop</a>';
-      footEl.hidden = true;
-      return;
-    }
-    footEl.hidden = false;
-    linesEl.innerHTML = lines.map(function (l) {
-      var m = l.merchandise;
-      var img = m.image ? '<img src="' + m.image.url + (m.image.url.indexOf('?') > -1 ? '&' : '?') + 'width=160" alt="">' : '<span></span>';
-      return '<div class="bag_line">' + img +
-        '<div class="bag_info"><span class="bag_name">' + m.product.title + '</span>' +
-        '<span class="bag_price">' + money(m.price.amount) + '</span>' +
-        '<div class="bag_qty">' +
-          '<button type="button" data-line="' + l.id + '" data-q="' + (l.quantity - 1) + '" aria-label="Decrease quantity">&minus;</button>' +
-          '<span aria-live="polite">' + l.quantity + '</span>' +
-          '<button type="button" data-line="' + l.id + '" data-q="' + (l.quantity + 1) + '" aria-label="Increase quantity">+</button>' +
-          '<button type="button" class="bag_remove" data-line="' + l.id + '" data-q="0">Remove</button>' +
-        '</div></div></div>';
-    }).join('');
-    drawer.querySelector('.bag_sub').textContent = money(cart.cost.subtotalAmount.amount);
-    drawer.querySelector('.bag_checkout').href = cart.checkoutUrl;
-  }
-
-  var panel = drawer.querySelector('.bag_panel');
-  var hideTimer = null;
-  function hideIfClosed() {
-    clearTimeout(hideTimer);
-    hideTimer = null;
-    if (!drawer.classList.contains('open')) drawer.hidden = true;
-  }
-  panel.addEventListener('transitionend', function (e) {
-    if (e.target === panel && e.propertyName === 'transform') hideIfClosed();
-  });
+  var drawer = root.querySelector('.bag'), linesEl = root.querySelector('[data-bag-lines]');
+  var foot = root.querySelector('[data-bag-foot]'), msg = root.querySelector('[data-bag-msg]');
 
   function open() {
-    clearTimeout(hideTimer);
-    hideTimer = null;
     lastFocus = document.activeElement;
-    drawer.hidden = false;
-    requestAnimationFrame(function () { drawer.classList.add('open'); });
-    document.documentElement.classList.add('bag_lock');
-    drawer.querySelector('.bag_close').focus();
+    root.hidden = false;
+    document.documentElement.classList.add('bag_open');
+    requestAnimationFrame(function () { root.classList.add('is_open'); drawer.focus(); });
   }
   function close() {
-    drawer.classList.remove('open');
-    document.documentElement.classList.remove('bag_lock');
-    /* Hidden on transitionend; the timer is a fallback (e.g. reduced motion, no transition) */
-    clearTimeout(hideTimer);
-    hideTimer = setTimeout(hideIfClosed, 400);
-    if (lastFocus) lastFocus.focus();
+    root.classList.remove('is_open');
+    document.documentElement.classList.remove('bag_open');
+    setTimeout(function () { if (!root.classList.contains('is_open')) root.hidden = true; }, 350);
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  tab.addEventListener('click', open);
+  root.addEventListener('click', function (e) { if (e.target.closest('[data-bag-close]')) close(); });
+  document.addEventListener('keydown', function (e) {
+    if (root.hidden) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'Tab') {   // keep focus inside the drawer
+      var f = drawer.querySelectorAll('button:not([disabled]), a[href]');
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && (document.activeElement === first || document.activeElement === drawer)) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+
+  function render() {
+    var n = cart ? cart.totalQuantity : 0;
+    tab.querySelector('[data-bag-count]').textContent = n;
+    tab.setAttribute('aria-label', 'Bag, ' + n + (n === 1 ? ' item' : ' items'));
+    var lines = cart ? cart.lines.nodes.filter(function (l) { return l.merchandise && l.merchandise.product; }) : [];
+    if (!lines.length) {
+      linesEl.innerHTML = '<div class="bag_empty"><p>Your bag is empty.</p><a href="/products">See the products <span aria-hidden="true">&rarr;</span></a></div>';
+      foot.hidden = true;
+      return;
+    }
+    linesEl.innerHTML = '<ul class="bag_lines">' + lines.map(function (l) {
+      var m = l.merchandise, p = m.product, img = m.image || p.featuredImage;
+      return '<li class="bag_line" data-line="' + esc(l.id) + '">' +
+        '<a class="bag_thumb" href="/products/' + esc(p.handle) + '">' + (img ? '<img src="' + esc(img.url + (img.url.indexOf('?') > -1 ? '&' : '?') + 'width=200') + '" alt="">' : '') + '</a>' +
+        '<div class="bag_info"><a class="bag_name" href="/products/' + esc(p.handle) + '">' + esc(p.title) + '</a>' +
+          '<span class="bag_unit">' + money(m.price.amount) + '</span>' +
+          '<div class="bag_qty"><button type="button" data-qty="-1" aria-label="Decrease quantity of ' + esc(p.title) + '">&minus;</button>' +
+          '<span aria-label="Quantity">' + l.quantity + '</span>' +
+          '<button type="button" data-qty="1" aria-label="Increase quantity of ' + esc(p.title) + '">+</button>' +
+          '<button type="button" class="bag_remove" data-remove aria-label="Remove ' + esc(p.title) + ' from bag">Remove</button></div></div>' +
+        '<span class="bag_line_total">' + money(l.cost.totalAmount.amount) + '</span></li>';
+    }).join('') + '</ul>';
+    root.querySelector('[data-bag-subtotal]').textContent = money(cart.cost.subtotalAmount.amount);
+    root.querySelector('[data-bag-checkout]').href = cart.checkoutUrl;
+    foot.hidden = false;
   }
 
-  drawer.addEventListener('click', function (e) {
-    if (e.target.closest('[data-close]')) { close(); return; }
-    var b = e.target.closest('[data-line]');
-    if (!b) return;
-    b.disabled = true;
-    updateLine(b.dataset.line, Number(b.dataset.q)).then(function (c) { cart = c; render(); })
-      .catch(function () { b.disabled = false; });
-  });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !drawer.hidden) close(); });
+  function setBusy(b) {
+    busy = b;
+    drawer.classList.toggle('is_busy', b);
+    drawer.querySelectorAll('.bag_qty button').forEach(function (x) { x.disabled = b; });
+  }
+  function fail(e) {
+    msg.textContent = 'Something went wrong updating your bag. Please try again.';
+    if (window.console) console.warn('Bag:', e && e.message);
+  }
 
-  document.querySelectorAll('.bag').forEach(function (b) {
-    b.addEventListener('click', function (e) { e.preventDefault(); render(); open(); });
+  /* ---------- Cart operations ---------- */
+  function load() {
+    var id = stored();
+    if (!id) { render(); return Promise.resolve(null); }
+    return gql('query($id: ID!) { cart(id: $id) { ' + CART + ' } }', { id: id })
+      .then(function (d) {
+        cart = d.cart;
+        if (!cart) store(null);          // expired or already checked out
+        render();
+        return cart;
+      })
+      .catch(function (e) { render(); fail(e); });
+  }
+  function apply(c, errs) {
+    if (errs && errs.length) throw new Error(errs[0].message);
+    cart = c; store(c && c.id); msg.textContent = ''; render(); return c;
+  }
+  function add(variantId, qty) {
+    qty = qty || 1;
+    var lines = [{ merchandiseId: variantId, quantity: qty }];
+    var run = function () {
+      if (cart && cart.id) {
+        return gql('mutation($id: ID!, $lines: [CartLineInput!]!) { cartLinesAdd(cartId: $id, lines: $lines) { cart { ' + CART + ' } userErrors { message } } }', { id: cart.id, lines: lines })
+          .then(function (d) {
+            if (!d.cartLinesAdd.cart) { cart = null; store(null); return run(); }   // cart vanished: start a new one
+            return apply(d.cartLinesAdd.cart, d.cartLinesAdd.userErrors);
+          });
+      }
+      return gql('mutation($lines: [CartLineInput!]!) { cartCreate(input: { lines: $lines }) { cart { ' + CART + ' } userErrors { message } } }', { lines: lines })
+        .then(function (d) { return apply(d.cartCreate.cart, d.cartCreate.userErrors); });
+    };
+    setBusy(true);
+    return ready.then(run).then(function (c) { setBusy(false); open(); return c; }, function (e) { setBusy(false); fail(e); open(); throw e; });
+  }
+  function update(lineId, quantity) {
+    if (busy || !cart) return;
+    setBusy(true);
+    var q = quantity > 0
+      ? gql('mutation($id: ID!, $lines: [CartLineUpdateInput!]!) { cartLinesUpdate(cartId: $id, lines: $lines) { cart { ' + CART + ' } userErrors { message } } }', { id: cart.id, lines: [{ id: lineId, quantity: quantity }] })
+        .then(function (d) { return apply(d.cartLinesUpdate.cart, d.cartLinesUpdate.userErrors); })
+      : gql('mutation($id: ID!, $ids: [ID!]!) { cartLinesRemove(cartId: $id, lineIds: $ids) { cart { ' + CART + ' } userErrors { message } } }', { id: cart.id, ids: [lineId] })
+        .then(function (d) { return apply(d.cartLinesRemove.cart, d.cartLinesRemove.userErrors); });
+    q.then(function () { setBusy(false); }, function (e) { setBusy(false); fail(e); });
+  }
+  linesEl.addEventListener('click', function (e) {
+    var li = e.target.closest('[data-line]');
+    if (!li || !cart) return;
+    var line = cart.lines.nodes.filter(function (l) { return l.id === li.dataset.line; })[0];
+    if (!line) return;
+    var step = e.target.closest('[data-qty]');
+    if (step) update(line.id, line.quantity + Number(step.dataset.qty));
+    if (e.target.closest('[data-remove]')) update(line.id, 0);
   });
 
-  document.addEventListener('click', function (e) {
-    var btn = e.target.closest('[data-variant]');
-    if (!btn || btn.disabled) return;
-    var note = document.getElementById('note');
-    var label = btn.textContent;
-    btn.disabled = true;
-    btn.textContent = 'Adding';
-    addLine(btn.dataset.variant).then(function (c) {
-      cart = c; render();
-      if (note) note.textContent = 'Added to bag.';
-      open();
-    }).catch(function (err) {
-      if (err.cart) { cart = err.cart; render(); }
-      if (note) note.textContent = err.message === 'unavailable'
-        ? 'Sorry, this piece can\u2019t be ordered online just yet. Please check back soon.'
-        : 'Something went wrong. Please try again.';
-    }).then(function () { btn.disabled = false; btn.textContent = label; });
-  });
+  /* Coming back from checkout (back button / bfcache): refresh so a completed order clears the bag */
+  window.addEventListener('pageshow', function (e) { if (e.persisted) load(); });
 
-  fetchCart().then(function (c) { cart = c; render(); }).catch(function () { render(); });
+  var ready = load();
+  window.CielCart = { add: add, open: open, reload: load };
 })();

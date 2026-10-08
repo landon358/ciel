@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ciel</title>
-<meta name="description" content="Sculptural pieces for the home, designed and made in house by Ciel.">
+<meta name="description" content="Sculptural pieces for the home, designed in house by Ciel.">
 <link rel="canonical" href="https://cieldesign.shop/products">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#050505">
@@ -19,7 +19,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200;300;400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap">
-<link rel="stylesheet" href="/products.css?v=1791476364">
+<link rel="stylesheet" href="/products.css?v=1791479261">
+<link rel="stylesheet" href="/cart.css?v=1791479261">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -44,7 +45,10 @@
       <h1 data-live="title">&nbsp;</h1>
       <div class="pdp_price" data-live="price">&nbsp;</div>
       <div class="buy" data-buy>
-        <button type="button" class="buy_btn" disabled><span data-buy-label>Buy now</span> <span aria-hidden="true">&rarr;</span></button>
+        <div class="buy_row">
+          <button type="button" class="buy_btn" data-add disabled><span data-add-label>Add to bag</span></button>
+          <button type="button" class="buy_btn ghost" data-buy-now disabled><span data-buy-label>Buy now</span> <span aria-hidden="true">&rarr;</span></button>
+        </div>
         <p class="buy_note" data-buy-note aria-live="polite">Built to order. Secure checkout by Shopify.</p>
       </div>
     </div>
@@ -84,6 +88,7 @@
 
 })();
 </script>
-<script src="/shop.js?v=1791476364"></script>
+<script src="/cart.js?v=1791479261"></script>
+<script src="/shop.js?v=1791479261"></script>
 </body>
 </html>
