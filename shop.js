@@ -14,7 +14,20 @@
   var IMAGES = { 'onde-clock': '/assets/products/onde_stage.jpg?v=4' };
 
   var FIELDS = 'handle title productType tags descriptionHtml ' +
-    'priceRange { minVariantPrice { amount } } featuredImage { url altText }';
+    'priceRange { minVariantPrice { amount } } featuredImage { url altText } ' +
+    'variants(first: 1) { nodes { id availableForSale } }';
+  var CARD_MEDIA = 'media(first: 10) { nodes { mediaContentType ... on Video { sources { url mimeType height } } } }';
+
+  /* Product cards in motion. Clocks: the photo with its points of light removed, and the points
+     redrawn orbiting their dials (positions measured from the photos, as a percentage of the square image).
+     Everything else: the product's first Shopify video (the 360 spin), looping silently. */
+  var R = function (n) { return Math.round(n * 1000) / 1000; };
+  var MOTION = {
+    'onde-clock': { img: '/assets/products/onde_motion.jpg?v=1', inset: true, periods: [60, 20, 7],
+      dots: [{"cx": 25.779500430663223, "cy": 26.804478897502154, "r": 6.804478897502153, "dot": 0.6201550387596899, "start": 90}, {"cx": 71.80017226528854, "cy": 35.2885443583118, "r": 6.804478897502153, "dot": 0.6201550387596899, "start": 90}, {"cx": 36.90783807062877, "cy": 66.2532299741602, "r": 6.804478897502153, "dot": 0.6201550387596899, "start": 90}] },
+    'halo-clock': { img: '/assets/products/halo_motion.jpg?v=1', inset: false, periods: [48, 14],
+      dots: [{"cx": 50.048828125, "cy": 49.3408203125, "r": 34.37446733398438, "dot": 0.673828125, "start": 29.0}, {"cx": 50.048828125, "cy": 49.3408203125, "r": 39.60444013671875, "dot": 0.546875, "start": 145.3}] }
+  };
 
   function gql(query, variables) {
     return fetch(API, {
@@ -55,22 +68,45 @@
   function flat(html) { return String(html).replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ').trim(); }
 
   /* ---------- Products grid: <div data-catalog="shop"> ---------- */
+  function firstVideo(p) {
+    var v = ((p.media && p.media.nodes) || []).filter(function (m) { return m.mediaContentType === 'VIDEO'; })[0];
+    if (!v) return null;
+    return (v.sources || []).filter(function (x) { return x.mimeType === 'video/mp4'; })
+      .sort(function (a, b) { return Math.abs(a.height - 720) - Math.abs(b.height - 720); })[0] || null;
+  }
+  function visual(p) {
+    var m = MOTION[p.handle], alt = esc(p.title);
+    if (m) {
+      return '<div class="frame' + (m.inset ? '' : ' full') + '"><div class="motion">' +
+        '<img src="' + m.img + '" alt="' + alt + '">' +
+        m.dots.map(function (d, i) {
+          return '<span class="orbit" style="left:' + R(d.cx) + '%;top:' + R(d.cy) + '%;width:' + R(d.r * 2) + '%;--a0:' + d.start + 'deg;--t:' + m.periods[i] + 's">' +
+            '<i style="width:' + R(d.dot / d.r * 100) + '%"></i></span>';
+        }).join('') + '</div></div>';
+    }
+    var poster = IMAGES[p.handle] || (p.featuredImage && p.featuredImage.url + '&width=900');
+    var vid = firstVideo(p);
+    if (vid) return '<div class="frame full"><video src="' + esc(vid.url) + '"' + (poster ? ' poster="' + esc(poster) + '"' : '') + ' muted loop playsinline autoplay preload="metadata" aria-label="' + alt + '"></video></div>';
+    return '<div class="frame' + (IMAGES[p.handle] ? '' : ' full') + '">' + (poster ? '<img src="' + esc(poster) + '" alt="' + alt + '">' : '') + '</div>';
+  }
   function card(p) {
-    var img = IMAGES[p.handle] || (p.featuredImage && p.featuredImage.url + '&width=900');
-    return '<a class="card" href="/products/' + encodeURIComponent(p.handle) + '">' +
-      '<div class="frame' + (IMAGES[p.handle] ? '' : ' full') + '">' + (img ? '<img src="' + esc(img) + '" alt="' + esc(IMAGES[p.handle] ? p.title : (p.featuredImage && p.featuredImage.altText || p.title)) + '">' : '') + '</div>' +
+    return '<a class="card" data-handle="' + esc(p.handle) + '" href="/products/' + encodeURIComponent(p.handle) + '">' + visual(p) +
       '<div class="meta"><h2>' + esc(p.title) + '</h2><span class="price">' + price(p) + '</span></div>' +
       '<p class="type">' + esc((p.productType ? p.productType + ', ' : '') + maker(p)) + '</p></a>';
   }
   document.querySelectorAll('[data-catalog="shop"]').forEach(function (grid) {
-    var q = 'query($q: String!) { collection(handle: "shop") { products(first: 50, sortKey: COLLECTION_DEFAULT) { nodes { ' + FIELDS + ' } } } ' +
-      'products(first: 50, sortKey: CREATED_AT, query: $q) { nodes { ' + FIELDS + ' } } }';
+    var q = 'query($q: String!) { collection(handle: "shop") { products(first: 50, sortKey: COLLECTION_DEFAULT) { nodes { ' + FIELDS + ' ' + CARD_MEDIA + ' } } } ' +
+      'products(first: 50, sortKey: CREATED_AT, query: $q) { nodes { ' + FIELDS + ' ' + CARD_MEDIA + ' } } }';
     grid.setAttribute('aria-busy', 'true');
     gql(q, { q: 'tag:ciel-studio' })
       .then(function (d) {
         var nodes = d.collection && d.collection.products.nodes.length ? d.collection.products.nodes : d.products.nodes;
         var list = nodes.filter(function (p) { return has(p, 'ciel-studio'); });
         if (list.length) grid.innerHTML = list.map(card).join('');
+        var gio = new IntersectionObserver(function (es) {
+          es.forEach(function (e) { if (e.isIntersecting) e.target.play().catch(function () {}); else e.target.pause(); });
+        });
+        grid.querySelectorAll('video').forEach(function (v) { gio.observe(v); });
       })
       .catch(function () { /* keep the static fallback card that ships in the HTML */ })
       .then(function () { grid.removeAttribute('aria-busy'); });
@@ -88,6 +124,7 @@
           var el = live.querySelector('[data-live="' + key + '"]');
           if (el && html) el.innerHTML = html;
         };
+        armBuy(p);
         put('title', esc(p.title));
         put('price', price(p));
         put('intro', flat(parts.intro));
@@ -120,6 +157,7 @@
       return;
     }
     var parts = split(p), s = parts.sections, intro = flat(parts.intro);
+    armBuy(p);
     q('title').textContent = p.title;
     q('price').textContent = price(p);
     q('desc').innerHTML = '<p>' + esc(intro) + '</p>' + (s.details ? '<p>' + esc(flat(s.details)) + '</p>' : '');
@@ -171,8 +209,35 @@
     var ld = { '@context': 'https://schema.org', '@type': 'Product', name: p.title, url: url, description: desc, category: p.productType,
       image: media.filter(function (m) { return m.image; }).slice(0, 6).map(function (m) { return m.image.url; }),
       brand: { '@type': 'Brand', name: 'Ciel' } };
-    if (amount > 0) ld.offers = { '@type': 'Offer', url: url, priceCurrency: 'USD', price: amount.toFixed(2), availability: 'https://schema.org/PreOrder' };
+    if (amount > 0) ld.offers = { '@type': 'Offer', url: url, priceCurrency: 'USD', price: amount.toFixed(2), availability: 'https://schema.org/MadeToOrder' };
     var sc = document.createElement('script'); sc.type = 'application/ld+json'; sc.textContent = JSON.stringify(ld); document.head.appendChild(sc);
+  }
+
+  /* ---------- Buy now: <div data-buy> on product pages. Creates a Shopify cart and opens its checkout. ---------- */
+  function armBuy(p) {
+    var box = document.querySelector('[data-buy]');
+    if (!box || !p) return;
+    var btn = box.querySelector('button'), label = btn.querySelector('[data-buy-label]'), note = box.querySelector('[data-buy-note]');
+    var v = p.variants && p.variants.nodes[0];
+    if (!v || !v.availableForSale || !(Number(p.priceRange.minVariantPrice.amount) > 0)) {
+      btn.disabled = true; label.textContent = 'Unavailable';
+      return;
+    }
+    btn.disabled = false;
+    btn.onclick = function () {
+      btn.disabled = true; label.textContent = 'Opening checkout';
+      gql('mutation($l: [CartLineInput!]!) { cartCreate(input: { lines: $l }) { cart { checkoutUrl } userErrors { message } } }',
+        { l: [{ merchandiseId: v.id, quantity: 1 }] })
+        .then(function (d) {
+          var c = d.cartCreate;
+          if (c.cart && c.cart.checkoutUrl) { location.href = c.cart.checkoutUrl; return; }
+          throw new Error((c.userErrors[0] || {}).message || 'cart');
+        })
+        .catch(function () {
+          btn.disabled = false; label.textContent = 'Buy now';
+          if (note) note.textContent = 'Checkout could not open. Please try again, or contact us.';
+        });
+    };
   }
 
   /* ---------- "I'm interested": <form data-interest="handle"> ---------- */

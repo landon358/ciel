@@ -10,6 +10,12 @@
   to = "/onde-clock.html"
   status = 200
 
+# Orbe Clock was renamed Halo Clock.
+[[redirects]]
+  from = "/products/orbe-clock"
+  to = "/products/halo-clock"
+  status = 301
+
 # Every other product renders from Shopify on the shared template (product.html).
 [[redirects]]
   from = "/products/:handle"

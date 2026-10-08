@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200;300;400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap">
-<link rel="stylesheet" href="/products.css?v=1791466175">
+<link rel="stylesheet" href="/products.css?v=1791474753">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -43,13 +43,10 @@
     <div>
       <h1 data-live="title">&nbsp;</h1>
       <div class="pdp_price" data-live="price">&nbsp;</div>
-      <form class="notify" data-interest="">
-        <label class="notify_field">
-          <input type="email" name="contact[email]" required placeholder="Your email" aria-label="Email address" autocomplete="email">
-          <button type="submit">I&rsquo;m interested <span aria-hidden="true">&rarr;</span></button>
-        </label>
-        <p class="buy_note" data-interest-note aria-live="polite"></p>
-      </form>
+      <div class="buy" data-buy>
+        <button type="button" class="buy_btn" disabled><span data-buy-label>Buy now</span> <span aria-hidden="true">&rarr;</span></button>
+        <p class="buy_note" data-buy-note aria-live="polite">Built to order. Secure checkout by Shopify.</p>
+      </div>
     </div>
     <div class="pdp_desc" data-live="desc"></div>
     <div data-live="folds"></div>
@@ -87,6 +84,6 @@
 
 })();
 </script>
-<script src="/shop.js?v=1791466175"></script>
+<script src="/shop.js?v=1791474753"></script>
 </body>
 </html>

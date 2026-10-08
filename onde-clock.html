@@ -27,7 +27,7 @@
 <meta name="twitter:image" content="https://cieldesign.shop/assets/products/onde_stage.jpg">
 <meta property="product:price:amount" content="2445.00">
 <meta property="product:price:currency" content="USD">
-<meta property="product:availability" content="preorder">
+<meta property="product:availability" content="in stock">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -71,7 +71,7 @@
     "url": "https://cieldesign.shop/products/onde-clock",
     "priceCurrency": "USD",
     "price": "2445.00",
-    "availability": "https://schema.org/PreOrder",
+    "availability": "https://schema.org/MadeToOrder",
     "itemCondition": "https://schema.org/NewCondition",
     "seller": {
      "@id": "https://cieldesign.shop/#org"
@@ -107,7 +107,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200;300;400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap">
-<link rel="stylesheet" href="/products.css?v=1791466175">
+<link rel="stylesheet" href="/products.css?v=1791474753">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -131,13 +131,10 @@
     <div>
       <h1 data-live="title">Onde Clock</h1>
       <div class="pdp_price" data-live="price">$2,445</div>
-      <form class="notify" data-interest="onde-clock">
-        <label class="notify_field">
-          <input type="email" name="contact[email]" required placeholder="Your email" aria-label="Email address" autocomplete="email">
-          <button type="submit">I&rsquo;m interested <span aria-hidden="true">&rarr;</span></button>
-        </label>
-        <p class="buy_note" data-interest-note aria-live="polite"></p>
-      </form>
+      <div class="buy" data-buy>
+        <button type="button" class="buy_btn" disabled><span data-buy-label>Buy now</span> <span aria-hidden="true">&rarr;</span></button>
+        <p class="buy_note" data-buy-note aria-live="polite">Built to order. Secure checkout by Shopify.</p>
+      </div>
     </div>
     <div class="pdp_desc">
       <p data-live="intro">Gloss lacquer. Three domed dials. Quiet, sculptural time.</p>
@@ -210,6 +207,6 @@
 
 })();
 </script>
-<script src="/shop.js?v=1791466175"></script>
+<script src="/shop.js?v=1791474753"></script>
 </body>
 </html>
