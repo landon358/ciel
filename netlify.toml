@@ -10,11 +10,11 @@
   to = "/onde-clock.html"
   status = 200
 
-# Any other product address (drafted or not yet designed) goes to the products page.
+# Every other product renders from Shopify on the shared template (product.html).
 [[redirects]]
   from = "/products/:handle"
-  to = "/products"
-  status = 302
+  to = "/product.html"
+  status = 200
 
 # Old pages and URLs from the previous site.
 [[redirects]]

@@ -35,6 +35,8 @@
     var n = Number(a);
     return '$' + n.toLocaleString('en-US', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
   }
+  /* Price still being set in Shopify (0) reads as "Pricing soon" instead of $0 */
+  function price(p) { var a = Number(p.priceRange.minVariantPrice.amount); return a > 0 ? money(a) : 'Pricing soon'; }
   function has(p, tag) { return p.tags.indexOf(tag) > -1; }
   function maker() { return 'Ciel Studio'; }
 
@@ -56,8 +58,8 @@
   function card(p) {
     var img = IMAGES[p.handle] || (p.featuredImage && p.featuredImage.url + '&width=900');
     return '<a class="card" href="/products/' + encodeURIComponent(p.handle) + '">' +
-      '<div class="frame">' + (img ? '<img src="' + esc(img) + '" alt="' + esc(IMAGES[p.handle] ? p.title : (p.featuredImage && p.featuredImage.altText || p.title)) + '">' : '') + '</div>' +
-      '<div class="meta"><h2>' + esc(p.title) + '</h2><span class="price">' + money(p.priceRange.minVariantPrice.amount) + '</span></div>' +
+      '<div class="frame' + (IMAGES[p.handle] ? '' : ' full') + '">' + (img ? '<img src="' + esc(img) + '" alt="' + esc(IMAGES[p.handle] ? p.title : (p.featuredImage && p.featuredImage.altText || p.title)) + '">' : '') + '</div>' +
+      '<div class="meta"><h2>' + esc(p.title) + '</h2><span class="price">' + price(p) + '</span></div>' +
       '<p class="type">' + esc((p.productType ? p.productType + ', ' : '') + maker(p)) + '</p></a>';
   }
   document.querySelectorAll('[data-catalog="shop"]').forEach(function (grid) {
@@ -87,13 +89,90 @@
           if (el && html) el.innerHTML = html;
         };
         put('title', esc(p.title));
-        put('price', money(p.priceRange.minVariantPrice.amount));
+        put('price', price(p));
         put('intro', flat(parts.intro));
         put('details', flat(s.details || ''));
         put('dimensions', flat(s.dimensions || '').replace(/^Approx\.\s*/i, ''));
         put('shipping', flat(s.shipping || ''));
       })
       .catch(function () { /* the page ships with the same copy, so it still reads correctly */ });
+  }
+
+  /* ---------- Product page template: <main data-product-page>, handle taken from /products/<handle> ---------- */
+  var page = document.querySelector('[data-product-page]');
+  if (page) {
+    var handle = decodeURIComponent((location.pathname.match(/\/products\/([^\/?#]+)/) || [])[1] || '');
+    var MEDIA = 'media(first: 20) { nodes { mediaContentType alt previewImage { url } ' +
+      '... on MediaImage { image { url altText width height } } ... on Video { sources { url mimeType height } } } }';
+    var form = page.querySelector('form[data-interest]');
+    if (form) form.dataset.interest = handle;
+    gql('query($h: String!) { product(handle: $h) { ' + FIELDS + ' ' + MEDIA + ' } }', { h: handle })
+      .then(function (d) { renderPage(d.product); })
+      .catch(function () { renderPage(null); });
+  }
+  function renderPage(p) {
+    var q = function (k) { return page.querySelector('[data-live="' + k + '"]'); };
+    if (!p) {
+      q('title').textContent = 'Not found';
+      q('price').textContent = '';
+      q('desc').innerHTML = '<p>This piece is no longer listed. <a class="inline" href="/products">See all products</a>.</p>';
+      var f = page.querySelector('form[data-interest]'); if (f) f.hidden = true;
+      return;
+    }
+    var parts = split(p), s = parts.sections, intro = flat(parts.intro);
+    q('title').textContent = p.title;
+    q('price').textContent = price(p);
+    q('desc').innerHTML = '<p>' + esc(intro) + '</p>' + (s.details ? '<p>' + esc(flat(s.details)) + '</p>' : '');
+    var keys = Object.keys(s).filter(function (k) { return k !== 'details'; });
+    q('folds').innerHTML = keys.map(function (k, i) {
+      return '<details class="fold" name="pdp"' + (i === 0 ? ' open' : '') + '><summary>' + esc(k.charAt(0).toUpperCase() + k.slice(1)) + '</summary><p>' + s[k] + '</p></details>';
+    }).join('');
+    var folds = q('folds').querySelectorAll('.fold');
+    folds.forEach(function (f) { f.addEventListener('toggle', function () { if (f.open) folds.forEach(function (o) { if (o !== f) o.open = false; }); }); });
+
+    /* Media row: first image large, everything else square; videos loop silently */
+    var rail = document.getElementById('rail');
+    var media = (p.media && p.media.nodes) || [];
+    rail.innerHTML = media.map(function (m, i) {
+      var alt = esc(m.alt || p.title);
+      if (m.mediaContentType === 'VIDEO') {
+        var mp4 = (m.sources || []).filter(function (x) { return x.mimeType === 'video/mp4'; })
+          .sort(function (a, b) { return Math.abs(a.height - 720) - Math.abs(b.height - 720); })[0];
+        if (!mp4) return '';
+        return '<figure><video src="' + esc(mp4.url) + '"' + (m.previewImage ? ' poster="' + esc(m.previewImage.url + '&width=900') + '"' : '') +
+          ' muted loop playsinline autoplay preload="metadata" aria-label="' + alt + '"></video></figure>';
+      }
+      if (!m.image) return '';
+      return i === 0
+        ? '<figure class="stage"><img src="' + esc(m.image.url + '&width=1600') + '" alt="' + alt + '"></figure>'
+        : '<figure><img src="' + esc(m.image.url + '&width=900') + '" alt="' + alt + '" loading="lazy"></figure>';
+    }).join('');
+    var vio = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) e.target.play().catch(function () {}); else e.target.pause(); });
+    });
+    rail.querySelectorAll('video').forEach(function (v) { vio.observe(v); });
+
+    /* Title, description, share tags and Product schema for this piece */
+    var url = 'https://cieldesign.shop/products/' + p.handle;
+    var desc = (intro + ' ' + flat(s.details || '')).trim().slice(0, 158);
+    var img = p.featuredImage ? p.featuredImage.url : 'https://cieldesign.shop/assets/og-image.jpg';
+    document.title = p.title + ' | Ciel';
+    var setMeta = function (attr, key, val) {
+      var el = document.head.querySelector('meta[' + attr + '="' + key + '"]');
+      if (!el) { el = document.createElement('meta'); el.setAttribute(attr, key); document.head.appendChild(el); }
+      el.setAttribute('content', val);
+    };
+    setMeta('name', 'description', desc);
+    setMeta('property', 'og:title', p.title + ' | Ciel'); setMeta('property', 'og:description', desc);
+    setMeta('property', 'og:url', url); setMeta('property', 'og:image', img); setMeta('property', 'og:type', 'product');
+    setMeta('name', 'twitter:title', p.title + ' | Ciel'); setMeta('name', 'twitter:description', desc); setMeta('name', 'twitter:image', img);
+    var canon = document.head.querySelector('link[rel="canonical"]'); if (canon) canon.href = url;
+    var amount = Number(p.priceRange.minVariantPrice.amount);
+    var ld = { '@context': 'https://schema.org', '@type': 'Product', name: p.title, url: url, description: desc, category: p.productType,
+      image: media.filter(function (m) { return m.image; }).slice(0, 6).map(function (m) { return m.image.url; }),
+      brand: { '@type': 'Brand', name: 'Ciel' } };
+    if (amount > 0) ld.offers = { '@type': 'Offer', url: url, priceCurrency: 'USD', price: amount.toFixed(2), availability: 'https://schema.org/PreOrder' };
+    var sc = document.createElement('script'); sc.type = 'application/ld+json'; sc.textContent = JSON.stringify(ld); document.head.appendChild(sc);
   }
 
   /* ---------- "I'm interested": <form data-interest="handle"> ---------- */

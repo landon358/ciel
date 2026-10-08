@@ -23,6 +23,24 @@
     <image:image><image:loc>https://cieldesign.shop/assets/products/on_006.jpg</image:loc></image:image>
   </url>
   <url>
+    <loc>https://cieldesign.shop/products/maree-catchall</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cieldesign.shop/products/torsade-vase</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cieldesign.shop/products/orbe-clock</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://cieldesign.shop/about</loc>
     <lastmod>2026-10-06</lastmod>
     <changefreq>monthly</changefreq>

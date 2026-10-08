@@ -3,9 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Page not found | Ciel</title>
-<meta name="description" content="This page could not be found. Browse the Ciel collection or return to the home page.">
-<meta name="robots" content="noindex">
+<title>Ciel</title>
+<meta name="description" content="Sculptural pieces for the home, designed and made in house by Ciel.">
+<link rel="canonical" href="https://cieldesign.shop/products">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#050505">
 <meta name="color-scheme" content="dark">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -13,17 +14,8 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta property="og:site_name" content="Ciel">
-<meta property="og:type" content="website">
-<meta property="og:title" content="About | Ciel">
-<meta property="og:description" content="This page could not be found. Browse the Ciel collection or return to the home page.">
-<meta property="og:url" content="https://cieldesign.shop/about">
-<meta property="og:image" content="https://cieldesign.shop/assets/og-image.jpg">
-<meta property="og:image:alt" content="The Onde Clock by Ciel, gloss black with three domed dials">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="About | Ciel">
-<meta name="twitter:description" content="This page could not be found. Browse the Ciel collection or return to the home page.">
-<meta name="twitter:image" content="https://cieldesign.shop/assets/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200;300;400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap">
@@ -46,25 +38,55 @@
   </nav>
 </header>
 
-<main id="main" class="about_page">
-  <div class="about_head">
-    <h1>This page has drifted.</h1>
-    <p>The link may be old, or the piece may no longer be listed.</p>
-  </div>
-  <div class="about_body">
-    <p><a class="inline" href="/products">See the products</a> or return to the <a class="inline" href="/">home page</a>.</p>
-  </div>
+<main id="main" class="pdp" data-product-page>
+  <section class="pdp_info">
+    <div>
+      <h1 data-live="title">&nbsp;</h1>
+      <div class="pdp_price" data-live="price">&nbsp;</div>
+      <form class="notify" data-interest="">
+        <label class="notify_field">
+          <input type="email" name="contact[email]" required placeholder="Your email" aria-label="Email address" autocomplete="email">
+          <button type="submit">I&rsquo;m interested <span aria-hidden="true">&rarr;</span></button>
+        </label>
+        <p class="buy_note" data-interest-note aria-live="polite"></p>
+      </form>
+    </div>
+    <div class="pdp_desc" data-live="desc"></div>
+    <div data-live="folds"></div>
+  </section>
+
+  <section class="rail_wrap" aria-label="Images">
+    <div class="rail" id="rail"></div>
+  </section>
 </main>
 
-<footer class="site_foot">
-  <span>&copy; 2026 Ciel</span>
-  <nav aria-label="Legal">
-    <a href="/about">About</a>
-    <a href="/terms">Terms</a>
-    <a href="/privacy">Privacy</a>
-    <a href="/contact">Contact</a>
-  </nav>
-</footer>
+<script>
+(function () {
+  var rail = document.getElementById('rail');
+  // Mouse users: drag the row sideways, or use the scroll wheel over it
+  var drag = null;
+  rail.addEventListener('pointerdown', function (e) {
+    if (e.pointerType !== 'mouse') return;
+    drag = { x: e.clientX, left: rail.scrollLeft };
+    rail.classList.add('dragging');
+  });
+  window.addEventListener('pointermove', function (e) {
+    if (drag) rail.scrollLeft = drag.left - (e.clientX - drag.x);
+  });
+  window.addEventListener('pointerup', function () { drag = null; rail.classList.remove('dragging'); });
+  rail.addEventListener('wheel', function (e) {
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+    var max = rail.scrollWidth - rail.clientWidth;
+    if ((e.deltaY > 0 && rail.scrollLeft < max) || (e.deltaY < 0 && rail.scrollLeft > 0)) {
+      rail.scrollLeft += e.deltaY;
+      e.preventDefault();
+    }
+  }, { passive: false });
 
+
+
+})();
+</script>
+<script src="/shop.js?v=1791466175"></script>
 </body>
 </html>
