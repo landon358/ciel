@@ -73,7 +73,7 @@ button, input { font: inherit; color: inherit; }
   z-index: 20;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   padding: 22px var(--gut);
   transition: background 0.5s var(--ease), padding 0.5s var(--ease);
 }
