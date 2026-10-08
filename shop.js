@@ -92,7 +92,7 @@
   function card(p) {
     return '<a class="card" data-handle="' + esc(p.handle) + '" href="/products/' + encodeURIComponent(p.handle) + '">' + visual(p) +
       '<div class="meta"><h2>' + esc(p.title) + '</h2><span class="price">' + price(p) + '</span></div>' +
-      '<p class="type">' + esc((p.productType ? p.productType + ', ' : '') + maker(p)) + '</p></a>';
+      (p.productType ? '<p class="type">' + esc(p.productType) + '</p>' : '') + '</a>';
   }
   document.querySelectorAll('[data-catalog="shop"]').forEach(function (grid) {
     var q = 'query($q: String!) { collection(handle: "shop") { products(first: 50, sortKey: COLLECTION_DEFAULT) { nodes { ' + FIELDS + ' ' + CARD_MEDIA + ' } } } ' +
