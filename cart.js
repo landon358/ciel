@@ -112,7 +112,7 @@
         '<span class="bag_line_total">' + money(l.cost.totalAmount.amount) + '</span></li>';
     }).join('') + '</ul>';
     root.querySelector('[data-bag-subtotal]').textContent = money(cart.cost.subtotalAmount.amount);
-    root.querySelector('[data-bag-checkout]').href = cart.checkoutUrl;
+    root.querySelector('[data-bag-checkout]').href = window.cielCheckoutUrl ? window.cielCheckoutUrl(cart.checkoutUrl) : cart.checkoutUrl;
     foot.hidden = false;
   }
 

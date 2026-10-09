@@ -222,6 +222,15 @@
     var addLabel = add.querySelector('[data-add-label]'), nowLabel = now.querySelector('[data-buy-label]');
     var note = box.querySelector('[data-buy-note]'), noteText = note ? note.textContent : '';
     var v = p.variants && p.variants.nodes[0];
+    /* Meta Pixel: content_ids are numeric Shopify variant ids (product id as fallback) to match the catalog synced to Meta */
+    var pixel = {
+      content_ids: [String((v || p).id).split('/').pop()],
+      content_type: 'product',
+      content_name: p.title,
+      value: Number(p.priceRange.minVariantPrice.amount),
+      currency: p.priceRange.minVariantPrice.currencyCode || 'USD'
+    };
+    if (window.fbq) fbq('track', 'ViewContent', pixel);
     if (!v || !v.availableForSale || !(Number(p.priceRange.minVariantPrice.amount) > 0)) {
       add.disabled = now.disabled = true; addLabel.textContent = 'Unavailable';
       return;
@@ -232,7 +241,9 @@
       add.disabled = true; addLabel.textContent = 'Adding';
       if (note) note.textContent = noteText;
       window.CielCart.add(v.id, 1)
-        .then(function () { addLabel.textContent = 'Added'; setTimeout(function () { addLabel.textContent = 'Add to bag'; add.disabled = false; }, 1200); })
+        .then(function () {
+          if (window.fbq) fbq('track', 'AddToCart', { content_ids: pixel.content_ids, content_type: 'product', content_name: pixel.content_name, value: pixel.value * 1, currency: pixel.currency });
+          addLabel.textContent = 'Added'; setTimeout(function () { addLabel.textContent = 'Add to bag'; add.disabled = false; }, 1200); })
         .catch(function () { add.disabled = false; addLabel.textContent = 'Add to bag'; if (note) note.textContent = 'Could not add to your bag. Please try again.'; });
     };
     now.onclick = function () {
@@ -241,7 +252,7 @@
         { l: [{ merchandiseId: v.id, quantity: 1 }] })
         .then(function (d) {
           var c = d.cartCreate;
-          if (c.cart && c.cart.checkoutUrl) { location.href = c.cart.checkoutUrl; return; }
+          if (c.cart && c.cart.checkoutUrl) { location.href = window.cielCheckoutUrl ? window.cielCheckoutUrl(c.cart.checkoutUrl) : c.cart.checkoutUrl; return; }
           throw new Error((c.userErrors[0] || {}).message || 'cart');
         })
         .catch(function () {

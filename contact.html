@@ -60,8 +60,36 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200;300;400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap">
-<link rel="stylesheet" href="/products.css?v=1791479261">
-<link rel="stylesheet" href="/cart.css?v=1791479261">
+<link rel="stylesheet" href="/products.css?v=1791512491">
+<link rel="stylesheet" href="/cart.css?v=1791512491">
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1076965738726389');
+fbq('track', 'PageView');
+/* Ad click params (fbclid, utm_*) are kept for the session and added to Shopify checkout URLs */
+(function () {
+  try {
+    var p = new URLSearchParams(location.search), ad = p.has('fbclid');
+    p.forEach(function (v, k) { if (k.indexOf('utm_') === 0) ad = true; });
+    if (ad) sessionStorage.setItem('ad_params', p.toString());
+  } catch (e) {}
+  window.cielCheckoutUrl = function (checkoutUrl) {
+    try {
+      var url = new URL(checkoutUrl);
+      new URLSearchParams(sessionStorage.getItem('ad_params') || '').forEach(function (v, k) { url.searchParams.set(k, v); });
+      return url.toString();
+    } catch (e) { return checkoutUrl; }
+  };
+})();
+</script>
+<noscript><img height="1" width="1" style="display:none" alt=""
+src="https://www.facebook.com/tr?id=1076965738726389&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel -->
 </head>
 <body class="contact_body">
 <a class="skip" href="#main">Skip to content</a>
@@ -119,12 +147,12 @@
   </nav>
 </footer>
 
-<script src="/ripple.js?v=1791479261"></script>
+<script src="/ripple.js?v=1791512491"></script>
 <script>
 if (/[?&]sent=1/.test(location.search)) {
   document.getElementById('sent').textContent = 'Thank you. Your message has been sent, and we will be in touch soon.';
 }
 </script>
-<script src="/cart.js?v=1791479261"></script>
+<script src="/cart.js?v=1791512491"></script>
 </body>
 </html>
