@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<base href="/terrain/">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Custom Shaded Relief Map of Any US Address | Ciel</title>
+<meta name="description" content="A shaded relief map of any place you love: a home, a lake, a hometown. Rendered from USGS lidar, as a print or a high resolution file.">
+<meta name="theme-color" content="#0a0908">
+<link rel="canonical" href="https://cieldesign.shop/terrain/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-10 -2 168.4 172.8'%3E%3Cg fill='%23f3eee9'%3E%3Cpath d='M141.628 22.373A84.4 84.4 0 1 0 148.487 139.537L133.779 126.886A65.0 65.0 0 1 1 128.497 36.654Z'/%3E%3Cpath d='M53.008 38.679A55.6 55.6 0 0 0 37.712 54.463L53.869 64.835A36.4 36.4 0 0 1 63.883 54.502Z'/%3E%3Cpath d='M32.057 66.032A55.6 55.6 0 0 0 45.877 124.495L59.214 110.684A36.4 36.4 0 0 1 50.167 72.409Z'/%3E%3Cpath d='M122.561 125.031A55.6 55.6 0 0 0 117.961 40.096L106.406 55.43A36.4 36.4 0 0 1 109.418 111.034Z'/%3E%3Cpath d='M111.711 82.3A27.3 27.3 0 1 0 110.539 92.7L92.985 92.7A11.8 11.8 0 1 1 96.093 82.3Z'/%3E%3Cpath d='M72 77.2H97V82.3H72Z'/%3E%3C/g%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ciel">
+<meta property="og:title" content="Any place, in relief | Ciel">
+<meta property="og:description" content="A shaded relief map of any US address, rendered from one meter lidar. As a print or a high resolution file.">
+<meta property="og:url" content="https://cieldesign.shop/terrain/">
+<meta property="og:image" content="https://cieldesign.shop/terrain/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Three shaded relief map prints of Chelsea, Michigan in the Sage, Midnight and Desert palettes">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://cieldesign.shop/terrain/og.jpg">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Product","name":"Custom Terrain Map","brand":{"@type":"Brand","name":"Ciel"},"image":"https://cieldesign.shop/terrain/og.jpg","description":"A made to order shaded relief map of any US address, rendered from USGS lidar, as a print or a high resolution file.","offers":{"@type":"AggregateOffer","priceCurrency":"USD","lowPrice":"15","highPrice":"229","availability":"https://schema.org/InStock"}}
+</script>
+<script>
+/* Meta pixel for this site only. Paste the dataset ID from Events Manager; nothing loads while it is empty. */
+window.META_PIXEL_ID = '';
+if (window.META_PIXEL_ID) {
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', window.META_PIXEL_ID);
+  fbq('track', 'PageView');
+}
+/* Ad click params (fbclid, utm_*) are kept for the session and added to the Shopify checkout URL */
+try {
+  var adp = new URLSearchParams(location.search), ad = adp.has('fbclid');
+  adp.forEach(function (v, k) { if (k.indexOf('utm_') === 0) ad = true; });
+  if (ad) sessionStorage.setItem('ad_params', adp.toString());
+} catch (e) {}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=202610291011">
+<style>
+/* Island nav: the mark and one way in */
+.nav { position: fixed; z-index: 20; top: 18px; left: 50%; transform: translateX(-50%); }
+.nav .shell { --r: 999px; --pad: 5px; background: rgba(20,17,15,0.55); backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%); }
+.nav .core { display: flex; align-items: center; gap: 28px; height: 50px; padding: 0 5px 0 18px; background: rgba(10,9,8,0.6); }
+.nav .cta { height: 40px; padding: 0 5px 0 16px; gap: 10px; font-size: 12px; }
+.nav .cta .ic { width: 30px; height: 30px; }
+
+/* Hero: editorial split, prints stacked in depth on the right */
+.hero { min-height: 100dvh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: clamp(32px, 5vw, 96px); max-width: 1480px; margin: 0 auto; padding: 140px var(--gut) 96px; }
+.hero h1 { font-size: clamp(64px, 8.6vw, 152px); margin-bottom: 30px; }
+.hero h1 em { font-style: normal; font-weight: 300; color: var(--thatch); }
+.hero .cta { margin-top: 40px; }
+.facts { display: flex; gap: 36px; flex-wrap: wrap; margin-top: 56px; padding-top: 28px; box-shadow: inset 0 1px 0 var(--hair); max-width: 520px; }
+.facts div { font: 400 12px/1.5 var(--mono); color: var(--faint); letter-spacing: 0.02em; }
+.facts b { display: block; font: 400 italic 26px/1.1 var(--serif); color: var(--linen); letter-spacing: 0; margin-bottom: 4px; }
+.cascade { position: relative; height: min(78vh, 760px); }
+.card-print { position: absolute; display: block; width: 54%; --r: 22px; --pad: 7px; transition: transform 1s var(--spring); box-shadow: inset 0 0 0 1px var(--hair), 0 60px 120px -40px rgba(0,0,0,0.9); background: rgba(243,238,233,0.04); }
+.card-print img { border-radius: 15px; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; }
+.card-print span { position: absolute; left: 22px; bottom: 20px; font: 500 11px/1 var(--sans); color: var(--linen); padding: 8px 12px; border-radius: 999px; background: rgba(10,9,8,0.6); opacity: 0; transform: translateY(6px); transition: opacity 0.5s var(--spring), transform 0.5s var(--spring); }
+.card-print:hover span { opacity: 1; transform: none; }
+.card-print.c1 { left: 0; top: 14%; transform: rotate(-7deg); z-index: 1; }
+.card-print.c2 { left: 23%; top: 2%; transform: rotate(2deg); z-index: 3; }
+.card-print.c3 { right: 0; top: 20%; transform: rotate(8deg); z-index: 2; }
+.cascade:hover .c1 { transform: rotate(-10deg) translate(-18px, 6px); }
+.cascade:hover .c3 { transform: rotate(11deg) translate(18px, 8px); }
+.card-print:hover { z-index: 4; }
+.cascade .c2:hover { transform: rotate(0deg) translateY(-12px); }
+
+/* Craft: one asymmetric bento */
+.craft { max-width: 1480px; margin: 0 auto; padding: clamp(64px, 8vw, 120px) var(--gut) clamp(96px, 12vw, 160px); }
+.craft h2 { font-size: clamp(48px, 6vw, 96px); margin-bottom: clamp(40px, 5vw, 64px); max-width: 14ch; }
+.bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-rows: minmax(250px, auto); gap: 16px; }
+.tile { --r: 30px; --pad: 6px; display: flex; }
+.tile > .core { flex: 1; position: relative; overflow: hidden; padding: 32px; display: flex; flex-direction: column; justify-content: flex-end; }
+.tile h3 { font: 300 italic clamp(32px, 2.8vw, 44px)/1 var(--serif); letter-spacing: -0.01em; margin-bottom: 12px; }
+.tile p { color: var(--mute); font-size: 15px; max-width: 38ch; }
+.tile .price { font: 400 13px/1 var(--mono); color: var(--linen); margin-top: 18px; }
+.t-big { grid-column: span 7; grid-row: span 2; }
+.t-big .core { padding: 0; min-height: 540px; }
+.t-big img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.04); transition: transform 1.6s var(--spring); }
+.t-big:hover img { transform: scale(1); }
+.t-big .over { position: relative; padding: 36px; background: linear-gradient(to top, rgba(10,9,8,0.92), rgba(10,9,8,0.55) 60%, transparent); }
+.t-big .stat { font: 300 italic clamp(88px, 9vw, 150px)/0.85 var(--serif); letter-spacing: -0.03em; }
+.t-big .over p { color: var(--linen); opacity: 0.82; margin-top: 14px; max-width: 42ch; }
+.t-side { grid-column: span 5; }
+.icon-row { display: flex; gap: 10px; margin-bottom: auto; padding-bottom: 28px; }
+.icon-row i { display: block; border-radius: 3px; box-shadow: inset 0 0 0 1px var(--faint); }
+.icon-row i.file { width: 30px; height: 40px; box-shadow: inset 0 0 0 1px var(--linen); position: relative; }
+.icon-row i.file::after { content: ""; position: absolute; left: 7px; right: 7px; bottom: 8px; height: 1px; background: var(--linen); }
+
+@media (max-width: 960px) {
+  .hero { grid-template-columns: minmax(0, 1fr); padding-top: 120px; min-height: 0; }
+  .cascade { height: auto; display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 calc(var(--gut) * -1); padding: 8px var(--gut) 24px; scrollbar-width: none; }
+  .cascade::-webkit-scrollbar { display: none; }
+  .card-print, .card-print.c1, .card-print.c2, .card-print.c3, .cascade:hover .c1, .cascade:hover .c3, .cascade .c2:hover { position: relative; left: auto; right: auto; top: auto; transform: none; flex: 0 0 64%; scroll-snap-align: center; }
+  .card-print span { opacity: 1; transform: none; }
+  .bento { grid-template-columns: minmax(0, 1fr); }
+  .t-big, .t-side { grid-column: auto; grid-row: auto; }
+  .t-big .core { min-height: 440px; }
+}
+@media (max-width: 767px) {
+  .nav { top: 12px; }
+  .hero { padding-left: 16px; padding-right: 16px; }
+  .hero h1 { font-size: clamp(58px, 16vw, 88px); }
+  .facts { gap: 22px; }
+  .craft { padding-left: 16px; padding-right: 16px; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ciel" viewBox="0.1 0.1 148.387 168.8"><g fill="currentColor"><path d="M141.628 22.373A84.4 84.4 0 1 0 148.487 139.537L133.779 126.886A65.0 65.0 0 1 1 128.497 36.654Z"/><path d="M53.008 38.679A55.6 55.6 0 0 0 37.712 54.463L53.869 64.835A36.4 36.4 0 0 1 63.883 54.502Z"/><path d="M32.057 66.032A55.6 55.6 0 0 0 45.877 124.495L59.214 110.684A36.4 36.4 0 0 1 50.167 72.409Z"/><path d="M122.561 125.031A55.6 55.6 0 0 0 117.961 40.096L106.406 55.43A36.4 36.4 0 0 1 109.418 111.034Z"/><path d="M111.711 82.3A27.3 27.3 0 1 0 110.539 92.7L92.985 92.7A11.8 11.8 0 1 1 96.093 82.3Z"/><path d="M72 77.2H97V82.3H72Z"/></g></symbol>
+</svg>
+
+<header class="nav">
+  <div class="shell"><div class="core">
+    <a class="logo" href="./" aria-label="Ciel"><svg viewBox="0.1 0.1 148.387 168.8"><use href="#ciel"/></svg></a>
+    <a class="cta" href="studio.html">Design yours <span class="ic"><svg viewBox="0 0 16 16"><path d="M4 12L12 4M5.5 4H12v6.5"/></svg></span></a>
+  </div></div>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <h1 class="display rv">Any place.</h1>
+      <p class="lede rv" style="--d:80ms">The ground beneath a home, a lake, a first apartment. Rendered from one meter lidar, with every hill and hollow cast in light and shadow.</p>
+      <a class="cta rv" style="--d:160ms" href="studio.html">Design your map <span class="ic"><svg viewBox="0 0 16 16"><path d="M4 12L12 4M5.5 4H12v6.5"/></svg></span></a>
+      <div class="facts rv" style="--d:240ms">
+        <div><b>From $15</b>Prints and digital files</div>
+        <div><b>Preview first</b>24 hours to make changes</div>
+      </div>
+    </div>
+    <div class="cascade rv" style="--d:160ms" aria-label="Example prints">
+      <a class="card-print shell c1" href="studio.html?palette=Desert"><img src="assets/print-desert.jpg" alt="Desert palette print of Chelsea, Michigan" width="720" height="963"><span>Desert</span></a>
+      <a class="card-print shell c2" href="studio.html?palette=Midnight"><img src="assets/print-midnight.jpg" alt="Midnight palette print of Chelsea, Michigan" width="720" height="960"><span>Midnight</span></a>
+      <a class="card-print shell c3" href="studio.html?palette=Sage"><img src="assets/print-sage.jpg" alt="Sage palette print of Chelsea, Michigan" width="720" height="960"><span>Sage</span></a>
+    </div>
+  </section>
+
+  <section class="craft">
+    <h2 class="display rv">Land you can almost touch.</h2>
+    <div class="bento">
+      <div class="tile shell t-big rv"><div class="core">
+        <img src="assets/relief-detail.jpg" alt="Close detail of a shaded relief print showing hills, roads and a marked spot" loading="lazy" width="1000" height="853">
+        <div class="over"><div class="stat">1 m</div><p>Every hill and hollow traced from the USGS lidar survey, one meter at a time, then lit from the northwest so the land reads like sculpture.</p></div>
+      </div></div>
+      <div class="tile shell t-side rv" style="--d:80ms"><div class="core">
+        <h3>Laser printed.</h3>
+        <p>Laser printed on high quality paper, rolled or in a slim black wood frame. You get a watermarked preview first, with 24 hours to deny it before it heads to printing.</p>
+      </div></div>
+      <div class="tile shell t-side rv" style="--d:160ms"><div class="core">
+        <div class="icon-row"><i class="file"></i></div>
+        <h3>Or keep the file.</h3>
+        <p>A 7200 by 9600 pixel file, emailed to you. Sharp enough to print up to 24 by 32 inches, anywhere you like.</p>
+      </div></div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <a class="logo" href="https://cieldesign.shop" aria-label="Ciel"><svg viewBox="0.1 0.1 148.387 168.8"><use href="#ciel"/></svg></a>
+  <nav><a href="studio.html">Studio</a><a href="https://cieldesign.shop/contact">Contact</a></nav>
+</footer>
+
+<script>
+var rv = new IntersectionObserver(function (es) {
+  es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); rv.unobserve(e.target); } });
+}, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+document.querySelectorAll('.rv').forEach(function (el) { rv.observe(el); });
+</script>
+</body>
+</html>

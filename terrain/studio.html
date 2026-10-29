@@ -1,0 +1,1191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<base href="/terrain/">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Design Your Terrain Map | Ciel</title>
+<meta name="description" content="Design a shaded relief map of any US address. Choose the view, palette and words, then order a print or a high resolution file.">
+<meta name="theme-color" content="#0a0908">
+<link rel="canonical" href="https://cieldesign.shop/terrain/studio.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-10 -2 168.4 172.8'%3E%3Cg fill='%23f3eee9'%3E%3Cpath d='M141.628 22.373A84.4 84.4 0 1 0 148.487 139.537L133.779 126.886A65.0 65.0 0 1 1 128.497 36.654Z'/%3E%3Cpath d='M53.008 38.679A55.6 55.6 0 0 0 37.712 54.463L53.869 64.835A36.4 36.4 0 0 1 63.883 54.502Z'/%3E%3Cpath d='M32.057 66.032A55.6 55.6 0 0 0 45.877 124.495L59.214 110.684A36.4 36.4 0 0 1 50.167 72.409Z'/%3E%3Cpath d='M122.561 125.031A55.6 55.6 0 0 0 117.961 40.096L106.406 55.43A36.4 36.4 0 0 1 109.418 111.034Z'/%3E%3Cpath d='M111.711 82.3A27.3 27.3 0 1 0 110.539 92.7L92.985 92.7A11.8 11.8 0 1 1 96.093 82.3Z'/%3E%3Cpath d='M72 77.2H97V82.3H72Z'/%3E%3C/g%3E%3C/svg%3E">
+<meta property="og:type" content="product">
+<meta property="og:site_name" content="Ciel">
+<meta property="og:title" content="Design your terrain map | Ciel">
+<meta property="og:description" content="A shaded relief map of any US address, rendered from one meter lidar. As a print or a high resolution file.">
+<meta property="og:url" content="https://cieldesign.shop/terrain/studio.html">
+<meta property="og:image" content="https://cieldesign.shop/terrain/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://cieldesign.shop/terrain/og.jpg">
+<script>
+/* Meta pixel for this site only. Paste the dataset ID from Events Manager; nothing loads while it is empty. */
+window.META_PIXEL_ID = '';
+if (window.META_PIXEL_ID) {
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', window.META_PIXEL_ID);
+  fbq('track', 'PageView');
+}
+/* Ad click params (fbclid, utm_*) are kept for the session and added to the Shopify checkout URL */
+try {
+  var adp = new URLSearchParams(location.search), ad = adp.has('fbclid');
+  adp.forEach(function (v, k) { if (k.indexOf('utm_') === 0) ad = true; });
+  if (ad) sessionStorage.setItem('ad_params', adp.toString());
+} catch (e) {}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=202610291011">
+<style>
+.top { display: flex; align-items: center; justify-content: space-between; max-width: 1600px; margin: 0 auto; padding: 22px var(--gut) 0; }
+.top .back { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--mute); transition: color 0.4s; }
+.top .back:hover { color: var(--linen); }
+.top .back svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 1.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+.studio-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(400px, 1fr); gap: 20px; align-items: start; max-width: 1600px; margin: 0 auto; padding: 20px var(--gut) 40px; }
+.stage { position: sticky; top: 20px; --r: 34px; --pad: 7px; }
+.stage > .core { position: relative; height: calc(100dvh - 40px); min-height: 560px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: clamp(24px, 3.5vw, 56px); overflow: hidden;
+  background: radial-gradient(ellipse 70% 60% at 50% 40%, #221d19 0%, #15120f 60%, #0f0d0b 100%); }
+.stage > .core::after { content: ""; position: absolute; left: 18%; right: 18%; bottom: 10%; height: 60px; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(0,0,0,0.45), transparent 70%); pointer-events: none; }
+.frame { position: relative; z-index: 1; width: min(100%, 540px, calc((100dvh - 220px) * 0.75)); transform: scale(var(--scale, 1)); transition: transform 0.9s var(--spring), padding 0.6s var(--spring), background 0.6s var(--spring); box-shadow: 0 50px 90px -30px rgba(0,0,0,0.7); }
+.frame.framed { padding: 14px; background: linear-gradient(145deg, #23201d, #070605); box-shadow: 0 50px 90px -30px rgba(0,0,0,0.75), inset 0 0 0 1px rgba(255,255,255,0.06); }
+.poster { position: relative; aspect-ratio: 3 / 4; container-type: inline-size; transition: background 0.5s var(--spring), color 0.5s var(--spring); overflow: hidden; }
+.view { position: absolute; left: 7%; top: 5%; width: 86%; height: 78%; overflow: hidden; cursor: grab; touch-action: none; }
+.view.drag { cursor: grabbing; }
+.pan { position: absolute; inset: 0; will-change: transform; }
+.pan canvas { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity 0.5s; }
+.poster .pin { position: absolute; left: 50%; top: 50%; width: 3cqw; height: 3cqw; border-radius: 50%; transform: translate(-50%, -50%); border: 0.58cqw solid; transition: opacity 0.3s; pointer-events: none; }
+/* Words sit at fixed positions like the print (title, second line, coordinates), so turning a line
+   on or off never pushes the title into the map */
+.poster .words { position: absolute; left: 0; right: 0; top: 85.1%; text-align: center; }
+.poster .t1 { font: 400 7.4cqw/1 var(--serif); letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: clip; padding: 0 6%; }
+.poster .t2 { font: 400 2.16cqw/1 var(--serif); letter-spacing: 0.08em; margin-top: 0.8cqw; min-height: 2.16cqw; }
+.poster .t3 { font: 400 1.7cqw/1 var(--mono); opacity: 0.75; margin-top: 1.5cqw; letter-spacing: 0.04em; }
+/* The rendering moment: the sketch softens while a status line and a hairline progress bar run */
+.pan canvas { transition: opacity 0.6s var(--spring), filter 0.8s var(--spring), transform 1.2s var(--spring); }
+.busy .pan canvas { opacity: 0.45; filter: blur(7px) saturate(0.8); transform: scale(1.015); }
+.loading { position: absolute; left: 7%; top: 5%; width: 86%; height: 78%; display: grid; place-items: center; align-content: center; gap: 14px; pointer-events: none; opacity: 0; transition: opacity 0.5s var(--spring); }
+.busy .loading { opacity: 1; }
+.loading span { font: 400 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: #fff; text-shadow: 0 1px 12px rgba(0,0,0,0.5); transition: opacity 0.35s; }
+.loading i { display: block; width: 38%; height: 1px; background: rgba(255,255,255,0.25); overflow: hidden; }
+.loading i b { display: block; height: 100%; background: #fff; transform-origin: left; transform: scaleX(0); }
+.busy .loading i b { transition: transform var(--dur, 1.8s) cubic-bezier(0.4, 0, 0.2, 1); transform: scaleX(0.92); }
+.under { position: relative; z-index: 1; width: min(100%, 540px); height: 44px; margin-top: 28px; }
+.under > * { position: absolute; inset: 0; transition: opacity 0.5s var(--spring), transform 0.5s var(--spring); }
+.caption { display: flex; justify-content: center; align-items: center; gap: 12px; font: 400 11px/1 var(--mono); letter-spacing: 0.06em; color: var(--mute); text-transform: uppercase; }
+.caption i { width: 3px; height: 3px; border-radius: 50%; background: var(--faint); }
+.mapbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 4px 0 18px; border-radius: 999px; background: rgba(10,9,8,0.4); box-shadow: inset 0 0 0 1px var(--hair2); font-size: 12px; color: var(--mute); opacity: 0; transform: translateY(8px); pointer-events: none; }
+.stage[data-step="view"] .mapbar { opacity: 1; transform: none; pointer-events: auto; }
+.stage[data-step="view"] .caption { opacity: 0; }
+.mapbar .zoom { display: flex; gap: 4px; align-items: center; }
+.mapbar .round { width: 36px; height: 36px; }
+.mapbar .round svg { width: 11px; height: 11px; }
+.mapbar .span { font: 400 11px/1 var(--mono); letter-spacing: 0.04em; color: var(--linen); min-width: 8ch; text-align: center; }
+.reset { background: none; border: 0; cursor: pointer; font: inherit; color: var(--thatch); }
+.reset:hover { color: var(--linen); }
+.reset[hidden] { display: none; }
+
+.console { --r: 34px; --pad: 7px; }
+.console > .core { display: flex; flex-direction: column; min-height: calc(100dvh - 40px); }
+.progress { padding: 30px 30px 0; }
+.progress .now { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.progress .now strong { font: 300 italic 44px/1 var(--serif); letter-spacing: -0.02em; }
+.progress .now strong span { color: var(--faint); margin-right: 10px; }
+.progress .now small { font: 400 11px/1 var(--mono); color: var(--faint); letter-spacing: 0.04em; }
+.segs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 22px; }
+.segs button { background: none; border: 0; padding: 10px 0 0; cursor: pointer; text-align: left; color: var(--faint); font: 400 11px/1 var(--sans); transition: color 0.4s; }
+.segs button::before { content: ""; display: block; height: 2px; border-radius: 2px; margin-bottom: 10px; background: var(--hair2); transition: background 0.6s var(--spring); }
+.segs button.seen { color: var(--mute); }
+.segs button.seen::before { background: rgba(243,238,233,0.38); }
+.segs button[aria-current="step"] { color: var(--linen); }
+.segs button[aria-current="step"]::before { background: var(--thatch); }
+.segs button:disabled { cursor: default; }
+.segs button.seen:not([aria-current]):hover { color: var(--linen); }
+
+.panels { flex: 1; padding: 40px 30px 32px; }
+.panel { display: none; }
+.panel.on { display: block; }
+.panel.on > * { animation: rise 0.9s var(--out) both; }
+.panel.on > *:nth-child(2) { animation-delay: 60ms; } .panel.on > *:nth-child(3) { animation-delay: 120ms; } .panel.on > *:nth-child(n+4) { animation-delay: 180ms; }
+@keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+.panel h1 { font-size: clamp(40px, 3.6vw, 56px); margin-bottom: 14px; }
+.panel .lede { font-size: 15px; }
+.field { margin-top: 30px; }
+.label { display: flex; justify-content: space-between; font-size: 13px; color: var(--mute); margin-bottom: 12px; }
+.label b { font-weight: 400; font-family: var(--mono); font-size: 12px; color: var(--linen); }
+.well { --r: 20px; --pad: 5px; }
+.input { display: block; width: 100%; height: 52px; padding: 0 18px; border: 0; border-radius: 15px; background: var(--bg2); box-shadow: inset 0 1px 2px rgba(0,0,0,0.35); outline: none; }
+.well:focus-within { box-shadow: inset 0 0 0 1px rgba(243,238,233,0.35); }
+.input::placeholder { color: var(--faint); }
+textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-height: 1.5; }
+.search { position: relative; }
+.suggest { position: absolute; z-index: 5; left: 0; right: 0; top: calc(100% + 8px); padding: 6px; border-radius: 20px; background: rgba(26,22,19,0.97); box-shadow: inset 0 0 0 1px var(--hair2), 0 30px 60px -20px rgba(0,0,0,0.8); display: none; }
+.suggest.on { display: block; animation: rise 0.5s var(--out) both; }
+.suggest button { display: block; width: 100%; text-align: left; padding: 12px 14px; border-radius: 14px; background: none; border: 0; cursor: pointer; font-size: 14px; color: var(--mute); }
+.suggest button:hover, .suggest button:focus { background: rgba(243,238,233,0.06); color: var(--linen); outline: none; }
+.suggest button strong { color: var(--linen); font-weight: 500; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 16px 0 5px; border-radius: 999px; border: 0; background: rgba(243,238,233,0.03); box-shadow: inset 0 0 0 1px var(--hair2); cursor: pointer; font-size: 13px; color: var(--mute); transition: box-shadow 0.4s var(--spring), color 0.4s, transform 0.4s var(--spring); }
+.chip img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+.chip:hover { color: var(--linen); box-shadow: inset 0 0 0 1px rgba(243,238,233,0.35); }
+.chip:active { transform: scale(0.97); }
+.err { color: #df9884; font-size: 13px; margin-top: 10px; min-height: 1em; }
+.hint { display: flex; gap: 14px; align-items: flex-start; margin-top: 28px; padding: 18px 20px; border-radius: 20px; background: rgba(243,238,233,0.025); box-shadow: inset 0 0 0 1px var(--hair); color: var(--mute); font-size: 14px; }
+.hint svg { flex: none; width: 22px; height: 22px; stroke: var(--thatch); stroke-width: 1; fill: none; stroke-linecap: round; }
+
+.range { -webkit-appearance: none; appearance: none; width: 100%; height: 28px; background: transparent; cursor: pointer; }
+.range::-webkit-slider-runnable-track { height: 2px; border-radius: 2px; background: var(--hair2); }
+.range::-moz-range-track { height: 2px; border-radius: 2px; background: var(--hair2); }
+.range::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -10px; border-radius: 50%; background: var(--linen); border: 0; box-shadow: 0 0 0 6px rgba(243,238,233,0.08); transition: box-shadow 0.4s var(--spring); }
+.range:active::-webkit-slider-thumb { box-shadow: 0 0 0 10px rgba(243,238,233,0.1); }
+.range::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--linen); border: 0; }
+.ticks { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--faint); }
+
+/* Option cards: a plate set in a tray */
+.options { display: grid; gap: 10px; }
+.opt { --r: 22px; --pad: 5px; display: block; width: 100%; text-align: left; border: 0; cursor: pointer; color: inherit; transition: box-shadow 0.5s var(--spring), background 0.5s var(--spring), transform 0.5s var(--spring); }
+.opt .core { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; padding: 16px 18px; transition: background 0.5s var(--spring); }
+.opt:hover { box-shadow: inset 0 0 0 1px rgba(243,238,233,0.18); }
+.opt:active { transform: scale(0.99); }
+.opt[aria-pressed="true"] { background: rgba(243,238,233,0.07); box-shadow: inset 0 0 0 1px rgba(243,238,233,0.42); }
+.opt[aria-pressed="true"] .core { background: var(--core2); }
+.opt .name { font: 400 25px/1.05 var(--serif); }
+.opt .desc { display: block; margin-top: 5px; font-size: 13px; line-height: 1.5; color: var(--mute); }
+.opt .cost { font: 400 12px/1 var(--mono); color: var(--faint); letter-spacing: 0.02em; white-space: nowrap; transition: color 0.4s; }
+.opt[aria-pressed="true"] .cost { color: var(--linen); }
+.opt .dot { width: 48px; height: 48px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1); }
+.opt .glyph { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 14px; background: rgba(243,238,233,0.03); }
+.opt .glyph i { display: block; position: relative; border-radius: 2px; background: rgba(243,238,233,0.1); box-shadow: inset 0 0 0 1px var(--faint); }
+.opt .glyph i.fr { box-shadow: inset 0 0 0 3px var(--linen); }
+.opt .glyph i.file { background: none; box-shadow: inset 0 0 0 1px var(--linen); }
+.opt .glyph i.file::after { content: ""; position: absolute; left: 6px; right: 6px; bottom: 7px; height: 1px; background: var(--linen); }
+.opt .cost:empty { display: none; }
+.opt .glyph svg { width: 30px; height: 30px; stroke: var(--linen); stroke-width: 1; fill: none; stroke-linecap: round; }
+/* Palette grid */
+.pals { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.pal { display: grid; justify-items: center; gap: 8px; padding: 12px 4px 10px; border: 0; border-radius: 18px; background: rgba(243,238,233,0.025); box-shadow: inset 0 0 0 1px var(--hair); cursor: pointer; color: var(--mute); font-size: 12px; transition: box-shadow 0.4s var(--spring), background 0.4s var(--spring), color 0.4s, transform 0.4s var(--spring); }
+.pal i { width: 40px; height: 40px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12); }
+.pal:hover { color: var(--linen); box-shadow: inset 0 0 0 1px rgba(243,238,233,0.22); }
+.pal:active { transform: scale(0.97); }
+.pal[aria-pressed="true"] { color: var(--linen); background: rgba(243,238,233,0.07); box-shadow: inset 0 0 0 1px rgba(243,238,233,0.45); }
+.pal.custom i { background: conic-gradient(from 90deg, #e85d5d, #e8c25d, #8ae85d, #5de8c9, #5d8ae8, #b05de8, #e85d5d); }
+.pal small { font: 400 9px/1 var(--mono); color: var(--thatch); margin-top: -3px; }
+.picks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+.pick { display: grid; justify-items: center; gap: 8px; padding: 14px 4px 12px; border-radius: 18px; background: var(--bg2); box-shadow: inset 0 1px 2px rgba(0,0,0,0.3); font-size: 12px; color: var(--mute); cursor: pointer; }
+.pick input { -webkit-appearance: none; appearance: none; width: 40px; height: 40px; border: 0; border-radius: 50%; padding: 0; background: none; cursor: pointer; box-shadow: 0 0 0 1px var(--hair2); }
+.pick input::-webkit-color-swatch-wrapper { padding: 0; }
+.pick input::-webkit-color-swatch { border: 0; border-radius: 50%; }
+.pick input::-moz-color-swatch { border: 0; border-radius: 50%; }
+.premium { margin-top: 12px; font-size: 13px; color: var(--mute); }
+.collapse { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 0.7s var(--spring), opacity 0.5s var(--spring); }
+.collapse > div { overflow: hidden; }
+.collapse.shut { grid-template-rows: 0fr; opacity: 0; }
+.note-card { margin-top: 30px; padding: 20px; border-radius: 20px; background: var(--bg2); box-shadow: inset 0 1px 2px rgba(0,0,0,0.3); font-size: 14px; color: var(--mute); }
+.note-card b { display: block; font: 400 12px/1.4 var(--mono); color: var(--linen); margin-bottom: 6px; }
+
+.check { display: flex; align-items: center; gap: 12px; margin-top: 14px; font-size: 14px; color: var(--mute); cursor: pointer; }
+.check input { appearance: none; -webkit-appearance: none; flex: none; width: 40px; height: 24px; border-radius: 999px; background: rgba(243,238,233,0.08); box-shadow: inset 0 0 0 1px var(--hair2); position: relative; cursor: pointer; transition: background 0.5s var(--spring); }
+.check input::after { content: ""; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--linen); transition: transform 0.5s var(--spring); }
+.check input:checked { background: var(--thatch); }
+.check input:checked::after { transform: translateX(16px); }
+.extra { --r: 22px; --pad: 5px; transition: box-shadow 0.5s var(--spring); }
+.extra .core { padding: 20px; }
+.extra[data-on="true"] { box-shadow: inset 0 0 0 1px rgba(243,238,233,0.42); }
+.extra .check { margin-top: 0; color: var(--linen); font-size: 15px; }
+.extra .note { font-size: 13px; color: var(--mute); margin: 10px 0 0 52px; }
+.swatches { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0 0 52px; }
+.swatch { width: 44px; height: 44px; border-radius: 50%; border: 0; box-shadow: inset 0 0 0 1px var(--hair2); cursor: pointer; padding: 5px; background: none; transition: box-shadow 0.4s var(--spring), opacity 0.4s; }
+.swatch i { display: block; width: 100%; height: 100%; border-radius: 50%; }
+.swatch[aria-pressed="true"] { box-shadow: inset 0 0 0 1px var(--linen); }
+.swatch:disabled { opacity: 0.2; cursor: default; }
+.extra[data-on="false"] .swatches { display: none; }
+
+/* Review */
+.summary { margin-top: 28px; }
+.row { display: grid; grid-template-columns: 96px 1fr auto; gap: 16px; align-items: baseline; padding: 16px 0; box-shadow: inset 0 -1px 0 var(--hair); }
+.row dt { font-size: 12px; color: var(--faint); }
+.row dd { font-size: 15px; overflow-wrap: anywhere; }
+.row dd small { display: block; color: var(--mute); font-size: 13px; }
+.row button { background: none; border: 0; cursor: pointer; font: 500 12px/1 var(--sans); color: var(--thatch); padding: 6px 10px; border-radius: 999px; transition: background 0.4s, color 0.4s; }
+.row button:hover { color: var(--linen); background: rgba(243,238,233,0.06); }
+.bill { margin-top: 24px; padding: 20px; border-radius: 20px; background: var(--bg2); box-shadow: inset 0 1px 2px rgba(0,0,0,0.3); display: grid; gap: 12px; font: 400 13px/1.3 var(--mono); }
+.bill div { display: flex; justify-content: space-between; gap: 16px; color: var(--mute); }
+.bill .total { color: var(--linen); font-size: 17px; padding-top: 14px; box-shadow: inset 0 1px 0 var(--hair); }
+.promise { margin-top: 22px; display: grid; gap: 10px; font-size: 13px; color: var(--mute); }
+.promise div { display: flex; gap: 12px; align-items: flex-start; }
+.promise svg { flex: none; width: 16px; height: 16px; margin-top: 2px; stroke: var(--thatch); stroke-width: 1.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Dock: a floating island with the total and the way forward */
+.dock { position: sticky; bottom: 14px; z-index: 3; margin: 0 14px 14px; --r: 999px; --pad: 5px; background: rgba(26,22,19,0.7); backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%); }
+.dock .core { display: flex; align-items: center; gap: 12px; padding: 5px; background: rgba(10,9,8,0.55); }
+.dock .sum { flex: 1; min-width: 0; padding-left: 10px; transition: opacity 0.4s; }
+.dock .sum.off { opacity: 0; }
+.dock .sum small { display: block; font-size: 11px; color: var(--faint); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dock .sum strong { font: 400 20px/1 var(--mono); letter-spacing: -0.01em; }
+.dock .cta { height: 52px; }
+.dock .cta .ic { width: 42px; height: 42px; }
+.dockErr { padding: 0 30px; }
+.dockErr:empty { display: none; }
+
+/* The pair offer, shown once before checkout */
+.modal { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 16px; background: rgba(10,9,8,0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); opacity: 0; pointer-events: none; transition: opacity 0.5s var(--spring); }
+.modal.on { opacity: 1; pointer-events: auto; }
+.modal .sheet { --r: 32px; --pad: 7px; width: min(100%, 480px); transform: translateY(24px) scale(0.98); transition: transform 0.7s var(--spring); }
+.modal.on .sheet { transform: none; }
+.modal .sheet > .core { padding: 34px 30px 26px; }
+.modal h2 { font-size: 46px; margin-bottom: 12px; }
+.modal .lede { font-size: 15px; }
+.modal .pair-pals { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0 26px; }
+.modal .pair-pals .swatch { margin: 0; }
+.modal .pair-name { font: 400 12px/1 var(--mono); color: var(--linen); margin: -12px 0 24px; min-height: 1em; }
+.modal .row2 { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 20px; }
+.modal .skip { background: none; border: 0; cursor: pointer; font-size: 14px; color: var(--mute); padding: 8px 0; transition: color 0.3s; }
+.modal .skip:hover { color: var(--linen); }
+
+@media (max-width: 960px) {
+  .top { padding-top: 16px; padding-bottom: 10px; }
+  .studio-grid { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 0; }
+  .stage { position: sticky; top: 0; z-index: 4; --r: 0px; --pad: 0px; background: var(--bg); box-shadow: none; }
+  .stage > .core { height: 46svh; min-height: 330px; border-radius: 0; padding: 14px 16px 6px; box-shadow: inset 0 -1px 0 var(--hair); }
+  .frame { width: min(100%, calc((max(46svh, 330px) - 82px) * 0.75)); }
+  .under { margin-top: 10px; height: 38px; }
+  .stage > .core::after { display: none; }
+  .console { margin-top: 0; --r: 26px; --pad: 0px; background: none; box-shadow: none; }
+  .console > .core { min-height: 0; background: transparent; box-shadow: none; }
+  .progress { padding: 16px var(--gut) 0; }
+  .progress .now strong { font-size: 34px; }
+  .segs button { font-size: 0; padding-top: 4px; }
+  .segs button::before { margin-bottom: 4px; }
+  .panels { padding: 30px var(--gut) 24px; }
+  .dock { margin: 0 10px max(10px, env(safe-area-inset-bottom)); bottom: max(10px, env(safe-area-inset-bottom)); }
+  .dockErr { padding: 0 var(--gut); }
+}
+@media (max-width: 767px) {
+  .row { grid-template-columns: 1fr auto; }
+  .row dt { grid-column: 1 / -1; }
+  .extra .note, .swatches { margin-left: 0; }
+  .dock .sum strong { font-size: 18px; }
+  .dock .cta { padding-left: 18px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ciel" viewBox="0.1 0.1 148.387 168.8"><g fill="currentColor"><path d="M141.628 22.373A84.4 84.4 0 1 0 148.487 139.537L133.779 126.886A65.0 65.0 0 1 1 128.497 36.654Z"/><path d="M53.008 38.679A55.6 55.6 0 0 0 37.712 54.463L53.869 64.835A36.4 36.4 0 0 1 63.883 54.502Z"/><path d="M32.057 66.032A55.6 55.6 0 0 0 45.877 124.495L59.214 110.684A36.4 36.4 0 0 1 50.167 72.409Z"/><path d="M122.561 125.031A55.6 55.6 0 0 0 117.961 40.096L106.406 55.43A36.4 36.4 0 0 1 109.418 111.034Z"/><path d="M111.711 82.3A27.3 27.3 0 1 0 110.539 92.7L92.985 92.7A11.8 11.8 0 1 1 96.093 82.3Z"/><path d="M72 77.2H97V82.3H72Z"/></g></symbol>
+</svg>
+
+<header class="top">
+  <a class="logo" href="./" aria-label="Ciel home"><svg viewBox="0.1 0.1 148.387 168.8"><use href="#ciel"/></svg></a>
+  <a class="back" href="./"><svg viewBox="0 0 14 14"><path d="M9 2L4 7l5 5"/></svg>Home</a>
+</header>
+
+<main class="studio-grid">
+  <div class="stage shell" id="stage" data-step="place" aria-label="Preview">
+    <div class="core">
+      <div class="frame" id="frame">
+        <div class="poster" id="poster">
+          <div class="view" id="view">
+            <div class="pan" id="pan">
+              <canvas id="map" width="600" height="725" aria-label="Map preview. Drag to move the map."></canvas>
+              <div class="pin" id="pin"></div>
+            </div>
+          </div>
+          <div class="loading" id="loading"><span id="busyMsg">Rendering</span><i><b></b></i></div>
+          <div class="words">
+            <div class="t1" id="t1">SLEEPING BEAR</div>
+            <div class="t2" id="t2">MICHIGAN</div>
+            <div class="t3" id="t3">44.8836° N &nbsp; 86.0456° W</div>
+          </div>
+        </div>
+      </div>
+      <div class="under">
+        <div class="caption" id="caption"></div>
+        <div class="mapbar">
+          <span>Drag to frame <button class="reset" id="recenter" type="button" hidden>&nbsp; Recenter</button></span>
+          <div class="zoom">
+            <button class="round" id="zoomOut" type="button" aria-label="Show more area"><svg viewBox="0 0 12 12"><path d="M2 6h8"/></svg></button>
+            <span class="span" id="span">3.6 km</span>
+            <button class="round" id="zoomIn" type="button" aria-label="Show less area"><svg viewBox="0 0 12 12"><path d="M2 6h8M6 2v8"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="console shell" aria-label="Configure your map">
+    <div class="core" id="consoleCore">
+      <div class="progress">
+        <div class="now"><strong><span id="stepNum">01</span><em id="stepName">Place</em></strong><small id="stepOf">1 of 6</small></div>
+        <nav class="segs" id="rail" aria-label="Steps"></nav>
+      </div>
+
+      <div class="panels" id="panels">
+        <div class="panel" data-step="place">
+          <h1 class="display">Begin with a place.</h1>
+          <p class="lede">Search any address in the United States.</p>
+          <div class="field">
+            <div class="label">Search</div>
+            <div class="search">
+              <div class="well shell"><input class="input" id="addr" type="text" autocomplete="off" placeholder="An address, lake, park or town" aria-label="Address"></div>
+              <div class="suggest" id="suggest" role="listbox"></div>
+            </div>
+            <div class="err" id="addrErr"></div>
+          </div>
+          <div class="field">
+            <div class="label">Or begin with a favorite</div>
+            <div class="chips" id="chips"></div>
+          </div>
+          <div class="field">
+            <label class="check"><input type="checkbox" id="coords" checked> Show coordinates</label>
+            <label class="check"><input type="checkbox" id="pinOn" checked> Mark the exact spot</label>
+          </div>
+        </div>
+
+        <div class="panel" data-step="view">
+          <h1 class="display">Frame the view.</h1>
+          <p class="lede">Choose how much land the map holds, from a single street to a whole region, then drag it until it sits just right.</p>
+          <div class="field">
+            <div class="label">Map scope <b id="scopeVal">3.6 km across</b></div>
+            <input class="range" id="scope" type="range" min="0" max="10" step="1" value="4" aria-label="Map scope">
+            <div class="ticks"><span>Street</span><span>Neighborhood</span><span>Town</span><span>Region</span></div>
+          </div>
+          <div class="hint"><svg viewBox="0 0 22 22"><path d="M11 3v16M3 11h16M11 3L8.5 5.5M11 3l2.5 2.5M11 19l-2.5-2.5M11 19l2.5-2.5M3 11l2.5-2.5M3 11l2.5 2.5M19 11l-2.5-2.5M19 11l-2.5 2.5"/></svg>
+            <span>Drag the map to move it. Your pin stays on the exact spot, wherever it lands in the frame.</span></div>
+        </div>
+
+        <div class="panel" data-step="style">
+          <h1 class="display">Choose a style.</h1>
+          <p class="lede">Light and shadow, or flowing contour lines. Then the colors.</p>
+          <div class="field options" id="styles"></div>
+          <div class="field">
+            <div class="label">Palette <b id="palName">Midnight</b></div>
+            <div class="pals" id="palettes"></div>
+            <div class="collapse shut" id="customOpts"><div>
+              <div class="picks">
+                <label class="pick"><input type="color" id="cLow" value="#1f2a44">Low ground</label>
+                <label class="pick"><input type="color" id="cHigh" value="#e9c88f">High ground</label>
+                <label class="pick"><input type="color" id="cWater" value="#4f7ea8">Water</label>
+                <label class="pick"><input type="color" id="cPaper" value="#f5efe6">Paper</label>
+              </div>
+              <p class="premium">Tap a circle to open the color wheel. A custom palette is a premium option, shown in your total on the final page.</p>
+            </div></div>
+          </div>
+          <div class="field">
+            <label class="check"><input type="checkbox" id="roadsOn" checked> Show roads</label>
+          </div>
+        </div>
+
+        <div class="panel" data-step="words">
+          <h1 class="display">Add your words.</h1>
+          <p class="lede">A name for the place, and a line beneath it. A family name, a date, a first home.</p>
+          <div class="field">
+            <div class="label">Title</div>
+            <div class="well shell"><input class="input" id="title" maxlength="22" value="SLEEPING BEAR" aria-label="Title"></div>
+          </div>
+          <div class="field">
+            <div class="label">Second line <b>Optional</b></div>
+            <div class="well shell"><input class="input" id="sub" maxlength="32" value="MICHIGAN" aria-label="Second line"></div>
+          </div>
+        </div>
+
+        <div class="panel" data-step="format">
+          <h1 class="display">Print or file.</h1>
+          <p class="lede">We laser print it on high quality paper and ship it to you, or email you the high resolution file to print however you like.</p>
+          <div class="field options" id="formats"></div>
+          <div class="collapse" id="printOpts"><div>
+            <div class="field">
+              <div class="label">Size</div>
+              <div class="options" id="sizes"></div>
+            </div>
+            <div class="field">
+              <div class="label">Finish</div>
+              <div class="options" id="frames"></div>
+            </div>
+          </div></div>
+          <div class="collapse shut" id="fileOpts"><div>
+            <div class="note-card"><b>7200 x 9600 pixels, 300 dpi at 24 x 32 in</b>A JPG emailed to you within a day, rendered at full resolution from lidar. Print it at any size up to 24 x 32 inches.</div>
+          </div></div>
+        </div>
+
+        <div class="panel" data-step="review">
+          <h1 class="display" id="reviewTitle">Your print.</h1>
+          <p class="lede">Look it over. Anything can still change.</p>
+          <dl class="summary" id="summary"></dl>
+          <div class="bill" id="bill"></div>
+          <div class="promise" id="promise"></div>
+        </div>
+      </div>
+
+      <div class="err dockErr" id="buyErr"></div>
+      <div class="dock shell"><div class="core">
+        <button class="round" id="back" type="button" aria-label="Previous step" hidden><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg></button>
+        <div class="sum off" id="sum"><small id="sumLabel">Total</small><strong id="price"></strong></div>
+        <button class="cta" id="next" type="button"><span id="nextLabel">Continue</span><span class="ic"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></button>
+      </div></div>
+    </div>
+  </div>
+</main>
+
+<div class="modal" id="pair" role="dialog" aria-modal="true" aria-labelledby="pairTitle">
+  <div class="sheet shell"><div class="core">
+    <h2 class="display" id="pairTitle">Make it a pair.</h2>
+    <p class="lede">Add the same map in a second palette, <span id="pairOff">30% off</span>. <span id="pairPrice"></span></p>
+    <div class="pair-pals" id="pairPals"></div>
+    <div class="pair-name" id="pairName"></div>
+    <div class="row2">
+      <button class="cta" id="pairYes" type="button"><span>Add the pair</span><span class="ic"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></button>
+      <button class="skip" id="pairNo" type="button">No thanks, continue to checkout</button>
+    </div>
+  </div></div>
+</div>
+
+<script>
+(function () {
+  var API = 'https://6n0zf6-2z.myshopify.com/api/2025-07/graphql.json';
+  var TOKEN = '9e6e50b006ca52f39041196f55c47b0d';
+  var HANDLE = 'custom-terrain-map';
+  var CUSTOM_HANDLE = 'custom-color-palette';  // the $15 add on line for a custom palette
+  var PRODUCT_ID = '8498183897154';
+  // Second one in another palette: offered in a popup before checkout, priced by this Shopify discount code
+  var EXTRA = { code: 'SECONDPALETTE', off: 0.30 };
+
+  // Same colors as make_print.py PALETTES
+  var PALETTES = {
+    Midnight: { ramp: ['#0b1622', '#1c3348', '#3f5f78', '#9fb4c4'], bg: '#0e1a26', ink: '#e3c27a', pin: '#e3c27a', road: '#e3c27a', water: '#0a121b' },
+    Sage:     { ramp: ['#1f3a4d', '#4f7a6a', '#c9b98f', '#efe6d2'], bg: '#f4efe4', ink: '#1f2a30', pin: '#c0392b', road: '#2b2b2b', water: '#7fa6b8' },
+    Mono:     { ramp: ['#2a2a2a', '#6e6e6e', '#bdbdbd', '#f2f2f2'], bg: '#fafafa', ink: '#111111', pin: '#111111', road: '#111111', water: '#ffffff' },
+    Desert:   { ramp: ['#5b3a29', '#a0613d', '#d9a679', '#f3e3c9'], bg: '#f6ecdd', ink: '#3b2418', pin: '#2f5d73', road: '#3b2418', water: '#5f8fa3' },
+    Glacier:  { ramp: ['#2b4c6f', '#6f9cc0', '#c9dde9', '#f7fbfd'], bg: '#f3f6f8', ink: '#1d3045', pin: '#c0392b', road: '#24384d', water: '#8fb3cc' },
+    Forest:   { ramp: ['#13261d', '#2f5240', '#7d9a6f', '#d9dfc4'], bg: '#101c16', ink: '#e9e2c7', pin: '#e9e2c7', road: '#e9e2c7', water: '#24414f' },
+    Dusk:     { ramp: ['#2d2440', '#6b4e71', '#c48b8b', '#f3d3bd'], bg: '#1f1a2c', ink: '#f3d3bd', pin: '#f3d3bd', road: '#f3d3bd', water: '#3e3a5c' },
+    Ember:    { ramp: ['#141414', '#3a2a22', '#a4552c', '#f2b880'], bg: '#111111', ink: '#f2b880', pin: '#f2b880', road: '#f2b880', water: '#0c0c0c' },
+    Coastal:  { ramp: ['#0f4c5c', '#5f9ea0', '#e4d6b4', '#fbf6ea'], bg: '#fbf6ea', ink: '#163a44', pin: '#d1495b', road: '#21363b', water: '#7cc0c8' },
+    Slate:    { ramp: ['#2f3640', '#56606c', '#9aa5b1', '#e6e9ec'], bg: '#22272e', ink: '#e6e9ec', pin: '#e6e9ec', road: '#e6e9ec', water: '#3d4a59' },
+    Ochre:    { ramp: ['#4a3b1f', '#8c6d2f', '#d6b46a', '#f7ecd0'], bg: '#f7efdc', ink: '#3a2e18', pin: '#3a2e18', road: '#3a2e18', water: '#557a7d' },
+    Blush:    { ramp: ['#6d3b47', '#b5737f', '#e8b9b3', '#fbeeea'], bg: '#fbf1ee', ink: '#4a2a32', pin: '#4a2a32', road: '#4a2a32', water: '#9db4c0' }
+  };
+  var STYLES = { Relief: 'Shaded relief', Contour: 'Contour lines' };
+  var SIZES = ['12 x 16 in', '18 x 24 in', '24 x 32 in'];
+  var SIZE_INFO = {
+    '12 x 16 in': { cm: '30 x 40 cm', desc: 'For a desk, a shelf or a hallway.', scale: 0.66 },
+    '18 x 24 in': { cm: '46 x 61 cm', desc: 'The classic. Above a console or a bed.', scale: 0.84 },
+    '24 x 32 in': { cm: '61 x 81 cm', desc: 'A statement for a large wall.', scale: 1 }
+  };
+  var FRAMES = ['Unframed', 'Black frame'];
+  var FRAME_INFO = {
+    'Unframed': 'Rolled and shipped in a sturdy tube.',
+    'Black frame': 'Slim black wood frame, ready to hang.'
+  };
+  // The digital file is its own Shopify variant: Size "Digital file", Frame "None"
+  var DIGITAL = 'Digital file|None';
+  var FALLBACK = { '12 x 16 in|Unframed': 49, '12 x 16 in|Black frame': 129, '18 x 24 in|Unframed': 69, '18 x 24 in|Black frame': 169, '24 x 32 in|Unframed': 99, '24 x 32 in|Black frame': 229, 'Digital file|None': 15, custom: 15 };
+  var FAVORITES = [
+    { name: 'Half Dome', lat: 37.7459, lon: -119.5332, title: 'HALF DOME', sub: 'YOSEMITE, CALIFORNIA', place: 'Half Dome, Yosemite National Park, California', span: 8000, img: 'assets/print-mono.jpg' },
+    { name: 'Zion Canyon', lat: 37.2690, lon: -112.9480, title: 'ZION', sub: 'UTAH', place: 'Zion Canyon, Utah', span: 8000, img: 'assets/print-desert.jpg' },
+    { name: 'Mount Rainier', lat: 46.8523, lon: -121.7603, title: 'MOUNT RAINIER', sub: 'WASHINGTON', place: 'Mount Rainier, Washington', span: 15000, img: 'assets/print-sage.jpg' },
+    { name: 'Sleeping Bear Dunes', lat: 44.8836, lon: -86.0456, title: 'SLEEPING BEAR', sub: 'MICHIGAN', place: 'Sleeping Bear Dunes, Michigan', span: 3600, img: 'assets/print-midnight.jpg' }
+  ];
+  // Map width across the print, in meters. The renderer reads the same value from the order.
+  var SPANS = [1500, 2000, 2500, 3000, 3600, 4500, 6000, 8000, 10000, 12000, 15000], DEFAULT_SPAN = 3600;
+  var STEPS = [['place', 'Place'], ['view', 'View'], ['style', 'Style'], ['words', 'Words'], ['format', 'Format'], ['review', 'Review']];
+  // How long each preview takes to "render": long enough to feel made, short enough not to drag
+  var DWELL = { load: 1900, restyle: 1100 };
+
+  var state = { lat: 44.8836, lon: -86.0456, clat: 44.8836, clon: -86.0456, span: DEFAULT_SPAN, place: 'Sleeping Bear Dunes, Michigan', style: 'Relief', palette: 'Midnight', roads: true, format: 'print', size: '18 x 24 in', frame: 'Unframed', extra: null };
+  var variants = {}, customVariant = null;
+  var elev = null, view = null, vec = null, seq = 0, step = 0, seen = 0, pairAsked = false;
+  var $ = function (id) { return document.getElementById(id); };
+  var track = function () { if (window.fbq) fbq.apply(null, arguments); };
+  var mobile = function () { return window.matchMedia('(max-width: 960px)').matches; };
+  function money(n) { n = Math.round(n * 100) / 100; return '$' + (n % 1 ? n.toFixed(2) : n); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function digital() { return state.format === 'digital'; }
+  function custom() { return state.palette === 'Custom'; }
+
+  /* Storefront */
+  function gql(query, variables) {
+    return fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': TOKEN }, body: JSON.stringify({ query: query, variables: variables || {} }) }).then(function (r) { return r.json(); });
+  }
+  gql('query($h:String!,$c:String!){product(handle:$h){variants(first:20){nodes{id price{amount} selectedOptions{name value}}}} addon:product(handle:$c){variants(first:1){nodes{id price{amount}}}}}', { h: HANDLE, c: CUSTOM_HANDLE }).then(function (d) {
+    var nodes = d && d.data && d.data.product ? d.data.product.variants.nodes : [];
+    nodes.forEach(function (v) {
+      var o = {}; v.selectedOptions.forEach(function (s) { o[s.name] = s.value; });
+      variants[o.Size + '|' + o.Frame] = { id: v.id, price: parseFloat(v.price.amount) };
+    });
+    var a = d && d.data && d.data.addon && d.data.addon.variants.nodes[0];
+    if (a) customVariant = { id: a.id, price: parseFloat(a.price.amount) };
+    refresh();
+  }).catch(function () {}).finally(function () {
+    track('track', 'ViewContent', { content_ids: [PRODUCT_ID], content_type: 'product', content_name: 'Custom Terrain Map', value: unitPrice(), currency: 'USD' });
+  });
+
+  function priceOf(k) { var v = variants[k]; return v ? v.price : FALLBACK[k]; }
+  function key() { return digital() ? DIGITAL : state.size + '|' + state.frame; }
+  function unitPrice() { return priceOf(key()); }
+  function customPrice() { return custom() ? (customVariant ? customVariant.price : FALLBACK.custom) : 0; }
+  function extraPrice() { return Math.round(unitPrice() * (1 - EXTRA.off) * 100) / 100; }
+  function total() { return unitPrice() + customPrice() + (state.extra ? extraPrice() : 0); }
+  function noun() { return digital() ? 'file' : 'print'; }
+
+  /* Colors */
+  function rgb(h) { return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; }
+  function hex(c) { return '#' + c.map(function (v) { return ('0' + Math.round(Math.max(0, Math.min(255, v))).toString(16)).slice(-2); }).join(''); }
+  function mix(a, b, t) { return a.map(function (x, i) { return x + (b[i] - x) * t; }); }
+  // Same derivation as make_print.custom_palette, so the preview matches the print
+  function customPalette() {
+    var low = rgb($('cLow').value), high = rgb($('cHigh').value), paper = rgb($('cPaper').value);
+    var lum = (0.2126 * paper[0] + 0.7152 * paper[1] + 0.0722 * paper[2]) / 255;
+    var ink = hex(lum > 0.5 ? mix(low, [0, 0, 0], 0.35) : high);
+    return { ramp: [hex(low), hex(mix(low, high, 0.4)), hex(mix(low, high, 0.75)), hex(high)], water: $('cWater').value, road: ink, bg: $('cPaper').value, ink: ink, pin: ink };
+  }
+  function pal() { return custom() ? customPalette() : PALETTES[state.palette]; }
+  function customColors() { return [$('cLow').value, $('cHigh').value, $('cWater').value, $('cPaper').value].join(','); }
+
+  /* Option cards */
+  function option(name, desc, lead) {
+    var b = document.createElement('button');
+    b.className = 'opt shell'; b.type = 'button';
+    b.innerHTML = '<span class="core">' + lead + '<span><span class="name">' + esc(name) + '</span><span class="desc">' + esc(desc) + '</span></span><span class="cost"></span></span>';
+    return b;
+  }
+  function gradient(p) { return 'linear-gradient(135deg,' + p.ramp[0] + ' 0%,' + p.ramp[1] + ' 40%,' + p.ramp[2] + ' 70%,' + p.ramp[3] + ' 100%)'; }
+  function select(group, b) { group.querySelectorAll('.opt').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); }
+
+  var styleCards = {};
+  [['Relief', 'Shaded relief', 'Light and shadow across every hill and hollow.', '<span class="glyph"><svg viewBox="0 0 30 30"><path d="M3 22l7-9 5 6 4-4 8 7"/><path d="M10 13l2 6M19 15l1 4" opacity=".5"/></svg></span>'],
+   ['Contour', 'Contour lines', 'Flowing lines with small heights in feet.', '<span class="glyph"><svg viewBox="0 0 30 30"><path d="M5 20c4-8 10-12 20-10"/><path d="M8 24c5-7 10-9 17-7"/><path d="M12 15c3-3 6-4 9-3"/></svg></span>']].forEach(function (s) {
+    var b = option(s[1], s[2], s[3]);
+    b.setAttribute('aria-pressed', state.style === s[0]);
+    b.onclick = function () { if (state.style === s[0]) return; state.style = s[0]; select($('styles'), b); restyle(); };
+    styleCards[s[0]] = b; $('styles').appendChild(b);
+  });
+
+  var paletteTiles = {};
+  Object.keys(PALETTES).concat(['Custom']).forEach(function (name) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'pal' + (name === 'Custom' ? ' custom' : '');
+    b.innerHTML = '<i' + (name === 'Custom' ? '' : ' style="background:' + gradient(PALETTES[name]) + '"') + '></i>' + name + (name === 'Custom' ? '<small>Premium</small>' : '');
+    b.setAttribute('aria-pressed', state.palette === name);
+    b.onclick = function () { choosePalette(name); };
+    paletteTiles[name] = b; $('palettes').appendChild(b);
+  });
+  function choosePalette(name) {
+    if (state.palette === name) return;
+    state.palette = name;
+    Object.keys(paletteTiles).forEach(function (n) { paletteTiles[n].setAttribute('aria-pressed', n === name); });
+    $('palName').textContent = name;
+    $('customOpts').classList.toggle('shut', name !== 'Custom');
+    if (state.extra === name) state.extra = null;
+    restyle();
+  }
+  // Dragging around the color wheel repaints straight away; no pause for every nudge
+  var colorFrame;
+  ['cLow', 'cHigh', 'cWater', 'cPaper'].forEach(function (id) {
+    $(id).addEventListener('input', function () { cancelAnimationFrame(colorFrame); colorFrame = requestAnimationFrame(function () { paint(); refresh(); }); });
+  });
+  $('roadsOn').addEventListener('change', function () { state.roads = this.checked; restyle(); });
+
+  var formatCards = {};
+  [['print', 'Print', 'Laser printed on high quality paper, rolled or framed, shipped to you.', '<span class="glyph"><i class="fr" style="width:24px;height:32px"></i></span>'],
+   ['digital', 'Digital file', 'A high resolution file by email. No printing, no shipping.', '<span class="glyph"><i class="file" style="width:24px;height:32px"></i></span>']].forEach(function (f) {
+    var b = option(f[1], f[2], f[3]);
+    b.setAttribute('aria-pressed', state.format === f[0]);
+    b.onclick = function () {
+      state.format = f[0]; select($('formats'), b);
+      $('printOpts').classList.toggle('shut', digital()); $('fileOpts').classList.toggle('shut', !digital());
+      $('frame').classList.toggle('framed', !digital() && state.frame !== 'Unframed');
+      refresh();
+    };
+    formatCards[f[0]] = b; $('formats').appendChild(b);
+  });
+
+  SIZES.forEach(function (s, i) {
+    var w = [22, 28, 34][i];
+    var b = option(s, SIZE_INFO[s].cm + '. ' + SIZE_INFO[s].desc, '<span class="glyph"><i style="width:' + w * 0.75 + 'px;height:' + w + 'px"></i></span>');
+    b.setAttribute('aria-pressed', state.size === s);
+    b.onclick = function () { state.size = s; select($('sizes'), b); refresh(); };
+    $('sizes').appendChild(b);
+  });
+  FRAMES.forEach(function (f) {
+    var b = option(f, FRAME_INFO[f], '<span class="glyph"><i class="' + (f === 'Unframed' ? '' : 'fr') + '" style="width:24px;height:32px"></i></span>');
+    b.setAttribute('aria-pressed', state.frame === f);
+    b.onclick = function () { state.frame = f; select($('frames'), b); $('frame').classList.toggle('framed', f !== 'Unframed'); refresh(); };
+    $('frames').appendChild(b);
+  });
+
+  /* Everything that shows a choice; prices appear only on the review step */
+  function refresh() {
+    var name = STEPS[step][0];
+    $('sum').classList.toggle('off', name !== 'review');
+    $('price').textContent = money(total());
+    $('sumLabel').textContent = 'Total';
+    $('caption').innerHTML = esc(state.palette) + '<i></i>' + esc(STYLES[state.style]) + '<i></i>' + (digital() ? 'Digital file' : esc(state.size));
+    var late = (name === 'format' || name === 'review') && !digital();
+    $('frame').style.setProperty('--scale', late ? SIZE_INFO[state.size].scale : 1);
+    if (name === 'review') review();
+  }
+
+  function words() {
+    $('t1').textContent = $('title').value.toUpperCase() || ' ';
+    $('t2').textContent = $('sub').value.toUpperCase();
+    var ns = state.lat >= 0 ? 'N' : 'S', ew = state.lon < 0 ? 'W' : 'E';
+    $('t3').innerHTML = $('coords').checked ? Math.abs(state.lat).toFixed(4) + '° ' + ns + ' &nbsp; ' + Math.abs(state.lon).toFixed(4) + '° ' + ew : '';
+    placePin();
+  }
+  ['title', 'sub'].forEach(function (id) { $(id).addEventListener('input', words); });
+  ['coords', 'pinOn'].forEach(function (id) { $(id).addEventListener('change', words); });
+
+  /* Steps */
+  STEPS.forEach(function (s, i) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = s[1]; b.setAttribute('aria-label', 'Step ' + (i + 1) + ', ' + s[1]);
+    b.onclick = function () { if (i <= seen) go(i); };
+    $('rail').appendChild(b);
+  });
+  function setNext(text) { $('nextLabel').textContent = text; }
+  function go(i) {
+    var prev = step;
+    step = Math.max(0, Math.min(STEPS.length - 1, i)); seen = Math.max(seen, step);
+    var name = STEPS[step][0];
+    document.querySelectorAll('.panel').forEach(function (p) { p.classList.toggle('on', p.dataset.step === name); });
+    $('rail').querySelectorAll('button').forEach(function (b, j) {
+      b.classList.toggle('seen', j <= seen);
+      b.disabled = j > seen;
+      if (j === step) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+    });
+    $('stepNum').textContent = '0' + (step + 1);
+    $('stepName').textContent = STEPS[step][1];
+    $('stepOf').textContent = (step + 1) + ' of ' + STEPS.length;
+    $('stage').dataset.step = name;
+    $('back').hidden = step === 0;
+    setNext(step === STEPS.length - 1 ? 'Checkout' : 'Continue to ' + STEPS[step + 1][1]);
+    $('buyErr').textContent = '';
+    refresh();
+    // Bring the new step into view: under the pinned map on phones, at the console top on desktop
+    if (prev !== step) {
+      var top = $('consoleCore').getBoundingClientRect().top;
+      if (mobile()) window.scrollTo({ top: window.scrollY + $('panels').getBoundingClientRect().top - $('stage').offsetHeight - $('rail').parentNode.offsetHeight - 10, behavior: 'smooth' });
+      else if (top < 0 || top > window.innerHeight * 0.5) window.scrollTo({ top: window.scrollY + top - 20, behavior: 'smooth' });
+    }
+  }
+  $('next').onclick = function () { if (step === STEPS.length - 1) offerPair(); else go(step + 1); };
+  $('back').onclick = function () { go(step - 1); };
+
+  var TICK = '<svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7"/></svg>';
+  function review() {
+    $('reviewTitle').textContent = digital() ? 'Your file.' : 'Your print.';
+    var rows = [
+      ['Place', esc(state.place) + '<small>' + ($('coords').checked ? 'Coordinates shown' : 'No coordinates') + ', ' + ($('pinOn').checked ? 'spot marked' : 'no pin') + '</small>', 0],
+      ['View', (state.span / 1000).toFixed(1).replace('.0', '') + ' km across' + (moved() ? '<small>Framed by hand</small>' : '<small>Centered on the place</small>'), 1],
+      ['Style', esc(STYLES[state.style]) + ' in ' + esc(state.palette) + '<small>' + (state.roads ? 'With roads' : 'Without roads') + (custom() ? ', your own colors' : '') + '</small>', 2],
+      ['Words', esc($('title').value.toUpperCase() || 'No title') + ($('sub').value.trim() ? '<small>' + esc($('sub').value.toUpperCase()) + '</small>' : ''), 3],
+      ['Format', digital() ? 'Digital file<small>7200 x 9600 pixels, emailed</small>' : esc(state.size) + '<small>' + SIZE_INFO[state.size].cm + ', ' + esc(state.frame.toLowerCase()) + '</small>', 4]
+    ];
+    $('summary').innerHTML = rows.map(function (r) {
+      return '<div class="row"><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd><button type="button" data-go="' + r[2] + '">Edit</button></div>';
+    }).join('');
+    $('summary').querySelectorAll('[data-go]').forEach(function (b) { b.onclick = function () { go(+b.dataset.go); }; });
+    var what = digital() ? 'Digital file' : 'Print, ' + esc(state.size) + ', ' + esc(state.frame.toLowerCase());
+    $('bill').innerHTML = '<div><span>' + what + '</span><span>' + money(unitPrice()) + '</span></div>' +
+      (custom() ? '<div><span>Custom palette</span><span>' + money(customPrice()) + '</span></div>' : '') +
+      (digital() ? '' : '<div><span>Shipping</span><span>At checkout</span></div>') +
+      '<div class="total"><span>Total</span><span>' + money(total()) + '</span></div>';
+    $('promise').innerHTML = (digital()
+      ? ['Your file is emailed within a day, rendered at full resolution from USGS lidar.', 'Ask for a change any time after it arrives.']
+      : ['A watermarked preview is emailed to you within a day.', 'You have 24 hours from that email to deny the file and ask for changes. After that, it heads to printing.', 'Laser printed on high quality paper and shipped within the United States in 5 to 7 days.']
+    ).map(function (t) { return '<div>' + TICK + t + '</div>'; }).join('');
+  }
+  function moved() { return Math.abs(state.clat - state.lat) > 1e-6 || Math.abs(state.clon - state.lon) > 1e-6; }
+
+  /* The pair offer: once, just before checkout */
+  var pairPick = null;
+  function offerPair() {
+    if (pairAsked) { checkout(); return; }
+    var names = Object.keys(PALETTES).filter(function (n) { return n !== state.palette; });
+    pairPick = names[(Object.keys(PALETTES).indexOf(state.palette) + 1) % names.length] || names[0];
+    $('pairPals').innerHTML = '';
+    names.forEach(function (n) {
+      var e = document.createElement('button');
+      e.className = 'swatch'; e.type = 'button'; e.title = n; e.setAttribute('aria-label', n);
+      e.innerHTML = '<i style="background:' + gradient(PALETTES[n]) + '"></i>';
+      e.setAttribute('aria-pressed', n === pairPick);
+      e.onclick = function () { pairPick = n; $('pairPals').querySelectorAll('.swatch').forEach(function (x) { x.setAttribute('aria-pressed', x === e); }); $('pairName').textContent = n; };
+      $('pairPals').appendChild(e);
+    });
+    $('pairName').textContent = pairPick;
+    $('pairOff').textContent = Math.round(EXTRA.off * 100) + '% off';
+    $('pairPrice').textContent = 'Your second ' + noun() + ' is ' + money(extraPrice()) + ' instead of ' + money(unitPrice()) + '.';
+    $('pair').classList.add('on');
+    pairAsked = true;
+    setTimeout(function () { $('pairYes').focus(); }, 50);
+  }
+  function closePair() { $('pair').classList.remove('on'); }
+  $('pairYes').onclick = function () { state.extra = pairPick; closePair(); refresh(); checkout(); };
+  $('pairNo').onclick = function () { state.extra = null; closePair(); checkout(); };
+  $('pair').addEventListener('click', function (e) { if (e.target === this) { closePair(); pairAsked = false; } });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && $('pair').classList.contains('on')) { closePair(); pairAsked = false; } });
+
+  /* Address search (Photon) */
+  var timer, results = [];
+  $('addr').addEventListener('input', function () {
+    clearTimeout(timer);
+    var q = this.value.trim();
+    if (q.length < 3) { $('suggest').classList.remove('on'); return; }
+    timer = setTimeout(function () {
+      fetch('https://photon.komoot.io/api/?limit=6&lang=en&lat=42.7&lon=-84.5&q=' + encodeURIComponent(q))
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          results = (d.features || []).filter(function (f) { return f.properties.countrycode === 'US'; });
+          var box = $('suggest'); box.innerHTML = '';
+          if (/^\d/.test(q)) {
+            var ex = document.createElement('button'); ex.type = 'button';
+            ex.innerHTML = '<strong>Use this exact address</strong> ' + esc(q);
+            ex.onclick = function () { exact(q); };
+            box.appendChild(ex);
+          }
+          results.forEach(function (f, i) {
+            var p = f.properties;
+            var main = [p.housenumber, p.street || p.name].filter(Boolean).join(' ') || p.name;
+            var rest = [p.city || p.county, p.state].filter(Boolean).join(', ');
+            var b = document.createElement('button'); b.type = 'button';
+            b.innerHTML = '<strong>' + esc(main) + '</strong> ' + esc(rest);
+            b.onclick = function () { choose(i); };
+            box.appendChild(b);
+          });
+          box.classList.toggle('on', box.children.length > 0);
+          $('addrErr').textContent = box.children.length ? '' : 'No US matches yet. Try adding the city or state.';
+        }).catch(function () { $('addrErr').textContent = 'Search is unavailable right now.'; });
+    }, 260);
+  });
+  $('addr').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); var q = this.value.trim(); if (/^\d/.test(q)) exact(q); else if (results.length) choose(0); }
+  });
+  // US Census geocoder (JSONP): precise for street addresses
+  var STATES = { AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California', CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', DC: 'Washington DC', FL: 'Florida', GA: 'Georgia', HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland', MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri', MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey', NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio', OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina', SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont', VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming' };
+  function exact(q) {
+    $('suggest').classList.remove('on');
+    $('addrErr').textContent = 'Finding address';
+    var cb = 'geo' + Date.now(), s = document.createElement('script');
+    window[cb] = function (d) {
+      delete window[cb]; s.remove();
+      var m = d && d.result && d.result.addressMatches;
+      if (!m || !m.length) { $('addrErr').textContent = 'We could not find that address. Include the city and state, or pick a suggestion.'; return; }
+      var c = m[0].addressComponents;
+      state.place = m[0].matchedAddress;
+      $('addr').value = state.place; $('addrErr').textContent = '';
+      $('title').value = (c.city || '').toUpperCase().slice(0, 22);
+      $('sub').value = (STATES[c.state] || c.state || '').toUpperCase();
+      goTo(m[0].coordinates.y, m[0].coordinates.x);
+    };
+    s.onerror = function () { $('addrErr').textContent = 'Address lookup is unavailable right now.'; };
+    s.src = 'https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?benchmark=Public_AR_Current&format=jsonp&callback=' + cb + '&address=' + encodeURIComponent(q);
+    document.body.appendChild(s);
+  }
+  document.addEventListener('click', function (e) { if (!e.target.closest('.search')) $('suggest').classList.remove('on'); });
+
+  function choose(i) {
+    var f = results[i], p = f.properties;
+    var main = [p.housenumber, p.street || p.name].filter(Boolean).join(' ') || p.name;
+    state.place = [main, p.city || p.county, p.state, p.postcode].filter(Boolean).join(', ');
+    $('addr').value = state.place;
+    $('suggest').classList.remove('on');
+    $('title').value = (p.city || p.name || '').toUpperCase().slice(0, 22);
+    $('sub').value = (p.state || '').toUpperCase();
+    goTo(f.geometry.coordinates[1], f.geometry.coordinates[0]);
+  }
+  function goTo(lat, lon, span) {
+    state.lat = state.clat = lat; state.lon = state.clon = lon; state.span = span || DEFAULT_SPAN;
+    words(); spanUI(); load();
+  }
+  FAVORITES.forEach(function (f) {
+    var b = document.createElement('button');
+    b.className = 'chip'; b.type = 'button';
+    b.innerHTML = '<img src="' + f.img + '" alt="" loading="lazy">' + esc(f.name);
+    b.onclick = function () {
+      state.place = f.place; $('addr').value = f.place; $('addrErr').textContent = '';
+      $('title').value = f.title; $('sub').value = f.sub;
+      goTo(f.lat, f.lon, f.span);
+    };
+    $('chips').appendChild(b);
+  });
+
+  /* The rendering moment: soften the sketch, step through what is happening, then reveal */
+  var busyTimer = null;
+  function busy(ms, lines) {
+    var i = 0, msg = $('busyMsg');
+    $('poster').style.setProperty('--dur', ms + 'ms');
+    $('poster').classList.remove('busy'); void $('poster').offsetWidth; $('poster').classList.add('busy');
+    msg.textContent = lines[0];
+    clearInterval(busyTimer);
+    busyTimer = setInterval(function () {
+      i = Math.min(i + 1, lines.length - 1);
+      msg.style.opacity = 0;
+      setTimeout(function () { msg.textContent = lines[i]; msg.style.opacity = 1; }, 180);
+    }, Math.max(450, ms / lines.length));
+  }
+  function done() { clearInterval(busyTimer); $('poster').classList.remove('busy'); }
+  function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function shadeLine() { return state.style === 'Contour' ? 'Tracing contour lines' : 'Casting light and shadow'; }
+  var styleJob = 0;
+  function restyle() {
+    var my = ++styleJob, ticket = seq;
+    busy(DWELL.restyle, [custom() ? 'Mixing your colors' : 'Mixing the palette', shadeLine()]);
+    refresh();
+    setTimeout(function () { if (my !== styleJob || ticket !== seq) return; paint(); done(); }, DWELL.restyle);
+  }
+
+  /* Web mercator helpers (world pixels at zoom z) */
+  function toWorld(lat, lon, z) {
+    var n = Math.pow(2, z) * 256, r = lat * Math.PI / 180;
+    return [(lon + 180) / 360 * n, (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n];
+  }
+  function toLatLon(x, y, z) {
+    var n = Math.pow(2, z) * 256;
+    return [Math.atan(Math.sinh(Math.PI * (1 - 2 * y / n))) * 180 / Math.PI, x / n * 360 - 180];
+  }
+
+  /* Terrain preview */
+  var W = 600, H = 725;
+  function load() {
+    var my = ++seq; styleJob++;
+    busy(DWELL.load, ['Finding your place', 'Reading the elevation', shadeLine(), 'Setting the type']);
+    var Z = state.span > 9000 ? 12 : state.span > 4000 ? 13 : 14;
+    var c0 = toWorld(state.clat, state.clon, Z), fx = c0[0], fy = c0[1];
+    var mpp = 156543.03 * Math.cos(state.clat * Math.PI / 180) / Math.pow(2, Z);
+    var pw = state.span / mpp, ph = pw * H / W;
+    var x0 = fx - pw / 2, y0 = fy - ph / 2;
+    var tx0 = Math.floor(x0 / 256), ty0 = Math.floor(y0 / 256), tx1 = Math.floor((x0 + pw) / 256), ty1 = Math.floor((y0 + ph) / 256);
+    var cw = (tx1 - tx0 + 1) * 256, ch = (ty1 - ty0 + 1) * 256;
+    var c = document.createElement('canvas'); c.width = cw; c.height = ch;
+    var g = c.getContext('2d');
+    var jobs = [];
+    for (var ty = ty0; ty <= ty1; ty++) for (var tx = tx0; tx <= tx1; tx++) jobs.push(tile(g, Z, tx, ty, (tx - tx0) * 256, (ty - ty0) * 256));
+    var v = { Z: Z, x0: x0, y0: y0, pw: pw, ph: ph };
+    loadVectors(v, my);
+    Promise.all([Promise.all(jobs), wait(DWELL.load)]).then(function () {
+      if (my !== seq) return;
+      var raw = g.getImageData(0, 0, cw, ch).data;
+      var e = new Float32Array(W * H), ox = x0 - tx0 * 256, oy = y0 - ty0 * 256, sx = pw / W, sy = ph / H;
+      for (var j = 0; j < H; j++) for (var i = 0; i < W; i++) {
+        var X = ox + i * sx, Y = oy + j * sy, xi = Math.floor(X), yi = Math.floor(Y), dx = X - xi, dy = Y - yi;
+        var a = h(raw, cw, xi, yi), b = h(raw, cw, xi + 1, yi), cc = h(raw, cw, xi, yi + 1), d = h(raw, cw, xi + 1, yi + 1);
+        e[j * W + i] = a * (1 - dx) * (1 - dy) + b * dx * (1 - dy) + cc * (1 - dx) * dy + d * dx * dy;
+      }
+      elev = { z: e, cell: state.span / W, smooth: null };
+      view = v;
+      resetPan(); paint(); spanUI(); done();
+    }).catch(function () { if (my === seq) { $('addrErr').textContent = 'Could not load terrain for this spot.'; done(); } });
+  }
+  function tile(g, z, x, y, dx, dy) {
+    return new Promise(function (res, rej) {
+      var im = new Image(); im.crossOrigin = 'anonymous';
+      im.onload = function () { g.drawImage(im, dx, dy); res(); };
+      im.onerror = rej;
+      im.src = 'https://elevation-tiles-prod.s3.amazonaws.com/terrarium/' + z + '/' + x + '/' + y + '.png';
+    });
+  }
+  function h(raw, cw, x, y) { var k = (y * cw + x) * 4; return raw[k] * 256 + raw[k + 1] + raw[k + 2] / 256 - 32768; }
+
+  /* Roads and water from Census TIGERweb, the same public data the print uses */
+  var TIGER = 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/';
+  var LAYERS = [['Hydro/MapServer/1', 'area'], ['Hydro/MapServer/0', 'stream'], ['Transportation/MapServer/8', 'road'], ['Transportation/MapServer/6', 'road'], ['Transportation/MapServer/2', 'road']];
+  var ROAD_W = { S1100: 2.4, S1200: 1.4, S1400: 0.7 };
+  function loadVectors(v, my) {
+    vec = null;
+    var a = toLatLon(v.x0, v.y0 + v.ph, v.Z), b = toLatLon(v.x0 + v.pw, v.y0, v.Z);
+    var env = [a[1], a[0], b[1], b[0]].map(function (n) { return n.toFixed(6); }).join(',');
+    var tol = (b[1] - a[1]) / W / 2;
+    Promise.all(LAYERS.map(function (l) {
+      var q = 'geometry=' + env + '&geometryType=esriGeometryEnvelope&inSR=4326&outSR=4326&spatialRel=esriSpatialRelIntersects&outFields=MTFCC&returnGeometry=true&maxAllowableOffset=' + tol.toFixed(7) + '&f=geojson';
+      return fetch(TIGER + l[0] + '/query?' + q).then(function (r) { return r.json(); })
+        .then(function (d) { return (d.features || []).map(function (f) { return { kind: l[1], mtfcc: (f.properties || {}).MTFCC, geom: f.geometry }; }); })
+        .catch(function () { return []; });
+    })).then(function (lists) {
+      if (my !== seq) return;
+      vec = [].concat.apply([], lists).filter(function (f) { return f.geom && (f.kind !== 'road' || ROAD_W[f.mtfcc]); });
+      if (view && elev && !$('poster').classList.contains('busy')) paint();
+    });
+  }
+  function drawVectors(ctx, p, contour) {
+    if (!vec || !view) return;
+    var sx = W / view.pw, sy = H / view.ph, line = p.ramp[3];
+    function pt(c) { var w = toWorld(c[1], c[0], view.Z); return [(w[0] - view.x0) * sx, (w[1] - view.y0) * sy]; }
+    function trace(rings) { rings.forEach(function (r) { r.forEach(function (c, i) { var q = pt(c); if (i) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }); }); }
+    function lines(g) { return g.type === 'LineString' ? [g.coordinates] : g.type === 'MultiLineString' ? g.coordinates : g.type === 'Polygon' ? g.coordinates : g.type === 'MultiPolygon' ? [].concat.apply([], g.coordinates) : []; }
+    ctx.save(); ctx.lineJoin = ctx.lineCap = 'round';
+    vec.forEach(function (f) {
+      if (f.kind !== 'area') return;
+      ctx.beginPath(); trace(lines(f.geom));
+      ctx.globalAlpha = contour ? 0.6 : 0.95; ctx.fillStyle = contour ? p.ramp[1] : p.water; ctx.fill('evenodd');
+      ctx.globalAlpha = 0.6; ctx.strokeStyle = contour ? line : p.road; ctx.lineWidth = 0.4; ctx.stroke();
+    });
+    ctx.globalAlpha = contour ? 0.6 : 1; ctx.strokeStyle = contour ? line : p.water; ctx.lineWidth = 0.9;
+    vec.forEach(function (f) { if (f.kind === 'stream') { ctx.beginPath(); trace(lines(f.geom)); ctx.stroke(); } });
+    if (state.roads) {
+      ctx.globalAlpha = contour ? 0.55 : 0.8; ctx.strokeStyle = contour ? line : p.road;
+      ['S1400', 'S1200', 'S1100'].forEach(function (code) {
+        ctx.lineWidth = (ROAD_W[code] * DEFAULT_SPAN / state.span * 0.8 + 0.2) * (contour ? 0.7 : 1);
+        vec.forEach(function (f) { if (f.kind === 'road' && f.mtfcc === code) { ctx.beginPath(); trace(lines(f.geom)); ctx.stroke(); } });
+      });
+    }
+    ctx.restore();
+  }
+
+  function paint() {
+    var p = pal();
+    $('poster').style.background = p.bg; $('poster').style.color = p.ink;
+    $('pin').style.background = p.pin; $('pin').style.borderColor = p.bg;
+    if (!elev) return;
+    var ctx = $('map').getContext('2d');
+    if (state.style === 'Contour') paintContour(ctx, p); else paintRelief(ctx, p);
+    drawVectors(ctx, p, state.style === 'Contour');
+    placePin();
+  }
+
+  function paintRelief(ctx, p) {
+    var z = elev.z, cell = elev.cell, ex = 5;
+    var lo = Infinity, hi = -Infinity;
+    for (var k = 0; k < z.length; k++) { if (z[k] < lo) lo = z[k]; if (z[k] > hi) hi = z[k]; }
+    var span = Math.max(hi - lo, 1), ramp = p.ramp.map(rgb);
+    // light from the northwest
+    var az = 315 * Math.PI / 180, alt = 40 * Math.PI / 180;
+    var lx = Math.sin(az) * Math.cos(alt), ly = -Math.cos(az) * Math.cos(alt), lz = Math.sin(alt);
+    // cast shadows: march toward the sun
+    var shadow = new Uint8Array(W * H), stepz = Math.tan(18 * Math.PI / 180) * cell * Math.SQRT2 / ex;
+    for (var j = 0; j < H; j++) for (var i = 0; i < W; i++) {
+      var base = z[j * W + i], x = i, y = j, need = base;
+      for (var s = 0; s < 90; s++) {
+        x -= 1; y -= 1; need += stepz;
+        if (x < 0 || y < 0) break;
+        if (z[y * W + x] > need) { shadow[j * W + i] = 1; break; }
+      }
+    }
+    var img = ctx.createImageData(W, H), d = img.data;
+    for (j = 0; j < H; j++) for (i = 0; i < W; i++) {
+      var k2 = j * W + i;
+      var zl = z[j * W + Math.max(i - 1, 0)], zr = z[j * W + Math.min(i + 1, W - 1)];
+      var zu = z[Math.max(j - 1, 0) * W + i], zd = z[Math.min(j + 1, H - 1) * W + i];
+      var nx = -(zr - zl) * ex / (2 * cell), ny = -(zd - zu) * ex / (2 * cell);
+      var len = Math.sqrt(nx * nx + ny * ny + 1);
+      var shade = Math.max(0, (nx * lx + ny * ly + lz) / len);
+      var t = (z[k2] - lo) / span * 3, seg = Math.min(Math.floor(t), 2), f = t - seg;
+      var a = ramp[seg], b = ramp[seg + 1];
+      var light = 0.45 + 0.75 * shade;
+      if (shadow[k2]) light *= 0.72;
+      for (var ch = 0; ch < 3; ch++) d[k2 * 4 + ch] = Math.min(255, (a[ch] + (b[ch] - a[ch]) * f) * light);
+      d[k2 * 4 + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+
+  /* Contour style: the same smoothing and intervals as make_print.py, traced with marching squares */
+  function boxBlur(src, r) {
+    var tmp = new Float32Array(W * H), out = new Float32Array(W * H), n = 2 * r + 1, i, j, acc;
+    for (j = 0; j < H; j++) {
+      acc = 0;
+      for (i = -r; i <= r; i++) acc += src[j * W + Math.min(W - 1, Math.max(0, i))];
+      for (i = 0; i < W; i++) {
+        tmp[j * W + i] = acc / n;
+        acc += src[j * W + Math.min(W - 1, i + r + 1)] - src[j * W + Math.max(0, i - r)];
+      }
+    }
+    for (i = 0; i < W; i++) {
+      acc = 0;
+      for (j = -r; j <= r; j++) acc += tmp[Math.min(H - 1, Math.max(0, j)) * W + i];
+      for (j = 0; j < H; j++) {
+        out[j * W + i] = acc / n;
+        acc += tmp[Math.min(H - 1, j + r + 1) * W + i] - tmp[Math.max(0, j - r) * W + i];
+      }
+    }
+    return out;
+  }
+  function interval(spanFt) {
+    var steps = [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000];
+    for (var i = 0; i < steps.length; i++) if (spanFt / steps[i] <= 22) return steps[i];
+    return 2000;
+  }
+  function paintContour(ctx, p) {
+    // Smooth to about 1/120 of the map width, like the print; three box passes approximate a gaussian
+    if (!elev.smooth) {
+      var r = Math.max(1, Math.round(W / 120 * 0.9)), zs = elev.z;
+      for (var pass = 0; pass < 3; pass++) zs = boxBlur(zs, r);
+      for (var q = 0; q < zs.length; q++) zs[q] *= 3.28084;
+      elev.smooth = zs;
+    }
+    var z = elev.smooth, lo = Infinity, hi = -Infinity, k;
+    for (k = 0; k < z.length; k++) { if (z[k] < lo) lo = z[k]; if (z[k] > hi) hi = z[k]; }
+    var stepFt = interval(hi - lo), line = p.ramp[3], labels = [], used = {};
+    ctx.fillStyle = p.ramp[0]; ctx.fillRect(0, 0, W, H);
+    ctx.save(); ctx.strokeStyle = line; ctx.lineJoin = ctx.lineCap = 'round';
+    for (var lv = Math.ceil(lo / stepFt) * stepFt; lv <= hi; lv += stepFt) {
+      var major = Math.round(lv / stepFt) % 5 === 0;
+      ctx.beginPath();
+      march(z, lv, ctx, major ? function (x, y) {
+        var key = Math.floor(x / 120) + ',' + Math.floor(y / 120);
+        if (used[key] || x < 24 || y < 16 || x > W - 24 || y > H - 16) return;
+        used[key] = 1; labels.push([x, y, lv]);
+      } : null);
+      ctx.globalAlpha = major ? 1 : 0.85; ctx.lineWidth = major ? 1.3 : 0.6; ctx.stroke();
+    }
+    // Small heights on the heavier lines, set into a gap in the line
+    ctx.globalAlpha = 1; ctx.font = '8px "Geist Mono", ui-monospace, monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    labels.forEach(function (l) {
+      var i = Math.round(l[0]), j = Math.round(l[1]);
+      var gx = z[j * W + Math.min(W - 1, i + 1)] - z[j * W + Math.max(0, i - 1)];
+      var gy = z[Math.min(H - 1, j + 1) * W + i] - z[Math.max(0, j - 1) * W + i];
+      var ang = Math.atan2(gx, -gy);
+      if (ang > Math.PI / 2) ang -= Math.PI; if (ang < -Math.PI / 2) ang += Math.PI;
+      var text = String(Math.round(l[2])), w = ctx.measureText(text).width + 6;
+      ctx.save(); ctx.translate(l[0], l[1]); ctx.rotate(ang);
+      ctx.fillStyle = p.ramp[0]; ctx.fillRect(-w / 2, -4.5, w, 9);
+      ctx.fillStyle = line; ctx.fillText(text, 0, 0.5);
+      ctx.restore();
+    });
+    ctx.restore();
+  }
+  // Marching squares for one level: adds the segments to the current path, reports one point per cell crossed
+  function march(z, l, ctx, mark) {
+    for (var j = 0; j < H - 1; j++) {
+      var row = j * W;
+      for (var i = 0; i < W - 1; i++) {
+        var a = z[row + i], b = z[row + i + 1], c = z[row + W + i + 1], d = z[row + W + i];
+        var idx = (a > l ? 8 : 0) | (b > l ? 4 : 0) | (c > l ? 2 : 0) | (d > l ? 1 : 0);
+        if (idx === 0 || idx === 15) continue;
+        var tx = i + (l - a) / (b - a), ry = j + (l - b) / (c - b), bx = i + (l - d) / (c - d), ly = j + (l - a) / (d - a);
+        switch (idx) {
+          case 1: case 14: ctx.moveTo(i, ly); ctx.lineTo(bx, j + 1); break;
+          case 2: case 13: ctx.moveTo(bx, j + 1); ctx.lineTo(i + 1, ry); break;
+          case 3: case 12: ctx.moveTo(i, ly); ctx.lineTo(i + 1, ry); break;
+          case 4: case 11: ctx.moveTo(tx, j); ctx.lineTo(i + 1, ry); break;
+          case 6: case 9: ctx.moveTo(tx, j); ctx.lineTo(bx, j + 1); break;
+          case 7: case 8: ctx.moveTo(tx, j); ctx.lineTo(i, ly); break;
+          case 5: ctx.moveTo(tx, j); ctx.lineTo(i + 1, ry); ctx.moveTo(i, ly); ctx.lineTo(bx, j + 1); break;
+          case 10: ctx.moveTo(tx, j); ctx.lineTo(i, ly); ctx.moveTo(bx, j + 1); ctx.lineTo(i + 1, ry); break;
+        }
+        if (mark) mark(i + 0.5, j + 0.5);
+      }
+    }
+  }
+
+  // The pin marks the place itself, which can sit off center once the map is dragged
+  function placePin() {
+    var pin = $('pin'), fx = 0.5, fy = 0.5;
+    if (view) {
+      var w = toWorld(state.lat, state.lon, view.Z);
+      fx = (w[0] - view.x0) / view.pw; fy = (w[1] - view.y0) / view.ph;
+    }
+    pin.style.left = fx * 100 + '%'; pin.style.top = fy * 100 + '%';
+    pin.style.opacity = $('pinOn').checked && fx > 0.01 && fx < 0.99 && fy > 0.01 && fy < 0.99 ? 1 : 0;
+  }
+
+  /* Drag to recenter, buttons and slider to set the scope */
+  var drag = null;
+  $('view').addEventListener('pointerdown', function (e) {
+    if (!view) return;
+    drag = { x: e.clientX, y: e.clientY, dx: 0, dy: 0 };
+    this.setPointerCapture(e.pointerId); this.classList.add('drag');
+  });
+  $('view').addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    drag.dx = e.clientX - drag.x; drag.dy = e.clientY - drag.y;
+    $('pan').style.transform = 'translate(' + drag.dx + 'px,' + drag.dy + 'px)';
+  });
+  function endDrag() {
+    if (!drag) return;
+    var d = drag; drag = null; $('view').classList.remove('drag');
+    if (Math.abs(d.dx) + Math.abs(d.dy) < 3) { resetPan(); return; }
+    var r = $('view').getBoundingClientRect();
+    var c = toWorld(state.clat, state.clon, view.Z);
+    var ll = toLatLon(c[0] - d.dx / r.width * view.pw, c[1] - d.dy / r.height * view.ph, view.Z);
+    state.clat = ll[0]; state.clon = ll[1];
+    load();
+  }
+  $('view').addEventListener('pointerup', endDrag);
+  $('view').addEventListener('pointercancel', endDrag);
+  function resetPan() { $('pan').style.transform = ''; }
+  function zoom(dir) {
+    var i = SPANS.indexOf(state.span) + dir;
+    if (i < 0 || i >= SPANS.length) return;
+    setSpan(SPANS[i]); load();
+  }
+  // Scale the current sketch right away so the change reads instantly, then fetch the new window
+  function setSpan(s) {
+    if (view && elev) $('pan').style.transform = 'scale(' + elev.cell * W / s + ')';
+    state.span = s; spanUI();
+  }
+  var scopeTimer;
+  $('scope').addEventListener('input', function () {
+    setSpan(SPANS[+this.value]);
+    clearTimeout(scopeTimer); scopeTimer = setTimeout(load, 260);
+  });
+  $('zoomIn').onclick = function () { zoom(-1); };
+  $('zoomOut').onclick = function () { zoom(1); };
+  $('recenter').onclick = function () { state.clat = state.lat; state.clon = state.lon; load(); };
+  function spanUI() {
+    var km = (state.span / 1000).toFixed(1).replace('.0', '') + ' km';
+    $('span').textContent = km; $('scopeVal').textContent = km + ' across';
+    $('scope').value = SPANS.indexOf(state.span);
+    $('zoomIn').disabled = state.span === SPANS[0];
+    $('zoomOut').disabled = state.span === SPANS[SPANS.length - 1];
+    $('recenter').hidden = !moved();
+  }
+
+  /* Checkout */
+  function withAdParams(url) {
+    try {
+      var u = new URL(url);
+      new URLSearchParams(sessionStorage.getItem('ad_params') || '').forEach(function (v, k) { u.searchParams.set(k, v); });
+      return u.toString();
+    } catch (e) { return url; }
+  }
+  function checkout() {
+    var v = variants[key()];
+    if (!v || (custom() && !customVariant)) { $('buyErr').textContent = 'The shop is still loading. Try again in a moment.'; pairAsked = false; return; }
+    $('next').disabled = true; setNext('Opening checkout'); $('buyErr').textContent = '';
+    var attrs = [
+      { key: 'Place', value: state.place },
+      { key: 'Coordinates', value: state.lat.toFixed(6) + ', ' + state.lon.toFixed(6) },
+      { key: 'Style', value: state.style },
+      { key: 'Palette', value: state.palette },
+      { key: 'Title', value: $('title').value.toUpperCase() || ' ' },
+      { key: 'Second line', value: $('sub').value.toUpperCase() || ' ' },
+      { key: 'Coordinates shown', value: $('coords').checked ? 'Yes' : 'No' },
+      { key: 'Pin', value: $('pinOn').checked ? 'Yes' : 'No' },
+      { key: 'Roads', value: state.roads ? 'Yes' : 'No' },
+      { key: 'Map center', value: state.clat.toFixed(6) + ', ' + state.clon.toFixed(6) },
+      { key: 'Map width', value: state.span + ' m' }
+    ];
+    if (custom()) attrs.push({ key: 'Custom colors', value: customColors() });
+    var lines = [{ merchandiseId: v.id, quantity: 1, attributes: attrs }];
+    if (custom()) lines.push({ merchandiseId: customVariant.id, quantity: 1, attributes: [{ key: 'For', value: ($('title').value.toUpperCase() || state.place) }, { key: 'Colors', value: customColors() }] });
+    if (state.extra) {
+      lines.push({ merchandiseId: v.id, quantity: 1, attributes: attrs.filter(function (a) { return a.key !== 'Custom colors'; }).map(function (a) {
+        return a.key === 'Palette' ? { key: 'Palette', value: state.extra } : a;
+      }).concat([{ key: 'Add on', value: 'Second palette' }]) });
+    }
+    var maps = state.extra ? 2 : 1;
+    var ev = { content_ids: [PRODUCT_ID], content_type: 'product', contents: [{ id: PRODUCT_ID, quantity: maps }], num_items: maps, value: total(), currency: 'USD' };
+    track('track', 'AddToCart', ev);
+    track('track', 'InitiateCheckout', ev);
+    gql('mutation($l:[CartLineInput!]!,$d:[String!]){cartCreate(input:{lines:$l,discountCodes:$d}){cart{checkoutUrl} userErrors{message}}}', { l: lines, d: state.extra ? [EXTRA.code] : [] })
+      .then(function (d) {
+        var c = d.data && d.data.cartCreate;
+        if (c && c.cart) { window.location.href = withAdParams(c.cart.checkoutUrl); return; }
+        throw new Error((c && c.userErrors[0] && c.userErrors[0].message) || 'Checkout failed');
+      })
+      .catch(function (e) { $('buyErr').textContent = e.message; $('next').disabled = false; setNext('Checkout'); pairAsked = false; });
+  }
+  window.addEventListener('pageshow', function (e) { if (e.persisted) { $('next').disabled = false; setNext('Checkout'); pairAsked = false; } });
+
+  // Arriving from a print on the home page opens in that palette
+  var want = new URLSearchParams(location.search).get('palette');
+  if (want && PALETTES[want]) { state.palette = want; Object.keys(paletteTiles).forEach(function (n) { paletteTiles[n].setAttribute('aria-pressed', n === want); }); $('palName').textContent = want; }
+
+  $('addr').value = state.place;
+  words(); paint(); spanUI(); go(0); load();
+})();
+</script>
+</body>
+</html>
