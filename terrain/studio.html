@@ -37,7 +37,7 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Cormorant+Garamond:wght@400&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=202610312239">
+<link rel="stylesheet" href="style.css?v=202611011810">
 <style>
 .top { display: flex; align-items: center; justify-content: space-between; max-width: 1600px; margin: 0 auto; padding: 22px var(--gut) 0; }
 .top .back { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--mute); transition: color 0.4s; }
@@ -930,7 +930,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     function lines(g) { return g.type === 'LineString' ? [g.coordinates] : g.type === 'MultiLineString' ? g.coordinates : g.type === 'Polygon' ? g.coordinates : g.type === 'MultiPolygon' ? [].concat.apply([], g.coordinates) : []; }
     ctx.save(); ctx.lineJoin = ctx.lineCap = 'round';
     vec.forEach(function (f) {
-      if (f.kind !== 'area') return;
+      // Census files glaciers (H2081) as water; skip them so the terrain under them shows
+      if (f.kind !== 'area' || f.mtfcc === 'H2081') return;
       ctx.beginPath(); trace(lines(f.geom));
       ctx.globalAlpha = contour ? 0.6 : 0.95; ctx.fillStyle = contour ? p.ramp[1] : p.water; ctx.fill('evenodd');
       ctx.globalAlpha = 0.6; ctx.strokeStyle = contour ? line : p.road; ctx.lineWidth = 0.4; ctx.stroke();
