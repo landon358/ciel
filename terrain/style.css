@@ -3,7 +3,7 @@
   --bg: #0a0908; --bg2: #100e0c; --core: #14110f; --core2: #1a1613;
   --linen: #f3eee9; --mute: rgba(243, 238, 233, 0.56); --faint: rgba(243, 238, 233, 0.32);
   --hair: rgba(243, 238, 233, 0.07); --hair2: rgba(243, 238, 233, 0.13); --thatch: #b2968a;
-  --serif: "Cormorant Garamond", Georgia, serif;
+  --serif: "Bodoni Moda", Didot, "Bodoni 72", Georgia, serif;
   --sans: "Geist", ui-sans-serif, system-ui, sans-serif;
   --mono: "Geist Mono", ui-monospace, Menlo, monospace;
   --spring: cubic-bezier(0.32, 0.72, 0, 1);
@@ -26,7 +26,7 @@ img { display: block; max-width: 100%; }
 ::selection { background: var(--linen); color: var(--bg); }
 :focus-visible { outline: 1px solid var(--thatch); outline-offset: 3px; }
 
-.display { font-family: var(--serif); font-weight: 300; font-style: italic; letter-spacing: -0.02em; line-height: 0.95; }
+.display { font-family: var(--serif); font-weight: 400; font-style: italic; letter-spacing: -0.02em; line-height: 1; font-optical-sizing: auto; }
 .lede { color: var(--mute); font-size: 17px; line-height: 1.65; max-width: 44ch; }
 .shell { padding: var(--pad); border-radius: var(--r); background: rgba(243,238,233,0.025); box-shadow: inset 0 0 0 1px var(--hair); }
 .core { border-radius: calc(var(--r) - var(--pad)); background: var(--core); box-shadow: inset 0 1px 1px rgba(255,255,255,0.06), inset 0 0 0 1px rgba(255,255,255,0.025); }

@@ -21,7 +21,7 @@
 <meta name="twitter:image" content="https://cieldesign.shop/terrain/og.jpg">
 <script>
 /* Meta pixel for this site only. Paste the dataset ID from Events Manager; nothing loads while it is empty. */
-window.META_PIXEL_ID = '';
+window.META_PIXEL_ID = '1076965738726389';
 if (window.META_PIXEL_ID) {
   !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
   fbq('init', window.META_PIXEL_ID);
@@ -36,8 +36,8 @@ try {
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=202610291011">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Cormorant+Garamond:wght@400&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=202610312239">
 <style>
 .top { display: flex; align-items: center; justify-content: space-between; max-width: 1600px; margin: 0 auto; padding: 22px var(--gut) 0; }
 .top .back { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--mute); transition: color 0.4s; }
@@ -51,17 +51,17 @@ try {
 .stage > .core::after { content: ""; position: absolute; left: 18%; right: 18%; bottom: 10%; height: 60px; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(0,0,0,0.45), transparent 70%); pointer-events: none; }
 .frame { position: relative; z-index: 1; width: min(100%, 540px, calc((100dvh - 220px) * 0.75)); transform: scale(var(--scale, 1)); transition: transform 0.9s var(--spring), padding 0.6s var(--spring), background 0.6s var(--spring); box-shadow: 0 50px 90px -30px rgba(0,0,0,0.7); }
 .frame.framed { padding: 14px; background: linear-gradient(145deg, #23201d, #070605); box-shadow: 0 50px 90px -30px rgba(0,0,0,0.75), inset 0 0 0 1px rgba(255,255,255,0.06); }
-.poster { position: relative; aspect-ratio: 3 / 4; container-type: inline-size; transition: background 0.5s var(--spring), color 0.5s var(--spring); overflow: hidden; }
+.poster { --poster: "Cormorant Garamond", Garamond, Georgia, serif; position: relative; aspect-ratio: 3 / 4; container-type: inline-size; transition: background 0.5s var(--spring), color 0.5s var(--spring); overflow: hidden; }
 .view { position: absolute; left: 7%; top: 5%; width: 86%; height: 78%; overflow: hidden; cursor: grab; touch-action: none; }
 .view.drag { cursor: grabbing; }
 .pan { position: absolute; inset: 0; will-change: transform; }
 .pan canvas { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity 0.5s; }
 .poster .pin { position: absolute; left: 50%; top: 50%; width: 3cqw; height: 3cqw; border-radius: 50%; transform: translate(-50%, -50%); border: 0.58cqw solid; transition: opacity 0.3s; pointer-events: none; }
-/* Words sit at fixed positions like the print (title, second line, coordinates), so turning a line
+/* Words sit at fixed positions and in the same Cormorant Garamond as the print (title, second line, coordinates), so turning a line
    on or off never pushes the title into the map */
 .poster .words { position: absolute; left: 0; right: 0; top: 85.1%; text-align: center; }
-.poster .t1 { font: 400 7.4cqw/1 var(--serif); letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: clip; padding: 0 6%; }
-.poster .t2 { font: 400 2.16cqw/1 var(--serif); letter-spacing: 0.08em; margin-top: 0.8cqw; min-height: 2.16cqw; }
+.poster .t1 { font: 400 7.4cqw/1 var(--poster); letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: clip; padding: 0 6%; }
+.poster .t2 { font: 400 2.16cqw/1 var(--poster); letter-spacing: 0.08em; margin-top: 0.8cqw; min-height: 2.16cqw; }
 .poster .t3 { font: 400 1.7cqw/1 var(--mono); opacity: 0.75; margin-top: 1.5cqw; letter-spacing: 0.04em; }
 /* The rendering moment: the sketch softens while a status line and a hairline progress bar run */
 .pan canvas { transition: opacity 0.6s var(--spring), filter 0.8s var(--spring), transform 1.2s var(--spring); }
@@ -74,11 +74,8 @@ try {
 .busy .loading i b { transition: transform var(--dur, 1.8s) cubic-bezier(0.4, 0, 0.2, 1); transform: scaleX(0.92); }
 .under { position: relative; z-index: 1; width: min(100%, 540px); height: 44px; margin-top: 28px; }
 .under > * { position: absolute; inset: 0; transition: opacity 0.5s var(--spring), transform 0.5s var(--spring); }
-.caption { display: flex; justify-content: center; align-items: center; gap: 12px; font: 400 11px/1 var(--mono); letter-spacing: 0.06em; color: var(--mute); text-transform: uppercase; }
-.caption i { width: 3px; height: 3px; border-radius: 50%; background: var(--faint); }
 .mapbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 4px 0 18px; border-radius: 999px; background: rgba(10,9,8,0.4); box-shadow: inset 0 0 0 1px var(--hair2); font-size: 12px; color: var(--mute); opacity: 0; transform: translateY(8px); pointer-events: none; }
 .stage[data-step="view"] .mapbar { opacity: 1; transform: none; pointer-events: auto; }
-.stage[data-step="view"] .caption { opacity: 0; }
 .mapbar .zoom { display: flex; gap: 4px; align-items: center; }
 .mapbar .round { width: 36px; height: 36px; }
 .mapbar .round svg { width: 11px; height: 11px; }
@@ -91,7 +88,7 @@ try {
 .console > .core { display: flex; flex-direction: column; min-height: calc(100dvh - 40px); }
 .progress { padding: 30px 30px 0; }
 .progress .now { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
-.progress .now strong { font: 300 italic 44px/1 var(--serif); letter-spacing: -0.02em; }
+.progress .now strong { font: 400 italic 38px/1 var(--serif); letter-spacing: -0.02em; }
 .progress .now strong span { color: var(--faint); margin-right: 10px; }
 .progress .now small { font: 400 11px/1 var(--mono); color: var(--faint); letter-spacing: 0.04em; }
 .segs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 22px; }
@@ -110,7 +107,7 @@ try {
 .panel.on > * { animation: rise 0.9s var(--out) both; }
 .panel.on > *:nth-child(2) { animation-delay: 60ms; } .panel.on > *:nth-child(3) { animation-delay: 120ms; } .panel.on > *:nth-child(n+4) { animation-delay: 180ms; }
 @keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
-.panel h1 { font-size: clamp(40px, 3.6vw, 56px); margin-bottom: 14px; }
+.panel h1 { font-size: clamp(34px, 3vw, 48px); margin-bottom: 14px; }
 .panel .lede { font-size: 15px; }
 .field { margin-top: 30px; }
 .label { display: flex; justify-content: space-between; font-size: 13px; color: var(--mute); margin-bottom: 12px; }
@@ -151,7 +148,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .opt:active { transform: scale(0.99); }
 .opt[aria-pressed="true"] { background: rgba(243,238,233,0.07); box-shadow: inset 0 0 0 1px rgba(243,238,233,0.42); }
 .opt[aria-pressed="true"] .core { background: var(--core2); }
-.opt .name { font: 400 25px/1.05 var(--serif); }
+.opt .name { font: 400 22px/1.1 var(--serif); }
 .opt .desc { display: block; margin-top: 5px; font-size: 13px; line-height: 1.5; color: var(--mute); }
 .opt .cost { font: 400 12px/1 var(--mono); color: var(--faint); letter-spacing: 0.02em; white-space: nowrap; transition: color 0.4s; }
 .opt[aria-pressed="true"] .cost { color: var(--linen); }
@@ -194,6 +191,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .extra .core { padding: 20px; }
 .extra[data-on="true"] { box-shadow: inset 0 0 0 1px rgba(243,238,233,0.42); }
 .extra .check { margin-top: 0; color: var(--linen); font-size: 15px; }
+#costNote { font: 400 12px/1.5 var(--mono); color: var(--thatch); margin: 2px 0 26px 4px; letter-spacing: 0.02em; }
 .extra .note { font-size: 13px; color: var(--mute); margin: 10px 0 0 52px; }
 .swatches { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0 0 52px; }
 .swatch { width: 44px; height: 44px; border-radius: 50%; border: 0; box-shadow: inset 0 0 0 1px var(--hair2); cursor: pointer; padding: 5px; background: none; transition: box-shadow 0.4s var(--spring), opacity 0.4s; }
@@ -235,7 +233,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .modal .sheet { --r: 32px; --pad: 7px; width: min(100%, 480px); transform: translateY(24px) scale(0.98); transition: transform 0.7s var(--spring); }
 .modal.on .sheet { transform: none; }
 .modal .sheet > .core { padding: 34px 30px 26px; }
-.modal h2 { font-size: 46px; margin-bottom: 12px; }
+.modal h2 { font-size: 40px; margin-bottom: 12px; }
 .modal .lede { font-size: 15px; }
 .modal .pair-pals { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0 26px; }
 .modal .pair-pals .swatch { margin: 0; }
@@ -255,7 +253,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   .console { margin-top: 0; --r: 26px; --pad: 0px; background: none; box-shadow: none; }
   .console > .core { min-height: 0; background: transparent; box-shadow: none; }
   .progress { padding: 16px var(--gut) 0; }
-  .progress .now strong { font-size: 34px; }
+  .progress .now strong { font-size: 30px; }
   .segs button { font-size: 0; padding-top: 4px; }
   .segs button::before { margin-bottom: 4px; }
   .panels { padding: 30px var(--gut) 24px; }
@@ -301,7 +299,6 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
         </div>
       </div>
       <div class="under">
-        <div class="caption" id="caption"></div>
         <div class="mapbar">
           <span>Drag to frame <button class="reset" id="recenter" type="button" hidden>&nbsp; Recenter</button></span>
           <div class="zoom">
@@ -369,7 +366,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
                 <label class="pick"><input type="color" id="cWater" value="#4f7ea8">Water</label>
                 <label class="pick"><input type="color" id="cPaper" value="#f5efe6">Paper</label>
               </div>
-              <p class="premium">Tap a circle to open the color wheel. A custom palette is a premium option, shown in your total on the final page.</p>
+              <p class="premium">Tap a circle to open the color wheel. Custom colors add <span id="customCost2">$15</span> to any print or file.</p>
             </div></div>
           </div>
           <div class="field">
@@ -392,8 +389,9 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 
         <div class="panel" data-step="format">
           <h1 class="display">Print or file.</h1>
-          <p class="lede">We laser print it on high quality paper and ship it to you, or email you the high resolution file to print however you like.</p>
+          <p class="lede">We print it on heavyweight matte paper and ship it to you, or email you the high resolution file to print however you like.</p>
           <div class="field options" id="formats"></div>
+          <p class="note" id="costNote" hidden></p>
           <div class="collapse" id="printOpts"><div>
             <div class="field">
               <div class="label">Size</div>
@@ -447,6 +445,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   var TOKEN = '9e6e50b006ca52f39041196f55c47b0d';
   var HANDLE = 'custom-terrain-map';
   var CUSTOM_HANDLE = 'custom-color-palette';  // the $15 add on line for a custom palette
+  var STUDIO_VERSION = '2026.10.31';  // written into each order's _config; bump when what the studio sends changes
   var PRODUCT_ID = '8498183897154';
   // Second one in another palette: offered in a popup before checkout, priced by this Shopify discount code
   var EXTRA = { code: 'SECONDPALETTE', off: 0.30 };
@@ -476,7 +475,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   var FRAMES = ['Unframed', 'Black frame'];
   var FRAME_INFO = {
     'Unframed': 'Rolled and shipped in a sturdy tube.',
-    'Black frame': 'Slim black wood frame, ready to hang.'
+    'Black frame': 'Solid oak or ash, shatterproof plexiglass, ready to hang.'
   };
   // The digital file is its own Shopify variant: Size "Digital file", Frame "None"
   var DIGITAL = 'Digital file|None';
@@ -566,7 +565,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   Object.keys(PALETTES).concat(['Custom']).forEach(function (name) {
     var b = document.createElement('button');
     b.type = 'button'; b.className = 'pal' + (name === 'Custom' ? ' custom' : '');
-    b.innerHTML = '<i' + (name === 'Custom' ? '' : ' style="background:' + gradient(PALETTES[name]) + '"') + '></i>' + name + (name === 'Custom' ? '<small>Premium</small>' : '');
+    b.innerHTML = '<i' + (name === 'Custom' ? '' : ' style="background:' + gradient(PALETTES[name]) + '"') + '></i>' + name + (name === 'Custom' ? '<small id="customCost"></small>' : '');
     b.setAttribute('aria-pressed', state.palette === name);
     b.onclick = function () { choosePalette(name); };
     paletteTiles[name] = b; $('palettes').appendChild(b);
@@ -588,7 +587,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   $('roadsOn').addEventListener('change', function () { state.roads = this.checked; restyle(); });
 
   var formatCards = {};
-  [['print', 'Print', 'Laser printed on high quality paper, rolled or framed, shipped to you.', '<span class="glyph"><i class="fr" style="width:24px;height:32px"></i></span>'],
+  [['print', 'Print', 'Heavyweight matte paper, rolled or framed, shipped to you.', '<span class="glyph"><i class="fr" style="width:24px;height:32px"></i></span>'],
    ['digital', 'Digital file', 'A high resolution file by email. No printing, no shipping.', '<span class="glyph"><i class="file" style="width:24px;height:32px"></i></span>']].forEach(function (f) {
     var b = option(f[1], f[2], f[3]);
     b.setAttribute('aria-pressed', state.format === f[0]);
@@ -601,27 +600,42 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     formatCards[f[0]] = b; $('formats').appendChild(b);
   });
 
+  var sizeCards = {}, frameCards = {};
   SIZES.forEach(function (s, i) {
     var w = [22, 28, 34][i];
     var b = option(s, SIZE_INFO[s].cm + '. ' + SIZE_INFO[s].desc, '<span class="glyph"><i style="width:' + w * 0.75 + 'px;height:' + w + 'px"></i></span>');
     b.setAttribute('aria-pressed', state.size === s);
     b.onclick = function () { state.size = s; select($('sizes'), b); refresh(); };
-    $('sizes').appendChild(b);
+    sizeCards[s] = b; $('sizes').appendChild(b);
   });
   FRAMES.forEach(function (f) {
     var b = option(f, FRAME_INFO[f], '<span class="glyph"><i class="' + (f === 'Unframed' ? '' : 'fr') + '" style="width:24px;height:32px"></i></span>');
     b.setAttribute('aria-pressed', state.frame === f);
     b.onclick = function () { state.frame = f; select($('frames'), b); $('frame').classList.toggle('framed', f !== 'Unframed'); refresh(); };
-    $('frames').appendChild(b);
+    frameCards[f] = b; $('frames').appendChild(b);
   });
 
-  /* Everything that shows a choice; prices appear only on the review step */
+  /* Prices on the format step include the custom palette, so each card shows what that choice costs in full */
+  function costs() {
+    var add = customPrice(), set = function (b, n) { b.querySelector('.cost').textContent = n; };
+    var fromPrint = Math.min.apply(null, SIZES.map(function (s) { return priceOf(s + '|' + FRAMES[0]); }));
+    set(formatCards.print, 'From ' + money(fromPrint + add));
+    set(formatCards.digital, money(priceOf(DIGITAL) + add));
+    SIZES.forEach(function (s) { set(sizeCards[s], money(priceOf(s + '|' + state.frame) + add)); });
+    FRAMES.forEach(function (f) { set(frameCards[f], money(priceOf(state.size + '|' + f) + add)); });
+    $('costNote').hidden = !custom();
+    $('costNote').textContent = 'Prices include your custom palette (' + money(add) + ').';
+    var upcharge = money(customVariant ? customVariant.price : FALLBACK.custom);
+    $('customCost').textContent = '+' + upcharge; $('customCost2').textContent = upcharge;
+  }
+
+  /* Everything that shows a choice; the running total appears on the review step */
   function refresh() {
     var name = STEPS[step][0];
+    costs();
     $('sum').classList.toggle('off', name !== 'review');
     $('price').textContent = money(total());
     $('sumLabel').textContent = 'Total';
-    $('caption').innerHTML = esc(state.palette) + '<i></i>' + esc(STYLES[state.style]) + '<i></i>' + (digital() ? 'Digital file' : esc(state.size));
     var late = (name === 'format' || name === 'review') && !digital();
     $('frame').style.setProperty('--scale', late ? SIZE_INFO[state.size].scale : 1);
     if (name === 'review') review();
@@ -694,7 +708,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
       '<div class="total"><span>Total</span><span>' + money(total()) + '</span></div>';
     $('promise').innerHTML = (digital()
       ? ['Your file is emailed within a day, rendered at full resolution from USGS lidar.', 'Ask for a change any time after it arrives.']
-      : ['A watermarked preview is emailed to you within a day.', 'You have 24 hours from that email to deny the file and ask for changes. After that, it heads to printing.', 'Laser printed on high quality paper and shipped within the United States in 5 to 7 days.']
+      : ['A watermarked preview is emailed to you within a day.', 'You have 24 hours from that email to deny the file and ask for changes. After that, it heads to printing.', 'Printed on heavyweight matte paper and shipped within the United States.']
     ).map(function (t) { return '<div>' + TICK + t + '</div>'; }).join('');
   }
   function moved() { return Math.abs(state.clat - state.lat) > 1e-6 || Math.abs(state.clon - state.lon) > 1e-6; }
@@ -1158,12 +1172,25 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
       { key: 'Map width', value: state.span + ' m' }
     ];
     if (custom()) attrs.push({ key: 'Custom colors', value: customColors() });
-    var lines = [{ merchandiseId: v.id, quantity: 1, attributes: attrs }];
+    // The exact, versioned record of this map. Keys starting with "_" stay on the Shopify order but are
+    // hidden from the customer; the fulfillment service renders from this, the readable fields are for people.
+    var config = {
+      v: 1, studio: STUDIO_VERSION, place: state.place,
+      lat: +state.lat.toFixed(6), lon: +state.lon.toFixed(6),
+      center: [+state.clat.toFixed(6), +state.clon.toFixed(6)], width_m: state.span,
+      style: state.style.toLowerCase(), palette: state.palette.toLowerCase(),
+      colors: custom() ? customColors().split(',') : null, roads: state.roads,
+      title: $('title').value.toUpperCase().trim(), subtitle: $('sub').value.toUpperCase().trim(),
+      coords: $('coords').checked, pin: $('pinOn').checked,
+      format: state.format, size: digital() ? null : state.size.replace(' in', '').replace(/ /g, ''), frame: digital() ? null : state.frame
+    };
+    var withConfig = function (list, c) { return list.concat([{ key: '_config', value: JSON.stringify(c) }]); };
+    var lines = [{ merchandiseId: v.id, quantity: 1, attributes: withConfig(attrs, config) }];
     if (custom()) lines.push({ merchandiseId: customVariant.id, quantity: 1, attributes: [{ key: 'For', value: ($('title').value.toUpperCase() || state.place) }, { key: 'Colors', value: customColors() }] });
     if (state.extra) {
-      lines.push({ merchandiseId: v.id, quantity: 1, attributes: attrs.filter(function (a) { return a.key !== 'Custom colors'; }).map(function (a) {
+      lines.push({ merchandiseId: v.id, quantity: 1, attributes: withConfig(attrs.filter(function (a) { return a.key !== 'Custom colors'; }).map(function (a) {
         return a.key === 'Palette' ? { key: 'Palette', value: state.extra } : a;
-      }).concat([{ key: 'Add on', value: 'Second palette' }]) });
+      }).concat([{ key: 'Add on', value: 'Second palette' }]), Object.assign({}, config, { palette: state.extra.toLowerCase(), colors: null })) });
     }
     var maps = state.extra ? 2 : 1;
     var ev = { content_ids: [PRODUCT_ID], content_type: 'product', contents: [{ id: PRODUCT_ID, quantity: maps }], num_items: maps, value: total(), currency: 'USD' };
