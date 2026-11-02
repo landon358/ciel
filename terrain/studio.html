@@ -37,7 +37,7 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Cormorant+Garamond:wght@400&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=202611011938">
+<link rel="stylesheet" href="style.css?v=202611012132">
 <style>
 .top { display: flex; align-items: center; justify-content: space-between; max-width: 1600px; margin: 0 auto; padding: 22px var(--gut) 0; }
 .top .back { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--mute); transition: color 0.4s; }
@@ -483,10 +483,10 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   var DIGITAL = 'Digital file|None';
   var FALLBACK = { '12 x 16 in|Unframed': 49, '12 x 16 in|Black frame': 129, '18 x 24 in|Unframed': 69, '18 x 24 in|Black frame': 169, '24 x 32 in|Unframed': 99, '24 x 32 in|Black frame': 229, 'Digital file|None': 15, custom: 15 };
   var FAVORITES = [
-    { name: 'Half Dome', lat: 37.7459, lon: -119.5332, title: 'HALF DOME', sub: 'YOSEMITE, CALIFORNIA', place: 'Half Dome, Yosemite National Park, California', span: 8000, img: 'assets/print-mono.jpg' },
-    { name: 'Zion Canyon', lat: 37.2690, lon: -112.9480, title: 'ZION', sub: 'UTAH', place: 'Zion Canyon, Utah', span: 8000, img: 'assets/print-desert.jpg' },
-    { name: 'Mount Rainier', lat: 46.8523, lon: -121.7603, title: 'MOUNT RAINIER', sub: 'WASHINGTON', place: 'Mount Rainier, Washington', span: 15000, img: 'assets/print-sage.jpg' },
-    { name: 'Sleeping Bear Dunes', lat: 44.8836, lon: -86.0456, title: 'SLEEPING BEAR', sub: 'MICHIGAN', place: 'Sleeping Bear Dunes, Michigan', span: 3600, img: 'assets/print-midnight.jpg' }
+    { name: 'Half Dome', lat: 37.7459, lon: -119.5332, title: 'HALF DOME', sub: 'YOSEMITE, CALIFORNIA', place: 'Half Dome, Yosemite National Park, California', span: 8000, img: 'assets/print-halfdome.jpg' },
+    { name: 'Zion Canyon', lat: 37.2690, lon: -112.9480, title: 'ZION', sub: 'UTAH', place: 'Zion Canyon, Utah', span: 8000, img: 'assets/print-zion-relief.jpg' },
+    { name: 'Mount Rainier', lat: 46.8523, lon: -121.7603, title: 'MOUNT RAINIER', sub: 'WASHINGTON', place: 'Mount Rainier, Washington', span: 15000, img: 'assets/print-rainier-relief.jpg' },
+    { name: 'Sleeping Bear Dunes', lat: 44.8836, lon: -86.0456, title: 'SLEEPING BEAR', sub: 'MICHIGAN', place: 'Sleeping Bear Dunes, Michigan', span: 3600, img: 'assets/print-sleepingbear.jpg' }
   ];
   // Map width across the print, in meters. The renderer reads the same value from the order.
   var SPANS = [1500, 2000, 2500, 3000, 3600, 4500, 6000, 8000, 10000, 12000, 15000], DEFAULT_SPAN = 3600;
