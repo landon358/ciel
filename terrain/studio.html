@@ -37,7 +37,7 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Cormorant+Garamond:wght@400&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=202611011933">
+<link rel="stylesheet" href="style.css?v=202611011938">
 <style>
 .top { display: flex; align-items: center; justify-content: space-between; max-width: 1600px; margin: 0 auto; padding: 22px var(--gut) 0; }
 .top .back { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--mute); transition: color 0.4s; }
@@ -712,7 +712,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
       '<div class="total"><span>Total</span><span>' + money(total()) + '</span></div>';
     $('promise').innerHTML = (digital()
       ? ['Your file is emailed within a day, rendered at full resolution from USGS lidar.', 'Ask for a change any time after it arrives.']
-      : ['A watermarked preview is emailed to you within a day.', 'You have 24 hours from that email to deny the file and ask for changes. After that, it heads to printing.', 'Printed on heavyweight matte paper and shipped within the United States.', 'Arrives damaged or not as previewed? We reprint it free. <a href="' + POLICY + 'refund-policy" target="_blank" rel="noopener">Returns policy</a>']
+      : ['A watermarked preview is emailed to you within a day.', 'You have 24 hours from that email to deny the file and ask for changes. After that, it heads to printing.', 'Printed on heavyweight matte paper and shipped within the United States.', 'A one of one, made to order, so all sales are final. Defects in workmanship are replaced free. <a href="' + POLICY + 'refund-policy" target="_blank" rel="noopener">Returns policy</a>']
     ).map(function (t) { return '<div>' + TICK + t + '</div>'; }).join('');
   }
   function moved() { return Math.abs(state.clat - state.lat) > 1e-6 || Math.abs(state.clon - state.lon) > 1e-6; }
