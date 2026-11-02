@@ -37,7 +37,7 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Cormorant+Garamond:wght@400&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=202611011810">
+<link rel="stylesheet" href="style.css?v=202611011922">
 <style>
 .top { display: flex; align-items: center; justify-content: space-between; max-width: 1600px; margin: 0 auto; padding: 22px var(--gut) 0; }
 .top .back { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--mute); transition: color 0.4s; }
@@ -292,9 +292,9 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
           </div>
           <div class="loading" id="loading"><span id="busyMsg">Rendering</span><i><b></b></i></div>
           <div class="words">
-            <div class="t1" id="t1">SLEEPING BEAR</div>
-            <div class="t2" id="t2">MICHIGAN</div>
-            <div class="t3" id="t3">44.8836° N &nbsp; 86.0456° W</div>
+            <div class="t1" id="t1">BIG SKY</div>
+            <div class="t2" id="t2">MONTANA</div>
+            <div class="t3" id="t3">45.2590° N &nbsp; 111.3087° W</div>
           </div>
         </div>
       </div>
@@ -303,7 +303,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
           <span>Drag to frame <button class="reset" id="recenter" type="button" hidden>&nbsp; Recenter</button></span>
           <div class="zoom">
             <button class="round" id="zoomOut" type="button" aria-label="Show more area"><svg viewBox="0 0 12 12"><path d="M2 6h8"/></svg></button>
-            <span class="span" id="span">3.6 km</span>
+            <span class="span" id="span">8 km</span>
             <button class="round" id="zoomIn" type="button" aria-label="Show less area"><svg viewBox="0 0 12 12"><path d="M2 6h8M6 2v8"/></svg></button>
           </div>
         </div>
@@ -344,8 +344,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
           <h1 class="display">Frame the view.</h1>
           <p class="lede">Choose how much land the map holds, from a single street to a whole region, then drag it until it sits just right.</p>
           <div class="field">
-            <div class="label">Map scope <b id="scopeVal">3.6 km across</b></div>
-            <input class="range" id="scope" type="range" min="0" max="10" step="1" value="4" aria-label="Map scope">
+            <div class="label">Map scope <b id="scopeVal">8 km across</b></div>
+            <input class="range" id="scope" type="range" min="0" max="10" step="1" value="7" aria-label="Map scope">
             <div class="ticks"><span>Street</span><span>Neighborhood</span><span>Town</span><span>Region</span></div>
           </div>
           <div class="hint"><svg viewBox="0 0 22 22"><path d="M11 3v16M3 11h16M11 3L8.5 5.5M11 3l2.5 2.5M11 19l-2.5-2.5M11 19l2.5-2.5M3 11l2.5-2.5M3 11l2.5 2.5M19 11l-2.5-2.5M19 11l-2.5 2.5"/></svg>
@@ -357,7 +357,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
           <p class="lede">Light and shadow, or flowing contour lines. Then the colors.</p>
           <div class="field options" id="styles"></div>
           <div class="field">
-            <div class="label">Palette <b id="palName">Midnight</b></div>
+            <div class="label">Palette <b id="palName">Ember</b></div>
             <div class="pals" id="palettes"></div>
             <div class="collapse shut" id="customOpts"><div>
               <div class="picks">
@@ -379,11 +379,11 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
           <p class="lede">A name for the place, and a line beneath it. A family name, a date, a first home.</p>
           <div class="field">
             <div class="label">Title</div>
-            <div class="well shell"><input class="input" id="title" maxlength="22" value="SLEEPING BEAR" aria-label="Title"></div>
+            <div class="well shell"><input class="input" id="title" maxlength="22" value="BIG SKY" aria-label="Title"></div>
           </div>
           <div class="field">
             <div class="label">Second line <b>Optional</b></div>
-            <div class="well shell"><input class="input" id="sub" maxlength="32" value="MICHIGAN" aria-label="Second line"></div>
+            <div class="well shell"><input class="input" id="sub" maxlength="32" value="MONTANA" aria-label="Second line"></div>
           </div>
         </div>
 
@@ -492,7 +492,9 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   // How long each preview takes to "render": long enough to feel made, short enough not to drag
   var DWELL = { load: 1900, restyle: 1100 };
 
-  var state = { lat: 44.8836, lon: -86.0456, clat: 44.8836, clon: -86.0456, span: DEFAULT_SPAN, place: 'Sleeping Bear Dunes, Michigan', style: 'Relief', palette: 'Midnight', roads: true, format: 'print', size: '18 x 24 in', frame: 'Unframed', extra: null };
+  // The map the studio opens on
+  var START = { lat: 45.2590, lon: -111.3087, span: 8000, place: 'Big Sky, Montana', palette: 'Ember' };
+  var state = { lat: START.lat, lon: START.lon, clat: START.lat, clon: START.lon, span: START.span, place: START.place, style: 'Relief', palette: START.palette, roads: true, format: 'print', size: '18 x 24 in', frame: 'Unframed', extra: null };
   var variants = {}, customVariant = null;
   var elev = null, view = null, vec = null, seq = 0, step = 0, seen = 0, pairAsked = false;
   var $ = function (id) { return document.getElementById(id); };
@@ -1207,9 +1209,20 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   }
   window.addEventListener('pageshow', function (e) { if (e.persisted) { $('next').disabled = false; setNext('Checkout'); pairAsked = false; } });
 
-  // Arriving from a print on the home page opens in that palette
-  var want = new URLSearchParams(location.search).get('palette');
-  if (want && PALETTES[want]) { state.palette = want; Object.keys(paletteTiles).forEach(function (n) { paletteTiles[n].setAttribute('aria-pressed', n === want); }); $('palName').textContent = want; }
+  // Links from the home page and from ads can open on a specific look:
+  // ?place=mount-rainier&style=contour&palette=sage&pin=off (place is a suggested place's name, any case)
+  var qs = new URLSearchParams(location.search);
+  var cap = function (v) { return v ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : ''; };
+  var want = cap(qs.get('palette'));
+  if (PALETTES[want]) { state.palette = want; Object.keys(paletteTiles).forEach(function (n) { paletteTiles[n].setAttribute('aria-pressed', n === want); }); $('palName').textContent = want; }
+  var look = cap(qs.get('style'));
+  if (styleCards[look]) { state.style = look; select($('styles'), styleCards[look]); }
+  var fav = FAVORITES.filter(function (f) { return f.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') === (qs.get('place') || '').toLowerCase(); })[0];
+  if (fav) {
+    state.lat = state.clat = fav.lat; state.lon = state.clon = fav.lon; state.span = fav.span; state.place = fav.place;
+    $('title').value = fav.title; $('sub').value = fav.sub;
+  }
+  if (qs.get('pin') === 'off') $('pinOn').checked = false;
 
   $('addr').value = state.place;
   words(); paint(); spanUI(); go(0); load();
