@@ -36,9 +36,25 @@ try {
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Cormorant+Garamond:wght@400&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=202611031024">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=gambarino@400&f[]=satoshi@400,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=202611031635">
 <style>
+/* Studio look from the Studio Workbench: Gambarino headings, Satoshi text, black panels, grey accent, white button.
+   Only the studio changes; the home page keeps the shared style.css look. */
+:root {
+  --bg: #000000; --bg2: #0b0b0b; --core: #000000; --core2: #0e0e0e;
+  --linen: #efedeb; --mute: rgba(239, 237, 235, 0.56); --faint: rgba(239, 237, 235, 0.32);
+  --hair: rgba(239, 237, 235, 0.08); --hair2: rgba(239, 237, 235, 0.14); --thatch: #757575;
+  --serif: "Gambarino", Didot, Georgia, serif;
+  --sans: "Satoshi", ui-sans-serif, system-ui, sans-serif;
+}
+body::before { background: radial-gradient(60vw 50vh at 78% 8%, rgba(255,255,255,0.035), transparent 70%); }
+.display, .progress .now strong { font-style: normal; letter-spacing: -0.01em; }
+.cta { background: #ffffff; color: #000000; }
+.cta:hover { background: #e9e9e9; }
+
 .top { display: flex; align-items: center; justify-content: space-between; max-width: 1600px; margin: 0 auto; padding: 22px var(--gut) 0; }
 .top .back { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--mute); transition: color 0.4s; }
 .top .back:hover { color: var(--linen); }
@@ -47,9 +63,9 @@ try {
 .studio-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(400px, 1fr); gap: 20px; align-items: start; max-width: 1600px; margin: 0 auto; padding: 20px var(--gut) 40px; }
 .stage { position: sticky; top: 20px; --r: 34px; --pad: 7px; }
 .stage > .core { position: relative; height: calc(100dvh - 40px); min-height: 560px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: clamp(24px, 3.5vw, 56px); overflow: hidden;
-  background: radial-gradient(ellipse 70% 60% at 50% 40%, #221d19 0%, #15120f 60%, #0f0d0b 100%); }
+  background: radial-gradient(ellipse 70% 60% at 50% 40%, #1a1a1a 0%, #0a0a0a 60%, #000000 100%); }
 .stage > .core::after { content: ""; position: absolute; left: 18%; right: 18%; bottom: 10%; height: 60px; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(0,0,0,0.45), transparent 70%); pointer-events: none; }
-.frame { position: relative; z-index: 1; width: min(100%, 540px, calc((100dvh - 220px) * 0.75)); transform: scale(var(--scale, 1)); transition: transform 0.9s var(--spring), padding 0.6s var(--spring), background 0.6s var(--spring); box-shadow: 0 50px 90px -30px rgba(0,0,0,0.7); }
+.frame { position: relative; z-index: 1; width: min(100%, 540px, calc((100dvh - 190px) * 0.75)); transform: scale(var(--scale, 1)); transition: transform 0.9s var(--spring), padding 0.6s var(--spring), background 0.6s var(--spring); box-shadow: 0 50px 90px -30px rgba(0,0,0,0.7); }
 .frame.framed { padding: 14px; background: linear-gradient(145deg, #23201d, #070605); box-shadow: 0 50px 90px -30px rgba(0,0,0,0.75), inset 0 0 0 1px rgba(255,255,255,0.06); }
 .poster { --poster: "Cormorant Garamond", Garamond, Georgia, serif; position: relative; aspect-ratio: 3 / 4; container-type: inline-size; transition: background 0.5s var(--spring), color 0.5s var(--spring); overflow: hidden; }
 .view { position: absolute; left: 7%; top: 5%; width: 86%; height: 78%; overflow: hidden; cursor: grab; touch-action: none; }
@@ -72,19 +88,12 @@ try {
 .loading i { display: block; width: 38%; height: 1px; background: rgba(255,255,255,0.25); overflow: hidden; }
 .loading i b { display: block; height: 100%; background: #fff; transform-origin: left; transform: scaleX(0); }
 .busy .loading i b { transition: transform var(--dur, 1.8s) cubic-bezier(0.4, 0, 0.2, 1); transform: scaleX(0.92); }
-.under { position: relative; z-index: 1; width: min(100%, 540px); height: 44px; margin-top: 28px; }
-.under > * { position: absolute; inset: 0; transition: opacity 0.5s var(--spring), transform 0.5s var(--spring); }
-.mapbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 4px 0 18px; border-radius: 999px; background: rgba(10,9,8,0.4); box-shadow: inset 0 0 0 1px var(--hair2); font-size: 12px; color: var(--mute); opacity: 0; transform: translateY(8px); pointer-events: none; }
-.stage[data-step="view"] .mapbar { opacity: 1; transform: none; pointer-events: auto; }
-.resetview { position: absolute; z-index: 2; top: 18px; right: 18px; display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px 0 13px; border: 0; border-radius: 999px; background: rgba(10,9,8,0.6); box-shadow: inset 0 0 0 1px var(--hair2); color: var(--linen); font: 500 12px/1 var(--sans); letter-spacing: 0.02em; cursor: pointer; opacity: 0; transform: translateY(-6px); pointer-events: none; transition: opacity 0.5s var(--spring), transform 0.5s var(--spring), box-shadow 0.4s var(--spring); }
+.lowres { position: relative; z-index: 1; width: min(100%, 460px); margin-top: 22px; text-align: center; font-size: 11.5px; line-height: 1.5; color: var(--faint); text-wrap: balance; }
+.resetview { position: absolute; z-index: 2; top: 18px; right: 18px; display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px 0 13px; border: 0; border-radius: 999px; background: rgba(0,0,0,0.6); box-shadow: inset 0 0 0 1px var(--hair2); color: var(--linen); font: 500 12px/1 var(--sans); letter-spacing: 0.02em; cursor: pointer; opacity: 0; transform: translateY(-6px); pointer-events: none; transition: opacity 0.5s var(--spring), transform 0.5s var(--spring), box-shadow 0.4s var(--spring); }
 .resetview.on { opacity: 1; transform: none; pointer-events: auto; }
 .resetview:hover { box-shadow: inset 0 0 0 1px rgba(243,238,233,0.35); }
 .resetview:active { transform: scale(0.97); }
 .resetview svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 1.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.mapbar .zoom { display: flex; gap: 4px; align-items: center; }
-.mapbar .round { width: 36px; height: 36px; }
-.mapbar .round svg { width: 11px; height: 11px; }
-.mapbar .span { font: 400 11px/1 var(--mono); letter-spacing: 0.04em; color: var(--linen); min-width: 8ch; text-align: center; }
 .reset { background: none; border: 0; cursor: pointer; font: inherit; color: var(--thatch); }
 .reset:hover { color: var(--linen); }
 .reset[hidden] { display: none; }
@@ -93,18 +102,23 @@ try {
 .console > .core { display: flex; flex-direction: column; min-height: calc(100dvh - 40px); }
 .progress { padding: 30px 30px 0; }
 .progress .now { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
-.progress .now strong { font: 400 italic 38px/1 var(--serif); letter-spacing: -0.02em; }
+.progress .now strong { font: 400 38px/1 var(--serif); letter-spacing: -0.01em; }
+.progress .now strong em { font-style: normal; }
 .progress .now strong span { color: var(--faint); margin-right: 10px; }
 .progress .now small { font: 400 11px/1 var(--mono); color: var(--faint); letter-spacing: 0.04em; }
-.segs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 22px; }
-.segs button { background: none; border: 0; padding: 10px 0 0; cursor: pointer; text-align: left; color: var(--faint); font: 400 11px/1 var(--sans); transition: color 0.4s; }
-.segs button::before { content: ""; display: block; height: 2px; border-radius: 2px; margin-bottom: 10px; background: var(--hair2); transition: background 0.6s var(--spring); }
-.segs button.seen { color: var(--mute); }
-.segs button.seen::before { background: rgba(243,238,233,0.38); }
+/* Step tracker: numbered circles joined by a line. Steps not reached yet are dimmed and can't be clicked. */
+.segs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin-top: 24px; }
+.segs button { position: relative; display: grid; justify-items: center; gap: 9px; background: none; border: 0; padding: 0; cursor: pointer; color: var(--mute); font: 400 11px/1.2 var(--sans); transition: color 0.4s, opacity 0.4s; }
+.segs button::before { content: ""; position: absolute; top: 15px; left: calc(-50% + 21px); right: calc(50% + 21px); height: 1px; background: var(--hair2); transition: background 0.6s var(--spring); }
+.segs button:first-child::before { display: none; }
+.segs button i { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 400 12px/1 var(--mono); font-style: normal; color: var(--linen); box-shadow: inset 0 0 0 1px rgba(239,237,235,0.45); transition: background 0.5s var(--spring), color 0.4s, box-shadow 0.5s var(--spring); }
+.segs button.seen::before { background: rgba(239,237,235,0.45); }
 .segs button[aria-current="step"] { color: var(--linen); }
-.segs button[aria-current="step"]::before { background: var(--thatch); }
-.segs button:disabled { cursor: default; }
+.segs button[aria-current="step"] i { background: var(--linen); color: #000; box-shadow: none; }
+.segs button.seen:not([aria-current]):hover i { box-shadow: inset 0 0 0 1px var(--linen); }
 .segs button.seen:not([aria-current]):hover { color: var(--linen); }
+.segs button:disabled { cursor: not-allowed; opacity: 0.32; }
+.segs button:disabled i { box-shadow: inset 0 0 0 1px var(--hair2); color: var(--faint); }
 
 .panels { flex: 1; padding: 40px 30px 32px; }
 .panel { display: none; }
@@ -125,11 +139,12 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .search { position: relative; }
 /* Each panel row animates in, which gives every row its own stacking layer; lift the search row so its suggestions sit above the rows below */
 .field-search { position: relative; z-index: 3; }
-.suggest { position: absolute; z-index: 5; left: 0; right: 0; top: calc(100% + 8px); padding: 6px; border-radius: 20px; background: rgba(26,22,19,0.97); box-shadow: inset 0 0 0 1px var(--hair2), 0 30px 60px -20px rgba(0,0,0,0.8); display: none; }
+.suggest { position: absolute; z-index: 5; left: 0; right: 0; top: calc(100% + 8px); padding: 6px; border-radius: 20px; background: rgba(16,16,16,0.97); box-shadow: inset 0 0 0 1px var(--hair2), 0 30px 60px -20px rgba(0,0,0,0.8); display: none; }
 .suggest.on { display: block; animation: rise 0.5s var(--out) both; }
 .suggest button { display: block; width: 100%; text-align: left; padding: 12px 14px; border-radius: 14px; background: none; border: 0; cursor: pointer; font-size: 14px; color: var(--mute); }
 .suggest button:hover, .suggest button:focus { background: rgba(243,238,233,0.06); color: var(--linen); outline: none; }
 .suggest button strong { color: var(--linen); font-weight: 500; }
+.suggest button em { float: right; margin-left: 12px; font: 400 10px/1.9 var(--mono); font-style: normal; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 16px 0 5px; border-radius: 999px; border: 0; background: rgba(243,238,233,0.03); box-shadow: inset 0 0 0 1px var(--hair2); cursor: pointer; font-size: 13px; color: var(--mute); transition: box-shadow 0.4s var(--spring), color 0.4s, transform 0.4s var(--spring); }
 .chip img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
@@ -183,6 +198,9 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .pick input::-webkit-color-swatch { border: 0; border-radius: 50%; }
 .pick input::-moz-color-swatch { border: 0; border-radius: 50%; }
 .premium { margin-top: 12px; font-size: 13px; color: var(--mute); }
+/* The custom pickers open above the palette tiles */
+#customOpts .picks { margin-top: 0; }
+#customOpts .premium { margin-bottom: 18px; }
 .collapse { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 0.7s var(--spring), opacity 0.5s var(--spring); }
 .collapse > div { overflow: hidden; }
 .collapse.shut { grid-template-rows: 0fr; opacity: 0; }
@@ -198,6 +216,32 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .extra .core { padding: 20px; }
 .extra[data-on="true"] { box-shadow: inset 0 0 0 1px rgba(243,238,233,0.42); }
 .extra .check { margin-top: 0; color: var(--linen); font-size: 15px; }
+/* Printing: sizes down the side, unframed and framed across, every price visible */
+.matrix { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.matrix .mh { font-size: 12px; color: var(--faint); text-align: center; transition: color 0.4s; }
+.matrix .mh.on { color: var(--linen); }
+.mrow { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 0 2px; }
+.mrow .glyph { flex: none; width: 30px; height: 40px; display: grid; place-items: center; }
+.mrow .glyph i { display: block; border-radius: 2px; background: rgba(239,237,235,0.08); box-shadow: inset 0 0 0 1px var(--faint); transition: box-shadow 0.4s; }
+.mrow.on .glyph i { box-shadow: inset 0 0 0 1px var(--linen); }
+.mrow .name { display: block; font: 400 21px/1.05 var(--serif); white-space: nowrap; }
+.mrow .name small { font: 400 12px/1 var(--sans); color: var(--faint); }
+.mrow .desc { display: block; margin-top: 4px; font: 400 11px/1.3 var(--mono); color: var(--faint); }
+.cell { display: grid; place-items: center; align-content: center; gap: 5px; min-height: 62px; padding: 10px 6px; border: 0; border-radius: 18px; background: rgba(239,237,235,0.025); box-shadow: inset 0 0 0 1px var(--hair2); color: var(--linen); cursor: pointer; transition: box-shadow 0.4s var(--spring), background 0.4s var(--spring), color 0.3s, transform 0.4s var(--spring); }
+.cell strong { font: 400 18px/1 var(--mono); letter-spacing: -0.01em; }
+.cell small { font-size: 11px; color: var(--faint); transition: color 0.3s; }
+.cell:hover { box-shadow: inset 0 0 0 1px rgba(239,237,235,0.35); }
+.cell:active { transform: scale(0.98); }
+.cell[aria-pressed="true"] { background: var(--linen); color: #000; box-shadow: none; }
+.cell[aria-pressed="true"] small { color: rgba(0,0,0,0.55); }
+/* What the customer picked, in plain words */
+.choice { --r: 24px; --pad: 5px; margin-top: 30px; box-shadow: inset 0 0 0 1px rgba(239,237,235,0.3); }
+.choice .core { padding: 20px 22px 18px; background: var(--core2); }
+.choice-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font: 400 11px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); }
+.choice-head strong { font: 400 20px/1 var(--mono); letter-spacing: -0.01em; text-transform: none; color: var(--linen); }
+.choice-name { margin: 10px 0 12px; font: 400 24px/1.15 var(--serif); }
+.choice-line { display: flex; gap: 11px; align-items: flex-start; margin-top: 7px; font-size: 14px; line-height: 1.5; color: var(--mute); }
+.choice-line svg { flex: none; width: 15px; height: 15px; margin-top: 3px; stroke: var(--linen); stroke-width: 1.3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 #costNote { font: 400 12px/1.5 var(--mono); color: var(--thatch); margin: 2px 0 26px 4px; letter-spacing: 0.02em; }
 .extra .note { font-size: 13px; color: var(--mute); margin: 10px 0 0 52px; }
 .swatches { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0 0 52px; }
@@ -224,8 +268,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .promise svg { flex: none; width: 16px; height: 16px; margin-top: 2px; stroke: var(--thatch); stroke-width: 1.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Dock: a floating island with the total and the way forward */
-.dock { position: sticky; bottom: 14px; z-index: 3; margin: 0 14px 14px; --r: 999px; --pad: 5px; background: rgba(26,22,19,0.7); backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%); }
-.dock .core { display: flex; align-items: center; gap: 12px; padding: 5px; background: rgba(10,9,8,0.55); }
+.dock { position: sticky; bottom: 14px; z-index: 3; margin: 0 14px 14px; --r: 999px; --pad: 5px; background: rgba(18,18,18,0.7); backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%); }
+.dock .core { display: flex; align-items: center; gap: 12px; padding: 5px; background: rgba(0,0,0,0.55); }
 .dock .sum { flex: 1; min-width: 0; padding-left: 10px; transition: opacity 0.4s; }
 .dock .sum.off { opacity: 0; }
 .dock .sum small { display: block; font-size: 11px; color: var(--faint); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -236,7 +280,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .dockErr:empty { display: none; }
 
 /* The pair offer, shown once before checkout */
-.modal { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 16px; background: rgba(10,9,8,0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); opacity: 0; pointer-events: none; transition: opacity 0.5s var(--spring); }
+.modal { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 16px; background: rgba(0,0,0,0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); opacity: 0; pointer-events: none; transition: opacity 0.5s var(--spring); }
 .modal.on { opacity: 1; pointer-events: auto; }
 .modal .sheet { --r: 32px; --pad: 7px; width: min(100%, 480px); transform: translateY(24px) scale(0.98); transition: transform 0.7s var(--spring); }
 .modal.on .sheet { transform: none; }
@@ -255,15 +299,17 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   .studio-grid { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 0; }
   .stage { position: sticky; top: 0; z-index: 4; --r: 0px; --pad: 0px; background: var(--bg); box-shadow: none; }
   .stage > .core { height: 46svh; min-height: 330px; border-radius: 0; padding: 14px 16px 6px; box-shadow: inset 0 -1px 0 var(--hair); }
-  .frame { width: min(100%, calc((max(46svh, 330px) - 82px) * 0.75)); }
-  .under { margin-top: 10px; height: 38px; }
+  .frame { width: min(100%, calc((max(46svh, 330px) - 58px) * 0.75)); }
+  .lowres { margin-top: 6px; font-size: 10.5px; line-height: 1.35; }
   .stage > .core::after { display: none; }
   .console { margin-top: 0; --r: 26px; --pad: 0px; background: none; box-shadow: none; }
   .console > .core { min-height: 0; background: transparent; box-shadow: none; }
   .progress { padding: 16px var(--gut) 0; }
   .progress .now strong { font-size: 30px; }
-  .segs button { font-size: 0; padding-top: 4px; }
-  .segs button::before { margin-bottom: 4px; }
+  .segs { margin-top: 18px; }
+  .segs button span { display: none; }
+  .segs button i { width: 28px; height: 28px; font-size: 11px; }
+  .segs button::before { top: 14px; left: calc(-50% + 19px); right: calc(50% + 19px); }
   .panels { padding: 30px var(--gut) 24px; }
   .dock { margin: 0 10px max(10px, env(safe-area-inset-bottom)); bottom: max(10px, env(safe-area-inset-bottom)); }
   .dockErr { padding: 0 var(--gut); }
@@ -307,29 +353,20 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
           </div>
         </div>
       </div>
-      <div class="under">
-        <div class="mapbar">
-          <span>Drag to frame</span>
-          <div class="zoom">
-            <button class="round" id="zoomOut" type="button" aria-label="Show more area"><svg viewBox="0 0 12 12"><path d="M2 6h8"/></svg></button>
-            <span class="span" id="span">8 km</span>
-            <button class="round" id="zoomIn" type="button" aria-label="Show less area"><svg viewBox="0 0 12 12"><path d="M2 6h8M6 2v8"/></svg></button>
-          </div>
-        </div>
-      </div>
+      <p class="lowres">Low resolution preview. Every final print and file is rendered at full resolution, up to 7200 x 9600 pixels, with far finer detail in the terrain, water and roads.</p>
     </div>
   </div>
 
   <div class="console shell" aria-label="Configure your map">
     <div class="core" id="consoleCore">
       <div class="progress">
-        <div class="now"><strong><span id="stepNum">01</span><em id="stepName">Place</em></strong><small id="stepOf">1 of 6</small></div>
+        <div class="now"><strong><span id="stepNum">01</span><em id="stepName">Place</em></strong><small id="stepOf">1 of 5</small></div>
         <nav class="segs" id="rail" aria-label="Steps"></nav>
       </div>
 
       <div class="panels" id="panels">
         <div class="panel" data-step="place">
-          <h1 class="display">Begin with a place.</h1>
+          <h1 class="display">Search an Address</h1>
           <p class="lede">Search any address in the United States.</p>
           <div class="field field-search">
             <div class="label">Search</div>
@@ -344,17 +381,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
             <div class="chips" id="chips"></div>
           </div>
           <div class="field">
-            <label class="check"><input type="checkbox" id="coords" checked> Show coordinates</label>
-            <label class="check"><input type="checkbox" id="pinOn" checked> Mark the exact spot</label>
-          </div>
-        </div>
-
-        <div class="panel" data-step="view">
-          <h1 class="display">Frame the view.</h1>
-          <p class="lede">Choose how much land the map holds, from a single street to a whole region, then drag it until it sits just right.</p>
-          <div class="field">
-            <div class="label">Map scope <b id="scopeVal">8 km across</b></div>
-            <input class="range" id="scope" type="range" min="0" max="10" step="1" value="7" aria-label="Map scope">
+            <div class="label">Map scope <b id="scopeVal">15 km across</b></div>
+            <input class="range" id="scope" type="range" min="0" max="12" step="1" value="10" aria-label="Map scope">
             <div class="ticks"><span>Street</span><span>Neighborhood</span><span>Town</span><span>Region</span></div>
           </div>
           <div class="hint"><svg viewBox="0 0 22 22"><path d="M11 3v16M3 11h16M11 3L8.5 5.5M11 3l2.5 2.5M11 19l-2.5-2.5M11 19l2.5-2.5M3 11l2.5-2.5M3 11l2.5 2.5M19 11l-2.5-2.5M19 11l-2.5 2.5"/></svg>
@@ -362,12 +390,11 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
         </div>
 
         <div class="panel" data-step="style">
-          <h1 class="display">Choose a style.</h1>
-          <p class="lede">Light and shadow, or flowing contour lines. Then the colors.</p>
+          <h1 class="display">Choose your colors and style</h1>
+          <p class="lede">Choose from our combinations or create your own custom colors.</p>
           <div class="field options" id="styles"></div>
           <div class="field">
             <div class="label">Palette <b id="palName">Ember</b></div>
-            <div class="pals" id="palettes"></div>
             <div class="collapse shut" id="customOpts"><div>
               <div class="picks">
                 <label class="pick"><input type="color" id="cLow" value="#1f2a44">Low ground</label>
@@ -377,15 +404,13 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
               </div>
               <p class="premium">Tap a circle to open the color wheel. Custom colors add <span id="customCost2">$15</span> to any print or file.</p>
             </div></div>
-          </div>
-          <div class="field">
-            <label class="check"><input type="checkbox" id="roadsOn" checked> Show roads</label>
+            <div class="pals" id="palettes"></div>
           </div>
         </div>
 
-        <div class="panel" data-step="words">
-          <h1 class="display">Add your words.</h1>
-          <p class="lede">A name for the place, and a line beneath it. A family name, a date, a first home.</p>
+        <div class="panel" data-step="options">
+          <h1 class="display">Options</h1>
+          <p class="lede">Change the text and toggle pin and road visibility.</p>
           <div class="field">
             <div class="label">Title</div>
             <div class="well shell"><input class="input" id="title" maxlength="22" value="BIG SKY" aria-label="Title"></div>
@@ -394,26 +419,28 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
             <div class="label">Second line <b>Optional</b></div>
             <div class="well shell"><input class="input" id="sub" maxlength="32" value="MONTANA" aria-label="Second line"></div>
           </div>
+          <div class="field">
+            <label class="check"><input type="checkbox" id="pinOn"> Mark the exact spot</label>
+            <label class="check"><input type="checkbox" id="roadsOn" checked> Show roads</label>
+            <label class="check"><input type="checkbox" id="coords" checked> Show coordinates</label>
+          </div>
         </div>
 
         <div class="panel" data-step="format">
           <h1 class="display">Print or file.</h1>
-          <p class="lede">We print it on heavyweight matte paper and ship it to you, or email you the high resolution file to print however you like.</p>
-          <div class="field options" id="formats"></div>
+          <p class="lede">We print it on premium heavyweight matte paper and ship it to you, or email you the high resolution file to print however you like.</p>
+          <div class="field">
+            <div class="label">Printed and shipped <b>Premium matte paper</b></div>
+            <div class="matrix" id="matrix" role="group" aria-label="Print size and frame">
+              <span></span><span class="mh" data-col="Unframed">Unframed</span><span class="mh" data-col="Black frame">Black pine frame</span>
+            </div>
+          </div>
+          <div class="field">
+            <div class="label">Or just the file</div>
+            <div class="options" id="formats"></div>
+          </div>
           <p class="note" id="costNote" hidden></p>
-          <div class="collapse" id="printOpts"><div>
-            <div class="field">
-              <div class="label">Size</div>
-              <div class="options" id="sizes"></div>
-            </div>
-            <div class="field">
-              <div class="label">Finish</div>
-              <div class="options" id="frames"></div>
-            </div>
-          </div></div>
-          <div class="collapse shut" id="fileOpts"><div>
-            <div class="note-card"><b>7200 x 9600 pixels, 300 dpi at 24 x 32 in</b>A JPG emailed to you within a day, rendered at full resolution from lidar. Print it at any size up to 24 x 32 inches.</div>
-          </div></div>
+          <div class="choice shell" aria-live="polite"><div class="core" id="choice"></div></div>
         </div>
 
         <div class="panel" data-step="review">
@@ -484,8 +511,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   };
   var FRAMES = ['Unframed', 'Black frame'];
   var FRAME_INFO = {
-    'Unframed': 'Rolled and shipped in a sturdy tube.',
-    'Black frame': 'Solid oak or ash, shatterproof plexiglass, ready to hang.'
+    'Unframed': 'The print alone, ready for a frame of your own.',
+    'Black frame': 'Framed in durable black pine wood behind shatterproof plexiglass, ready to hang.'
   };
   // The digital file is its own Shopify variant: Size "Digital file", Frame "None"
   var DIGITAL = 'Digital file|None';
@@ -498,13 +525,14 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     { name: 'Yosemite', lat: 37.8393, lon: -119.5165, title: 'YOSEMITE', sub: 'NATIONAL PARK', place: 'Yosemite National Park, California', span: 8000, img: 'assets/print-yosemite.jpg' }
   ];
   // Map width across the print, in meters. The renderer reads the same value from the order.
-  var SPANS = [1500, 2000, 2500, 3000, 3600, 4500, 6000, 8000, 10000, 12000, 15000], DEFAULT_SPAN = 3600;
-  var STEPS = [['place', 'Place'], ['view', 'View'], ['style', 'Style'], ['words', 'Words'], ['format', 'Format'], ['review', 'Review']];
+  // Relief reads best wide, so new places open at 15 km
+  var SPANS = [1500, 2000, 2500, 3000, 3600, 4500, 6000, 8000, 10000, 12000, 15000, 20000, 25000], DEFAULT_SPAN = 15000;
+  var STEPS = [['place', 'Place'], ['style', 'Color'], ['options', 'Options'], ['format', 'Printing'], ['review', 'Review']];
   // How long each preview takes to "render": long enough to feel made, short enough not to drag
   var DWELL = { load: 1900, restyle: 1100 };
 
   // The map the studio opens on
-  var START = { lat: 45.2590, lon: -111.3087, span: 8000, place: 'Big Sky, Montana', palette: 'Ember' };
+  var START = { lat: 45.2590, lon: -111.3087, span: 15000, place: 'Big Sky, Montana', palette: 'Ember' };
   var state = { lat: START.lat, lon: START.lon, clat: START.lat, clon: START.lon, span: START.span, place: START.place, style: 'Relief', palette: START.palette, roads: true, format: 'print', size: '18 x 24 in', frame: 'Unframed', extra: null };
   var variants = {}, customVariant = null;
   var elev = null, view = null, vec = null, seq = 0, step = 0, seen = 0, pairAsked = false;
@@ -599,54 +627,63 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   });
   $('roadsOn').addEventListener('change', function () { state.roads = this.checked; restyle(); });
 
-  var formatCards = {};
-  [['print', 'Print', 'Heavyweight matte paper, rolled or framed, shipped to you.', '<span class="glyph"><i class="fr" style="width:24px;height:32px"></i></span>'],
-   ['digital', 'Digital file', 'A high resolution file by email. No printing, no shipping.', '<span class="glyph"><i class="file" style="width:24px;height:32px"></i></span>']].forEach(function (f) {
-    var b = option(f[1], f[2], f[3]);
-    b.setAttribute('aria-pressed', state.format === f[0]);
-    b.onclick = function () {
-      state.format = f[0]; select($('formats'), b);
-      $('printOpts').classList.toggle('shut', digital()); $('fileOpts').classList.toggle('shut', !digital());
-      $('frame').classList.toggle('framed', !digital() && state.frame !== 'Unframed');
-      refresh();
-    };
-    formatCards[f[0]] = b; $('formats').appendChild(b);
-  });
-
-  var sizeCards = {}, frameCards = {};
+  /* Printing: all seven choices at once. Each size is a row with its unframed and framed price side by side, and the
+     digital file sits below, so no price shifts when another choice changes. */
+  var cells = {}, rowHeads = {}, colHeads = {};
+  document.querySelectorAll('#matrix .mh').forEach(function (h) { colHeads[h.dataset.col] = h; });
   SIZES.forEach(function (s, i) {
-    var w = [22, 28, 34][i];
-    var b = option(s, SIZE_INFO[s].cm + '. ' + SIZE_INFO[s].desc, '<span class="glyph"><i style="width:' + w * 0.75 + 'px;height:' + w + 'px"></i></span>');
-    b.setAttribute('aria-pressed', state.size === s);
-    b.onclick = function () { state.size = s; select($('sizes'), b); refresh(); };
-    sizeCards[s] = b; $('sizes').appendChild(b);
+    var w = [16, 20, 24][i];
+    var head = document.createElement('div'); head.className = 'mrow';
+    head.innerHTML = '<span class="glyph"><i style="width:' + Math.round(w * 0.75) + 'px;height:' + w + 'px"></i></span><span><span class="name">' + esc(s.replace(' in', '')) + '<small> in</small></span><span class="desc">' + SIZE_INFO[s].cm + '</span></span>';
+    rowHeads[s] = head; $('matrix').appendChild(head);
+    FRAMES.forEach(function (f) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'cell';
+      b.setAttribute('aria-label', s + ', ' + f.toLowerCase());
+      b.innerHTML = '<strong></strong>';
+      b.onclick = function () { state.format = 'print'; state.size = s; state.frame = f; markFormat(); refresh(); };
+      cells[s + '|' + f] = b; $('matrix').appendChild(b);
+    });
   });
-  FRAMES.forEach(function (f) {
-    var b = option(f, FRAME_INFO[f], '<span class="glyph"><i class="' + (f === 'Unframed' ? '' : 'fr') + '" style="width:24px;height:32px"></i></span>');
-    b.setAttribute('aria-pressed', state.frame === f);
-    b.onclick = function () { state.frame = f; select($('frames'), b); $('frame').classList.toggle('framed', f !== 'Unframed'); refresh(); };
-    frameCards[f] = b; $('frames').appendChild(b);
-  });
+  var fileCard = option('Digital file', 'A 7200 x 9600 pixel JPG by email. No printing, no shipping.', '<span class="glyph"><i class="file" style="width:24px;height:32px"></i></span>');
+  fileCard.onclick = function () { state.format = 'digital'; markFormat(); refresh(); };
+  $('formats').appendChild(fileCard);
+  function markFormat() {
+    Object.keys(cells).forEach(function (k) { cells[k].setAttribute('aria-pressed', !digital() && k === state.size + '|' + state.frame); });
+    SIZES.forEach(function (s) { rowHeads[s].classList.toggle('on', !digital() && s === state.size); });
+    FRAMES.forEach(function (f) { colHeads[f].classList.toggle('on', !digital() && f === state.frame); });
+    fileCard.setAttribute('aria-pressed', digital());
+    $('frame').classList.toggle('framed', !digital() && state.frame !== 'Unframed');
+  }
+  markFormat();
 
-  /* Prices on the format step include the custom palette, so each card shows what that choice costs in full */
+  // The card under the choices spells out exactly what was picked
+  function describeChoice() {
+    var price = money(unitPrice() + customPrice()), lines;
+    var tick = '<svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7"/></svg>';
+    if (digital()) lines = ['Digital file', ['A 7200 x 9600 pixel JPG, 300 dpi at 24 x 32 in.', 'Emailed to you within a day, rendered at full resolution.', 'Print it yourself at any size up to 24 x 32 inches.']];
+    else lines = [state.size + ', ' + (state.frame === 'Unframed' ? 'unframed' : 'black pine frame'),
+      ['Printed on premium heavyweight matte paper, ' + SIZE_INFO[state.size].cm + '.', FRAME_INFO[state.frame], 'Shipped within the United States.']];
+    $('choice').innerHTML = '<div class="choice-head"><span>Your choice</span><strong>' + price + '</strong></div><div class="choice-name">' + esc(lines[0]) + '</div>' +
+      lines[1].map(function (t) { return '<div class="choice-line">' + tick + '<span>' + esc(t) + '</span></div>'; }).join('');
+  }
+
+  /* Prices on the printing step include the custom palette, so each choice shows what it costs in full */
   function costs() {
-    var add = customPrice(), set = function (b, n) { b.querySelector('.cost').textContent = n; };
-    var fromPrint = Math.min.apply(null, SIZES.map(function (s) { return priceOf(s + '|' + FRAMES[0]); }));
-    set(formatCards.print, 'From ' + money(fromPrint + add));
-    set(formatCards.digital, money(priceOf(DIGITAL) + add));
-    SIZES.forEach(function (s) { set(sizeCards[s], money(priceOf(s + '|' + state.frame) + add)); });
-    FRAMES.forEach(function (f) { set(frameCards[f], money(priceOf(state.size + '|' + f) + add)); });
+    var add = customPrice();
+    describeChoice();
+    Object.keys(cells).forEach(function (k) { cells[k].querySelector('strong').textContent = money(priceOf(k) + add); });
+    fileCard.querySelector('.cost').textContent = money(priceOf(DIGITAL) + add);
     $('costNote').hidden = !custom();
     $('costNote').textContent = 'Prices include your custom palette (' + money(add) + ').';
     var upcharge = money(customVariant ? customVariant.price : FALLBACK.custom);
     $('customCost').textContent = '+' + upcharge; $('customCost2').textContent = upcharge;
   }
 
-  /* Everything that shows a choice; the running total appears on the review step */
+  /* Everything that shows a choice; the total lives in the review step's bill, not the dock */
   function refresh() {
     var name = STEPS[step][0];
     costs();
-    $('sum').classList.toggle('off', name !== 'review');
+    $('sum').classList.add('off');
     $('price').textContent = money(total());
     $('sumLabel').textContent = 'Total';
     var late = (name === 'format' || name === 'review') && !digital();
@@ -667,7 +704,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   /* Steps */
   STEPS.forEach(function (s, i) {
     var b = document.createElement('button');
-    b.type = 'button'; b.textContent = s[1]; b.setAttribute('aria-label', 'Step ' + (i + 1) + ', ' + s[1]);
+    b.type = 'button'; b.innerHTML = '<i>' + (i + 1) + '</i><span>' + esc(s[1]) + '</span>'; b.setAttribute('aria-label', 'Step ' + (i + 1) + ', ' + s[1]);
     b.onclick = function () { if (i <= seen) go(i); };
     $('rail').appendChild(b);
   });
@@ -705,10 +742,10 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     $('reviewTitle').textContent = digital() ? 'Your file.' : 'Your print.';
     var rows = [
       ['Place', esc(state.place) + '<small>' + ($('coords').checked ? 'Coordinates shown' : 'No coordinates') + ', ' + ($('pinOn').checked ? 'spot marked' : 'no pin') + '</small>', 0],
-      ['View', (state.span / 1000).toFixed(1).replace('.0', '') + ' km across' + (moved() ? '<small>Framed by hand</small>' : '<small>Centered on the place</small>'), 1],
-      ['Style', esc(STYLES[state.style]) + ' in ' + esc(state.palette) + '<small>' + (state.roads ? 'With roads' : 'Without roads') + (custom() ? ', your own colors' : '') + '</small>', 2],
-      ['Words', esc($('title').value.toUpperCase() || 'No title') + ($('sub').value.trim() ? '<small>' + esc($('sub').value.toUpperCase()) + '</small>' : ''), 3],
-      ['Format', digital() ? 'Digital file<small>7200 x 9600 pixels, emailed</small>' : esc(state.size) + '<small>' + SIZE_INFO[state.size].cm + ', ' + esc(state.frame.toLowerCase()) + '</small>', 4]
+      ['View', (state.span / 1000).toFixed(1).replace('.0', '') + ' km across' + (moved() ? '<small>Framed by hand</small>' : '<small>Centered on the place</small>'), 0],
+      ['Style', esc(STYLES[state.style]) + ' in ' + esc(state.palette) + '<small>' + (state.roads ? 'With roads' : 'Without roads') + (custom() ? ', your own colors' : '') + '</small>', 1],
+      ['Words', esc($('title').value.toUpperCase() || 'No title') + ($('sub').value.trim() ? '<small>' + esc($('sub').value.toUpperCase()) + '</small>' : ''), 2],
+      ['Format', digital() ? 'Digital file<small>7200 x 9600 pixels, emailed</small>' : esc(state.size) + '<small>' + SIZE_INFO[state.size].cm + ', ' + esc(state.frame.toLowerCase()) + '</small>', 3]
     ];
     $('summary').innerHTML = rows.map(function (r) {
       return '<div class="row"><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd><button type="button" data-go="' + r[2] + '">Edit</button></div>';
@@ -721,7 +758,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
       '<div class="total"><span>Total</span><span>' + money(total()) + '</span></div>';
     $('promise').innerHTML = (digital()
       ? ['Your file is emailed within a day, rendered at full resolution from USGS lidar.', 'Ask for a change any time after it arrives.']
-      : ['A watermarked preview is emailed to you within a day.', 'You have 24 hours from that email to deny the file and ask for changes. After that, it heads to printing.', 'Printed on heavyweight matte paper and shipped within the United States.', 'A one of one, made to order, so all sales are final. Defects in workmanship are replaced free. <a href="' + POLICY + 'refund-policy" target="_blank" rel="noopener">Returns policy</a>']
+      : ['A watermarked preview is emailed to you within a day.', 'You have 24 hours from that email to deny the file and ask for changes. After that, it heads to printing.', 'Printed on premium heavyweight matte paper and shipped within the United States.', 'A one of one, made to order, so all sales are final. Defects in workmanship are replaced free. <a href="' + POLICY + 'refund-policy" target="_blank" rel="noopener">Returns policy</a>']
     ).map(function (t) { return '<div>' + TICK + t + '</div>'; }).join('');
   }
   function moved() { return Math.abs(state.clat - state.lat) > 1e-6 || Math.abs(state.clon - state.lon) > 1e-6; }
@@ -754,36 +791,73 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   $('pair').addEventListener('click', function (e) { if (e.target === this) { closePair(); pairAsked = false; } });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && $('pair').classList.contains('on')) { closePair(); pairAsked = false; } });
 
-  /* Address search (Photon) */
-  var timer, results = [];
+  /* Place search (Photon). Most customers want a park, a peak or a ski hill, so outdoor places are searched on their own
+     and listed first; towns and street addresses follow. A query that starts with a number is treated as an address. */
+  var PHOTON = 'https://photon.komoot.io/api/?lang=en&bbox=-180,17,-64,72&q=';
+  var OUTDOOR_TAGS = ['boundary:national_park', 'boundary:protected_area', 'leisure:nature_reserve', 'natural', 'landuse:winter_sports', 'leisure:park', 'waterway:waterfall'];
+  // What each kind of place is called in the list, and how high it ranks (lower first)
+  var KINDS = {
+    national_park: ['National park', 0], winter_sports: ['Ski area', 1], peak: ['Peak', 1], volcano: ['Volcano', 1], glacier: ['Glacier', 1],
+    ridge: ['Ridge', 2], saddle: ['Pass', 2], valley: ['Valley', 2], arch: ['Arch', 2], cliff: ['Cliff', 2], waterfall: ['Waterfall', 2], water: ['Lake', 2], bay: ['Bay', 2], beach: ['Beach', 2], spring: ['Spring', 2], geyser: ['Geyser', 2],
+    nature_reserve: ['Nature area', 2], protected_area: ['Protected area', 2], park: ['Park', 5],
+    city: ['City', 4], town: ['Town', 4], village: ['Town', 4], hamlet: ['Town', 4], locality: ['Place', 4], county: ['County', 4], state: ['State', 5]
+  };
+  // Names people use that the map data files under something else
+  var ALIASES = [
+    { keys: ['lone peak'], name: 'Lone Peak', where: 'Big Sky, Montana', kind: 'Peak', lat: 45.2781, lon: -111.4503, title: 'LONE PEAK', sub: 'BIG SKY, MONTANA', place: 'Lone Peak, Big Sky, Montana' }
+  ];
+  function kindOf(p) {
+    if (/national park/i.test(p.name || '') && /nature_reserve|protected_area|national_park/.test(p.osm_value)) return KINDS.national_park;
+    if (p.osm_key === 'place' || p.osm_key === 'boundary' && p.osm_value === 'administrative') return KINDS[p.type] || KINDS[p.osm_value] || ['Place', 4];
+    if (p.housenumber || p.osm_key === 'highway' || p.osm_key === 'building' || p.type === 'house' || p.type === 'street') return ['Address', 6];
+    return KINDS[p.osm_value] || ['Place', 3];
+  }
+  function photon(q, outdoor) {
+    var url = PHOTON + encodeURIComponent(q) + '&limit=' + (outdoor ? 12 : 8) + (outdoor ? OUTDOOR_TAGS.map(function (t) { return '&osm_tag=' + t; }).join('') : '');
+    return fetch(url).then(function (r) { return r.json(); }).then(function (d) { return (d.features || []).filter(function (f) { return f.properties.countrycode === 'US'; }); }).catch(function () { return []; });
+  }
+  var timer, results = [], searchSeq = 0;
   $('addr').addEventListener('input', function () {
     clearTimeout(timer);
     var q = this.value.trim();
     if (q.length < 3) { $('suggest').classList.remove('on'); return; }
     timer = setTimeout(function () {
-      fetch('https://photon.komoot.io/api/?limit=6&lang=en&lat=42.7&lon=-84.5&q=' + encodeURIComponent(q))
-        .then(function (r) { return r.json(); })
-        .then(function (d) {
-          results = (d.features || []).filter(function (f) { return f.properties.countrycode === 'US'; });
-          var box = $('suggest'); box.innerHTML = '';
-          if (/^\d/.test(q)) {
-            var ex = document.createElement('button'); ex.type = 'button';
-            ex.innerHTML = '<strong>Use this exact address</strong> ' + esc(q);
-            ex.onclick = function () { exact(q); };
-            box.appendChild(ex);
-          }
-          results.forEach(function (f, i) {
-            var p = f.properties;
+      var my = ++searchSeq, address = /^\d/.test(q), lq = q.toLowerCase();
+      Promise.all([address ? [] : photon(q, true), photon(q, false)]).then(function (r) {
+        if (my !== searchSeq) return;
+        var seenKeys = {}, list = [];
+        ALIASES.forEach(function (a) { if (a.keys.some(function (k) { return lq.indexOf(k) >= 0 || k.indexOf(lq) === 0; })) list.push({ alias: a, kind: [a.kind, -1], order: -1 }); });
+        r[0].concat(r[1]).forEach(function (f, i) {
+          var p = f.properties, kind = kindOf(p);
+          var k = ([p.housenumber, p.street].filter(Boolean).join(' ') || p.name || '') + '|' + (p.city || '') + '|' + (p.state || '');
+          if (seenKeys[k]) return; seenKeys[k] = 1;
+          list.push({ f: f, kind: kind, order: i });
+        });
+        // Outdoor places first when searching by name; for an address, keep the geocoder's order
+        if (!address) list.sort(function (a, b) { return (a.kind[1] - b.kind[1]) || (a.order - b.order); });
+        results = list.slice(0, 8);
+        var box = $('suggest'); box.innerHTML = '';
+        if (address) {
+          var ex = document.createElement('button'); ex.type = 'button';
+          ex.innerHTML = '<strong>Use this exact address</strong> ' + esc(q);
+          ex.onclick = function () { exact(q); };
+          box.appendChild(ex);
+        }
+        results.forEach(function (r, i) {
+          var b = document.createElement('button'); b.type = 'button';
+          if (r.alias) b.innerHTML = '<strong>' + esc(r.alias.name) + '</strong> ' + esc(r.alias.where) + '<em>' + r.kind[0] + '</em>';
+          else {
+            var p = r.f.properties;
             var main = [p.housenumber, p.street || p.name].filter(Boolean).join(' ') || p.name;
-            var rest = [p.city || p.county, p.state].filter(Boolean).join(', ');
-            var b = document.createElement('button'); b.type = 'button';
-            b.innerHTML = '<strong>' + esc(main) + '</strong> ' + esc(rest);
-            b.onclick = function () { choose(i); };
-            box.appendChild(b);
-          });
-          box.classList.toggle('on', box.children.length > 0);
-          $('addrErr').textContent = box.children.length ? '' : 'No US matches yet. Try adding the city or state.';
-        }).catch(function () { $('addrErr').textContent = 'Search is unavailable right now.'; });
+            var rest = [r.kind[1] < 4 ? p.county : p.city || p.county, p.state].filter(Boolean).join(', ');
+            b.innerHTML = '<strong>' + esc(main) + '</strong> ' + esc(rest) + '<em>' + r.kind[0] + '</em>';
+          }
+          b.onclick = function () { choose(i); };
+          box.appendChild(b);
+        });
+        box.classList.toggle('on', box.children.length > 0);
+        $('addrErr').textContent = box.children.length ? '' : 'No US matches yet. Try adding the state, like "Lone Mountain Montana".';
+      });
     }, 260);
   });
   // The box opens holding the current place; select it so typing starts a new search instead of appending
@@ -815,14 +889,31 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   document.addEventListener('click', function (e) { if (!e.target.closest('.search')) $('suggest').classList.remove('on'); });
 
   function choose(i) {
-    var f = results[i], p = f.properties;
+    var r = results[i];
+    $('suggest').classList.remove('on'); $('addrErr').textContent = '';
+    if (r.alias) {
+      var a = r.alias;
+      state.place = a.place; $('addr').value = a.place; $('title').value = a.title; $('sub').value = a.sub;
+      goTo(a.lat, a.lon);
+      return;
+    }
+    var f = r.f, p = f.properties, outdoor = r.kind[1] < 4;
     var main = [p.housenumber, p.street || p.name].filter(Boolean).join(' ') || p.name;
-    state.place = [main, p.city || p.county, p.state, p.postcode].filter(Boolean).join(', ');
+    state.place = outdoor ? [p.name, p.state].filter(Boolean).join(', ') : [main, p.city || p.county, p.state, p.postcode].filter(Boolean).join(', ');
     $('addr').value = state.place;
-    $('suggest').classList.remove('on');
-    $('title').value = (p.city || p.name || '').toUpperCase().slice(0, 22);
-    $('sub').value = (p.state || '').toUpperCase();
-    goTo(f.geometry.coordinates[1], f.geometry.coordinates[0]);
+    var park = /^(.*?)\s+National Park$/i.exec(p.name || '');
+    if (park) { $('title').value = park[1].toUpperCase().slice(0, 22); $('sub').value = ('National Park, ' + (p.state || '')).toUpperCase().replace(/, $/, ''); }
+    else if (outdoor) { $('title').value = (p.name || '').toUpperCase().slice(0, 22); $('sub').value = (p.state || '').toUpperCase(); }
+    else { $('title').value = (p.city || p.name || '').toUpperCase().slice(0, 22); $('sub').value = (p.state || '').toUpperCase(); }
+    // Parks and wide places open wide enough to hold them, up to the widest map we print
+    var span = DEFAULT_SPAN, lat = f.geometry.coordinates[1], lon = f.geometry.coordinates[0], e = p.extent;
+    if (e && outdoor) {
+      var w = Math.max((e[2] - e[0]) * 111000 * Math.cos(lat * Math.PI / 180), (e[1] - e[3]) * 111000 * 0.75);
+      span = SPANS.filter(function (s) { return s >= Math.min(w, SPANS[SPANS.length - 1]); })[0] || SPANS[SPANS.length - 1];
+      span = Math.max(span, DEFAULT_SPAN);
+      if (w > SPANS[SPANS.length - 1]) { lat = (e[1] + e[3]) / 2; lon = (e[0] + e[2]) / 2; }
+    }
+    goTo(lat, lon, span);
   }
   function goTo(lat, lon, span) {
     state.lat = state.clat = lat; state.lon = state.clon = lon; state.span = span || DEFAULT_SPAN;
@@ -956,7 +1047,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     if (state.roads) {
       ctx.globalAlpha = contour ? 0.55 : 0.8; ctx.strokeStyle = contour ? line : p.road;
       ['S1400', 'S1200', 'S1100'].forEach(function (code) {
-        ctx.lineWidth = (ROAD_W[code] * DEFAULT_SPAN / state.span * 0.8 + 0.2) * (contour ? 0.7 : 1);
+        ctx.lineWidth = (ROAD_W[code] * 3600 / state.span * 0.8 + 0.2) * (contour ? 0.7 : 1);
         vec.forEach(function (f) { if (f.kind === 'road' && f.mtfcc === code) { ctx.beginPath(); trace(lines(f.geom)); ctx.stroke(); } });
       });
     }
@@ -1135,11 +1226,6 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   $('view').addEventListener('pointerup', endDrag);
   $('view').addEventListener('pointercancel', endDrag);
   function resetPan() { $('pan').style.transform = ''; }
-  function zoom(dir) {
-    var i = SPANS.indexOf(state.span) + dir;
-    if (i < 0 || i >= SPANS.length) return;
-    setSpan(SPANS[i]); load();
-  }
   // Scale the current sketch right away so the change reads instantly, then fetch the new window
   function setSpan(s) {
     if (view && elev) $('pan').style.transform = 'scale(' + elev.cell * W / s + ')';
@@ -1150,16 +1236,12 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     setSpan(SPANS[+this.value]);
     clearTimeout(scopeTimer); scopeTimer = setTimeout(load, 260);
   });
-  $('zoomIn').onclick = function () { zoom(-1); };
-  $('zoomOut').onclick = function () { zoom(1); };
   // Back to the chosen place, centered, keeping the scope the customer picked
   $('resetView').onclick = function () { state.clat = state.lat; state.clon = state.lon; spanUI(); load(); };
   function spanUI() {
     var km = (state.span / 1000).toFixed(1).replace('.0', '') + ' km';
-    $('span').textContent = km; $('scopeVal').textContent = km + ' across';
+    $('scopeVal').textContent = km + ' across';
     $('scope').value = SPANS.indexOf(state.span);
-    $('zoomIn').disabled = state.span === SPANS[0];
-    $('zoomOut').disabled = state.span === SPANS[SPANS.length - 1];
     var rv = $('resetView'), off = moved();
     rv.classList.toggle('on', off); rv.tabIndex = off ? 0 : -1; rv.setAttribute('aria-hidden', off ? 'false' : 'true');
   }
