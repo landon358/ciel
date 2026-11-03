@@ -37,7 +37,7 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Cormorant+Garamond:wght@400&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=202611012132">
+<link rel="stylesheet" href="style.css?v=202611031024">
 <style>
 .top { display: flex; align-items: center; justify-content: space-between; max-width: 1600px; margin: 0 auto; padding: 22px var(--gut) 0; }
 .top .back { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--mute); transition: color 0.4s; }
@@ -76,6 +76,11 @@ try {
 .under > * { position: absolute; inset: 0; transition: opacity 0.5s var(--spring), transform 0.5s var(--spring); }
 .mapbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 4px 0 18px; border-radius: 999px; background: rgba(10,9,8,0.4); box-shadow: inset 0 0 0 1px var(--hair2); font-size: 12px; color: var(--mute); opacity: 0; transform: translateY(8px); pointer-events: none; }
 .stage[data-step="view"] .mapbar { opacity: 1; transform: none; pointer-events: auto; }
+.resetview { position: absolute; z-index: 2; top: 18px; right: 18px; display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px 0 13px; border: 0; border-radius: 999px; background: rgba(10,9,8,0.6); box-shadow: inset 0 0 0 1px var(--hair2); color: var(--linen); font: 500 12px/1 var(--sans); letter-spacing: 0.02em; cursor: pointer; opacity: 0; transform: translateY(-6px); pointer-events: none; transition: opacity 0.5s var(--spring), transform 0.5s var(--spring), box-shadow 0.4s var(--spring); }
+.resetview.on { opacity: 1; transform: none; pointer-events: auto; }
+.resetview:hover { box-shadow: inset 0 0 0 1px rgba(243,238,233,0.35); }
+.resetview:active { transform: scale(0.97); }
+.resetview svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 1.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .mapbar .zoom { display: flex; gap: 4px; align-items: center; }
 .mapbar .round { width: 36px; height: 36px; }
 .mapbar .round svg { width: 11px; height: 11px; }
@@ -118,6 +123,8 @@ try {
 .input::placeholder { color: var(--faint); }
 textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-height: 1.5; }
 .search { position: relative; }
+/* Each panel row animates in, which gives every row its own stacking layer; lift the search row so its suggestions sit above the rows below */
+.field-search { position: relative; z-index: 3; }
 .suggest { position: absolute; z-index: 5; left: 0; right: 0; top: calc(100% + 8px); padding: 6px; border-radius: 20px; background: rgba(26,22,19,0.97); box-shadow: inset 0 0 0 1px var(--hair2), 0 30px 60px -20px rgba(0,0,0,0.8); display: none; }
 .suggest.on { display: block; animation: rise 0.5s var(--out) both; }
 .suggest button { display: block; width: 100%; text-align: left; padding: 12px 14px; border-radius: 14px; background: none; border: 0; cursor: pointer; font-size: 14px; color: var(--mute); }
@@ -283,6 +290,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 <main class="studio-grid">
   <div class="stage shell" id="stage" data-step="place" aria-label="Preview">
     <div class="core">
+      <button class="resetview" id="resetView" type="button" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M2.5 8a5.5 5.5 0 1 0 1.6-3.9"/><path d="M2.5 2.5v3h3"/></svg>Reset view</button>
       <div class="frame" id="frame">
         <div class="poster" id="poster">
           <div class="view" id="view">
@@ -301,7 +309,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
       </div>
       <div class="under">
         <div class="mapbar">
-          <span>Drag to frame <button class="reset" id="recenter" type="button" hidden>&nbsp; Recenter</button></span>
+          <span>Drag to frame</span>
           <div class="zoom">
             <button class="round" id="zoomOut" type="button" aria-label="Show more area"><svg viewBox="0 0 12 12"><path d="M2 6h8"/></svg></button>
             <span class="span" id="span">8 km</span>
@@ -323,7 +331,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
         <div class="panel" data-step="place">
           <h1 class="display">Begin with a place.</h1>
           <p class="lede">Search any address in the United States.</p>
-          <div class="field">
+          <div class="field field-search">
             <div class="label">Search</div>
             <div class="search">
               <div class="well shell"><input class="input" id="addr" type="text" autocomplete="off" placeholder="An address, lake, park or town" aria-label="Address"></div>
@@ -486,7 +494,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     { name: 'Half Dome', lat: 37.7459, lon: -119.5332, title: 'HALF DOME', sub: 'YOSEMITE, CALIFORNIA', place: 'Half Dome, Yosemite National Park, California', span: 8000, img: 'assets/print-halfdome.jpg' },
     { name: 'Zion Canyon', lat: 37.2690, lon: -112.9480, title: 'ZION', sub: 'UTAH', place: 'Zion Canyon, Utah', span: 8000, img: 'assets/print-zion-relief.jpg' },
     { name: 'Mount Rainier', lat: 46.8523, lon: -121.7603, title: 'MOUNT RAINIER', sub: 'WASHINGTON', place: 'Mount Rainier, Washington', span: 15000, img: 'assets/print-rainier-relief.jpg' },
-    { name: 'Sleeping Bear Dunes', lat: 44.8836, lon: -86.0456, title: 'SLEEPING BEAR', sub: 'MICHIGAN', place: 'Sleeping Bear Dunes, Michigan', span: 3600, img: 'assets/print-sleepingbear.jpg' }
+    { name: 'Sleeping Bear Dunes', lat: 44.8836, lon: -86.0456, title: 'SLEEPING BEAR', sub: 'MICHIGAN', place: 'Sleeping Bear Dunes, Michigan', span: 3600, img: 'assets/print-sleepingbear.jpg' },
+    { name: 'Yosemite', lat: 37.8393, lon: -119.5165, title: 'YOSEMITE', sub: 'NATIONAL PARK', place: 'Yosemite National Park, California', span: 8000, img: 'assets/print-yosemite.jpg' }
   ];
   // Map width across the print, in meters. The renderer reads the same value from the order.
   var SPANS = [1500, 2000, 2500, 3000, 3600, 4500, 6000, 8000, 10000, 12000, 15000], DEFAULT_SPAN = 3600;
@@ -777,6 +786,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
         }).catch(function () { $('addrErr').textContent = 'Search is unavailable right now.'; });
     }, 260);
   });
+  // The box opens holding the current place; select it so typing starts a new search instead of appending
+  $('addr').addEventListener('focus', function () { var el = this; setTimeout(function () { el.select(); }); });
   $('addr').addEventListener('keydown', function (e) {
     if (e.key === 'Enter') { e.preventDefault(); var q = this.value.trim(); if (/^\d/.test(q)) exact(q); else if (results.length) choose(0); }
   });
@@ -1141,14 +1152,16 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   });
   $('zoomIn').onclick = function () { zoom(-1); };
   $('zoomOut').onclick = function () { zoom(1); };
-  $('recenter').onclick = function () { state.clat = state.lat; state.clon = state.lon; load(); };
+  // Back to the chosen place, centered, keeping the scope the customer picked
+  $('resetView').onclick = function () { state.clat = state.lat; state.clon = state.lon; spanUI(); load(); };
   function spanUI() {
     var km = (state.span / 1000).toFixed(1).replace('.0', '') + ' km';
     $('span').textContent = km; $('scopeVal').textContent = km + ' across';
     $('scope').value = SPANS.indexOf(state.span);
     $('zoomIn').disabled = state.span === SPANS[0];
     $('zoomOut').disabled = state.span === SPANS[SPANS.length - 1];
-    $('recenter').hidden = !moved();
+    var rv = $('resetView'), off = moved();
+    rv.classList.toggle('on', off); rv.tabIndex = off ? 0 : -1; rv.setAttribute('aria-hidden', off ? 'false' : 'true');
   }
 
   /* Checkout */
@@ -1212,7 +1225,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   window.addEventListener('pageshow', function (e) { if (e.persisted) { $('next').disabled = false; setNext('Checkout'); pairAsked = false; } });
 
   // Links from the home page and from ads can open on a specific look:
-  // ?place=mount-rainier&style=contour&palette=sage&pin=off (place is a suggested place's name, any case)
+  // ?place=mount-rainier&style=contour&palette=sage&km=15&roads=off&pin=off (place is a suggested place's name, any case;
+  // km is the map width, snapped to the nearest scope the studio offers)
   var qs = new URLSearchParams(location.search);
   var cap = function (v) { return v ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : ''; };
   var want = cap(qs.get('palette'));
@@ -1224,6 +1238,9 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     state.lat = state.clat = fav.lat; state.lon = state.clon = fav.lon; state.span = fav.span; state.place = fav.place;
     $('title').value = fav.title; $('sub').value = fav.sub;
   }
+  var km = parseFloat(qs.get('km'));
+  if (km > 0) state.span = SPANS.reduce(function (a, b) { return Math.abs(b - km * 1000) < Math.abs(a - km * 1000) ? b : a; });
+  if (qs.get('roads') === 'off') { state.roads = false; $('roadsOn').checked = false; }
   if (qs.get('pin') === 'off') $('pinOn').checked = false;
 
   $('addr').value = state.place;
