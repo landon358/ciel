@@ -39,7 +39,7 @@ try {
 <link rel="preconnect" href="https://api.fontshare.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
 <link href="https://api.fontshare.com/v2/css?f[]=gambarino@400&f[]=satoshi@400,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=202611032321">
+<link rel="stylesheet" href="style.css?v=202611040930">
 <style>
 /* Studio look from the Studio Workbench: Gambarino headings, Satoshi text, black panels, grey accent, white button.
    Only the studio changes; the home page keeps the shared style.css look. */
@@ -58,6 +58,33 @@ body::before { background: radial-gradient(60vw 50vh at 78% 8%, rgba(255,255,255
 .top { display: flex; align-items: center; justify-content: space-between; max-width: 1600px; margin: 0 auto; padding: 22px var(--gut) 0; }
 .top .back { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--mute); transition: color 0.4s; }
 .top .back:hover { color: var(--linen); }
+.top-right { display: flex; align-items: center; gap: 20px; }
+.cartbtn { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 6px 0 12px; border: 0; border-radius: 999px; background: rgba(239,237,235,0.05); box-shadow: inset 0 0 0 1px var(--hair2); color: var(--linen); font: 500 12px/1 var(--sans); cursor: pointer; transition: box-shadow 0.4s var(--spring); }
+.cartbtn:hover { box-shadow: inset 0 0 0 1px rgba(239,237,235,0.4); }
+.cartbtn svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 1.2; fill: none; stroke-linejoin: round; }
+.cartbtn b { min-width: 24px; height: 24px; padding: 0 7px; border-radius: 12px; background: var(--linen); color: #000; font: 500 11px/24px var(--mono); text-align: center; }
+.cartbtn[hidden] { display: none; }
+/* Cart sheet */
+.modal .cart-sheet { width: min(100%, 560px); }
+.modal .cart-sheet > .core { max-height: min(88dvh, 780px); overflow: auto; scrollbar-width: thin; scrollbar-color: rgba(239,237,235,0.22) transparent; }
+.cart-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.cart-head h2 { margin-bottom: 0; }
+.cart-head .round { width: 40px; height: 40px; }
+.cart-note { margin: 10px 0 8px; font-size: 14px; color: var(--mute); }
+.cart-item { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 16px 0; box-shadow: inset 0 -1px 0 var(--hair); }
+.cart-item .thumb { display: block; width: 56px; aspect-ratio: 3 / 4; border-radius: 3px; object-fit: cover; box-shadow: 0 8px 18px -8px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.08); }
+.cart-item b { display: block; font: 400 19px/1.2 var(--serif); overflow-wrap: anywhere; }
+.cart-item small { display: block; margin-top: 2px; font-size: 12.5px; line-height: 1.45; color: var(--mute); }
+.cart-item .end { display: grid; justify-items: end; gap: 8px; font: 400 14px/1 var(--mono); }
+.cart-item .end button { background: none; border: 0; padding: 2px 0; cursor: pointer; font: 400 12px/1 var(--sans); color: var(--faint); transition: color 0.3s; }
+.cart-item .end button:hover { color: var(--linen); }
+.cart-empty { padding: 22px 0 8px; color: var(--mute); font-size: 14px; }
+.notice { position: fixed; left: 50%; top: 20px; z-index: 30; max-width: min(92vw, 520px); padding: 13px 18px; border-radius: 16px; background: rgba(20,20,20,0.92); box-shadow: inset 0 0 0 1px var(--hair2), 0 20px 50px -20px rgba(0,0,0,0.8); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); color: var(--linen); font-size: 14px; line-height: 1.45; text-align: center; opacity: 0; transform: translate(-50%, -12px); pointer-events: none; transition: opacity 0.5s var(--spring), transform 0.6s var(--spring); }
+.notice.on { opacity: 1; transform: translate(-50%, 0); }
+.cart-item .end s { color: var(--faint); font-size: 12px; margin-right: 4px; }
+#cartBill .save { color: var(--linen); }
+#cartBill { margin: 20px 0 22px; }
+#cartBill[hidden], .cta[hidden] { display: none; }
 .top .back svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 1.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
 .studio-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(400px, 1fr); gap: 20px; align-items: start; max-width: 1600px; margin: 0 auto; padding: 20px var(--gut) 40px; }
@@ -355,9 +382,11 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .modal .sheet > .core { padding: 34px 30px 26px; }
 .modal h2 { font-size: 40px; margin-bottom: 12px; }
 .modal .lede { font-size: 15px; }
-.modal .pair-pals { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0 26px; }
-.modal .pair-pals .swatch { margin: 0; }
-.modal .pair-name { font: 400 12px/1 var(--mono); color: var(--linen); margin: -12px 0 24px; min-height: 1em; }
+.modal .deal { display: flex; align-items: baseline; gap: 20px; margin: 26px 0 10px; }
+.modal .deal .was { position: relative; font: 400 46px/1 var(--mono); letter-spacing: -0.03em; color: rgba(239,237,235,0.38); }
+.modal .deal .was::after { content: ""; position: absolute; left: -8%; right: -8%; top: 50%; height: 3px; border-radius: 2px; background: #e5484d; transform: rotate(-12deg); box-shadow: 0 0 10px rgba(229,72,77,0.45); }
+.modal .deal .now { font: 400 46px/1 var(--mono); letter-spacing: -0.03em; color: #ffffff; }
+.modal .deal-note { margin: 0 0 26px; font-size: 13px; color: var(--mute); }
 .modal .row2 { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 20px; }
 .modal .skip { background: none; border: 0; cursor: pointer; font-size: 14px; color: var(--mute); padding: 8px 0; transition: color 0.3s; }
 .modal .skip:hover { color: var(--linen); }
@@ -398,7 +427,10 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 
 <header class="top">
   <a class="logo" href="./" aria-label="Ciel home"><svg viewBox="0.1 0.1 148.387 168.8"><use href="#ciel"/></svg></a>
-  <a class="back" href="./"><svg viewBox="0 0 14 14"><path d="M9 2L4 7l5 5"/></svg>Home</a>
+  <div class="top-right">
+    <button class="cartbtn" id="cartBtn" type="button" hidden aria-label="Open cart"><svg viewBox="0 0 16 16"><path d="M3 5.5h10l-.8 8H3.8z"/><path d="M5.8 5.5V4.6a2.2 2.2 0 0 1 4.4 0v.9"/></svg>Cart<b id="cartCount">0</b></button>
+    <a class="back" href="./"><svg viewBox="0 0 14 14"><path d="M9 2L4 7l5 5"/></svg>Home</a>
+  </div>
 </header>
 
 <main class="studio-grid">
@@ -540,13 +572,32 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 
 <div class="modal" id="pair" role="dialog" aria-modal="true" aria-labelledby="pairTitle">
   <div class="sheet shell"><div class="core">
-    <h2 class="display" id="pairTitle">Make it a pair.</h2>
-    <p class="lede">Add the same map in a second palette, <span id="pairOff">30% off</span>. <span id="pairPrice"></span></p>
-    <div class="pair-pals" id="pairPals"></div>
-    <div class="pair-name" id="pairName"></div>
+    <h2 class="display" id="pairTitle">Add a second map for 25% off.</h2>
+    <p class="lede">Another place, another palette or another size. Whatever you design next is 25% off.</p>
+    <div class="deal" aria-hidden="true"><span class="was" id="pairWas"></span><span class="now" id="pairNow"></span></div>
+    <p class="deal-note" id="pairNote"></p>
     <div class="row2">
-      <button class="cta" id="pairYes" type="button"><span>Add the pair</span><span class="ic"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></button>
-      <button class="skip" id="pairNo" type="button">No thanks, continue to checkout</button>
+      <button class="cta" id="pairYes" type="button"><span>Design a second map</span><span class="ic"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></button>
+      <button class="skip" id="pairNo" type="button">No thanks, just this one</button>
+    </div>
+  </div></div>
+</div>
+
+<div class="notice" id="notice" role="status" aria-live="polite"></div>
+
+<div class="modal" id="cartSheet" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+  <div class="sheet shell cart-sheet"><div class="core">
+    <div class="cart-head">
+      <h2 class="display" id="cartTitle">Your cart</h2>
+      <button class="round" id="cartClose" type="button" aria-label="Close cart"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+    </div>
+    <p class="cart-note" id="cartNote"></p>
+    <div class="cart-list" id="cartList"></div>
+    <div class="bill" id="cartBill" hidden></div>
+    <div class="err" id="cartErr"></div>
+    <div class="row2">
+      <button class="cta" id="cartCheckout" type="button" hidden><span id="cartCheckoutLabel">Checkout</span><span class="ic"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></button>
+      <button class="skip" id="cartMore" type="button">Design another map</button>
     </div>
   </div></div>
 </div>
@@ -561,7 +612,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   var STUDIO_VERSION = '2026.10.31';  // written into each order's _config; bump when what the studio sends changes
   var PRODUCT_ID = '8498183897154';
   // Second one in another palette: offered in a popup before checkout, priced by this Shopify discount code
-  var EXTRA = { code: 'SECONDPALETTE', off: 0.30 };
+  // Shopify's automatic "Second map 25% off" discount: with two or more maps in a cart, the lower priced one is 25% off
+  var EXTRA = { off: 0.25 };
 
   // Same colors as make_print.py PALETTES
   var PALETTES = {
@@ -989,7 +1041,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     $('stepOf').textContent = (step + 1) + ' of ' + STEPS.length;
     $('stage').dataset.step = name;
     $('back').hidden = step === 0;
-    setNext(step === STEPS.length - 1 ? 'Checkout' : 'Continue to ' + STEPS[step + 1][1]);
+    setNext(step === STEPS.length - 1 ? 'Add to cart' : 'Continue to ' + STEPS[step + 1][1]);
     $('buyErr').textContent = '';
     refresh();
     showcase(name === 'review');
@@ -1029,31 +1081,21 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   }
   function moved() { return Math.abs(state.clat - state.lat) > 1e-6 || Math.abs(state.clon - state.lon) > 1e-6; }
 
-  /* The pair offer: once, just before checkout */
-  var pairPick = null;
+  /* The second map offer: shown as the first map goes into the cart. The discount is one per order, so once the cart
+     holds a map, the next map already takes it and the offer is skipped. Yes puts this map in the cart and starts the
+     next one; no just adds this one. */
   function offerPair() {
-    if (pairAsked) { checkout(); return; }
-    var names = Object.keys(PALETTES).filter(function (n) { return n !== state.palette; });
-    pairPick = names[(Object.keys(PALETTES).indexOf(state.palette) + 1) % names.length] || names[0];
-    $('pairPals').innerHTML = '';
-    names.forEach(function (n) {
-      var e = document.createElement('button');
-      e.className = 'swatch'; e.type = 'button'; e.title = n; e.setAttribute('aria-label', n);
-      e.innerHTML = '<i style="background:' + gradient(PALETTES[n]) + '"></i>';
-      e.setAttribute('aria-pressed', n === pairPick);
-      e.onclick = function () { pairPick = n; $('pairPals').querySelectorAll('.swatch').forEach(function (x) { x.setAttribute('aria-pressed', x === e); }); $('pairName').textContent = n; };
-      $('pairPals').appendChild(e);
-    });
-    $('pairName').textContent = pairPick;
-    $('pairOff').textContent = Math.round(EXTRA.off * 100) + '% off';
-    $('pairPrice').textContent = 'Your second ' + noun() + ' is ' + money(extraPrice()) + ' instead of ' + money(unitPrice()) + '.';
+    if (pairAsked || mapsIn(cart).length) { addToCart(); return; }
+    var what = digital() ? 'digital file' : state.size + ' ' + (state.frame === 'Unframed' ? 'unframed print' : 'framed print');
+    $('pairWas').textContent = money(unitPrice()); $('pairNow').textContent = money(extraPrice());
+    $('pairNote').textContent = 'For another ' + what + '. The ' + Math.round(EXTRA.off * 100) + '% comes off the lower priced map in your cart.';
     $('pair').classList.add('on');
     pairAsked = true;
     setTimeout(function () { $('pairYes').focus(); }, 50);
   }
   function closePair() { $('pair').classList.remove('on'); }
-  $('pairYes').onclick = function () { state.extra = pairPick; closePair(); refresh(); checkout(); };
-  $('pairNo').onclick = function () { state.extra = null; closePair(); checkout(); };
+  $('pairYes').onclick = function () { closePair(); addToCart(true); };
+  $('pairNo').onclick = function () { closePair(); addToCart(); };
   $('pair').addEventListener('click', function (e) { if (e.target === this) { closePair(); pairAsked = false; } });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && $('pair').classList.contains('on')) { closePair(); pairAsked = false; } });
 
@@ -1520,10 +1562,12 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
       return u.toString();
     } catch (e) { return url; }
   }
-  function checkout() {
+  // The cart lines for the map on screen: the map, its custom palette add on, and the discounted second palette if taken.
+  // A hidden _item id ties each add on to its map, so removing a map from the cart takes its add on with it.
+  function mapLines() {
     var v = variants[key()];
-    if (!v || (custom() && !customVariant)) { $('buyErr').textContent = 'The shop is still loading. Try again in a moment.'; pairAsked = false; return; }
-    $('next').disabled = true; setNext('Opening checkout'); $('buyErr').textContent = '';
+    if (!v || (custom() && !customVariant)) return null;
+    var item = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
     var attrs = [
       { key: 'Place', value: state.place },
       { key: 'Coordinates', value: state.lat.toFixed(6) + ', ' + state.lon.toFixed(6) },
@@ -1550,27 +1594,154 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
       coords: $('coords').checked, pin: $('pinOn').checked,
       format: state.format, size: digital() ? null : state.size.replace(' in', '').replace(/ /g, ''), frame: digital() ? null : state.frame
     };
-    var withConfig = function (list, c) { return list.concat([{ key: '_config', value: JSON.stringify(c) }]); };
-    var lines = [{ merchandiseId: v.id, quantity: 1, attributes: withConfig(attrs, config) }];
-    if (custom()) lines.push({ merchandiseId: customVariant.id, quantity: 1, attributes: [{ key: 'For', value: ($('title').value.toUpperCase() || state.place) }, { key: 'Colors', value: customColors() }] });
+    var withConfig = function (list, c, id) { return list.concat([{ key: '_config', value: JSON.stringify(c) }, { key: '_item', value: id }]); };
+    var lines = [{ merchandiseId: v.id, quantity: 1, attributes: withConfig(attrs, config, item) }];
+    if (custom()) lines.push({ merchandiseId: customVariant.id, quantity: 1, attributes: [{ key: 'For', value: ($('title').value.toUpperCase() || state.place) }, { key: 'Colors', value: customColors() }, { key: '_for', value: item }] });
     if (state.extra) {
       lines.push({ merchandiseId: v.id, quantity: 1, attributes: withConfig(attrs.filter(function (a) { return a.key !== 'Custom colors'; }).map(function (a) {
         return a.key === 'Palette' ? { key: 'Palette', value: state.extra } : a;
-      }).concat([{ key: 'Add on', value: 'Second palette' }]), Object.assign({}, config, { palette: state.extra.toLowerCase(), colors: null })) });
+      }).concat([{ key: 'Add on', value: 'Second palette' }]), Object.assign({}, config, { palette: state.extra.toLowerCase(), colors: null }), item + 'p') });
     }
-    var maps = state.extra ? 2 : 1;
-    var ev = { content_ids: [PRODUCT_ID], content_type: 'product', contents: [{ id: PRODUCT_ID, quantity: maps }], num_items: maps, value: total(), currency: 'USD' };
-    track('track', 'AddToCart', ev);
-    track('track', 'InitiateCheckout', ev);
-    gql('mutation($l:[CartLineInput!]!,$d:[String!]){cartCreate(input:{lines:$l,discountCodes:$d}){cart{checkoutUrl} userErrors{message}}}', { l: lines, d: state.extra ? [EXTRA.code] : [] })
-      .then(function (d) {
-        var c = d.data && d.data.cartCreate;
-        if (c && c.cart) { window.location.href = withAdParams(c.cart.checkoutUrl); return; }
-        throw new Error((c && c.userErrors[0] && c.userErrors[0].message) || 'Checkout failed');
-      })
-      .catch(function (e) { $('buyErr').textContent = e.message; $('next').disabled = false; setNext('Checkout'); pairAsked = false; });
+    return { lines: lines, item: item, maps: state.extra ? 2 : 1, value: total() };
   }
-  window.addEventListener('pageshow', function (e) { if (e.persisted) { $('next').disabled = false; setNext('Checkout'); pairAsked = false; } });
+
+  /* Cart. Maps collect in one Shopify cart that lives across visits (its id is kept in this browser), so a customer can
+     design several maps and check out once. The cart sheet lists every map with a small picture of it. */
+  var CART_KEY = 'ciel_cart', cart = null;
+  var CART_FIELDS = 'id checkoutUrl totalQuantity cost{subtotalAmount{amount} totalAmount{amount}} ' +
+    'lines(first:50){nodes{id attributes{key value} cost{subtotalAmount{amount} totalAmount{amount}} merchandise{...on ProductVariant{id title}}}}';
+  function keep(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
+  function recall(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function attr(line, k) { for (var i = 0; i < line.attributes.length; i++) if (line.attributes[i].key === k) return line.attributes[i].value; return ''; }
+  function mapsIn(c) { return c ? c.lines.nodes.filter(function (l) { return attr(l, '_config'); }) : []; }
+  function setCart(c) {
+    cart = c && c.lines ? c : null;
+    keep(CART_KEY, cart ? cart.id : null);
+    if (cart) {  // drop pictures of maps no longer in the cart
+      var live = {}; mapsIn(cart).forEach(function (l) { live[attr(l, '_item')] = 1; });
+      try { Object.keys(localStorage).forEach(function (k) { if (k.indexOf('ciel_thumb_') === 0 && !live[k.slice(11)]) localStorage.removeItem(k); }); } catch (e) {}
+    }
+    cartUI();
+  }
+  function cartCall(query, vars, field) {
+    return gql(query, vars).then(function (d) {
+      var r = d.data && d.data[field];
+      if (r && r.cart) return r.cart;
+      throw new Error((r && r.userErrors && r.userErrors[0] && r.userErrors[0].message) || 'The cart could not be updated.');
+    });
+  }
+  function loadCart() {
+    var id = recall(CART_KEY);
+    if (!id) { cartUI(); return; }
+    gql('query($id:ID!){cart(id:$id){' + CART_FIELDS + '}}', { id: id }).then(function (d) { setCart(d.data && d.data.cart); }).catch(function () { cartUI(); });
+  }
+  function thumbnail(item) {
+    try {
+      var big = posterImage($('poster').getBoundingClientRect()), c = document.createElement('canvas');
+      c.width = 150; c.height = Math.round(150 * big.height / big.width);
+      c.getContext('2d').drawImage(big, 0, 0, c.width, c.height);
+      keep('ciel_thumb_' + item, c.toDataURL('image/jpeg', 0.82));
+    } catch (e) {}
+  }
+  // another: the customer chose to design a second map, so go straight back to the start instead of opening the cart
+  function addToCart(another) {
+    var built = mapLines();
+    if (!built) { $('buyErr').textContent = 'The shop is still loading. Try again in a moment.'; pairAsked = false; return; }
+    $('next').disabled = true; setNext('Adding to cart'); $('buyErr').textContent = '';
+    thumbnail(built.item);
+    var add = cart
+      ? cartCall('mutation($c:ID!,$l:[CartLineInput!]!){cartLinesAdd(cartId:$c,lines:$l){cart{' + CART_FIELDS + '} userErrors{message}}}', { c: cart.id, l: built.lines }, 'cartLinesAdd')
+          .catch(function () { return null; })  // an expired cart: start a new one below
+      : Promise.resolve(null);
+    add.then(function (c) {
+      return c || cartCall('mutation($l:[CartLineInput!]!){cartCreate(input:{lines:$l}){cart{' + CART_FIELDS + '} userErrors{message}}}', { l: built.lines }, 'cartCreate');
+    }).then(function (c) {
+      track('track', 'AddToCart', { content_ids: [PRODUCT_ID], content_type: 'product', contents: [{ id: PRODUCT_ID, quantity: built.maps }], num_items: built.maps, value: built.value, currency: 'USD' });
+      setCart(c);
+      state.extra = null; pairAsked = false; refresh();
+      $('next').disabled = false; setNext('Add to cart');
+      if (another) {
+        var name = ($('title').value.trim() || state.place).toUpperCase();
+        go(0); window.scrollTo({ top: 0, behavior: 'smooth' });
+        notice(name + ' is in your cart. Design your second map and it is ' + Math.round(EXTRA.off * 100) + '% off.');
+      } else openCart(built.maps > 1 ? 'Both maps are in your cart.' : 'Added to your cart.');
+    }).catch(function (e) {
+      keep('ciel_thumb_' + built.item, null);
+      $('buyErr').textContent = e.message; $('next').disabled = false; setNext('Add to cart'); pairAsked = false;
+    });
+  }
+  function removeMap(item) {
+    if (!cart) return;
+    var ids = cart.lines.nodes.filter(function (l) { return attr(l, '_item') === item || attr(l, '_for') === item; }).map(function (l) { return l.id; });
+    $('cartErr').textContent = '';
+    cartCall('mutation($c:ID!,$l:[ID!]!){cartLinesRemove(cartId:$c,lineIds:$l){cart{' + CART_FIELDS + '} userErrors{message}}}', { c: cart.id, l: ids }, 'cartLinesRemove')
+      .then(setCart)
+      .catch(function (e) { $('cartErr').textContent = e.message; });
+  }
+  function cartUI() {
+    var maps = mapsIn(cart), n = maps.length;
+    $('cartBtn').hidden = !n; $('cartCount').textContent = n;
+    if (!$('cartSheet').classList.contains('on')) return;
+    var addons = cart ? cart.lines.nodes.filter(function (l) { return attr(l, '_for'); }) : [];
+    $('cartList').innerHTML = n ? maps.map(function (l) {
+      var item = attr(l, '_item'), pal = attr(l, 'Palette'), thumb = recall('ciel_thumb_' + item);
+      var pairOf = attr(l, 'Add on') === 'Second palette';
+      var pic = !pairOf && thumb ? '<img class="thumb" src="' + thumb + '" alt="">' : '<i class="thumb" style="background:' + (PALETTES[pal] ? gradient(PALETTES[pal]) : '#333') + '"></i>';
+      var extras = addons.filter(function (a) { return attr(a, '_for') === item; }).map(function (a) { return '<small>Custom palette, ' + money(+a.cost.totalAmount.amount) + '</small>'; }).join('');
+      var fmt = l.merchandise.title.replace(' / ', ', ').replace(', None', '').replace('Black frame', 'black pine frame').replace('Unframed', 'unframed');
+      return '<div class="cart-item">' + pic + '<div><b>' + esc(attr(l, 'Title').trim() || attr(l, 'Place')) + '</b>' +
+        (attr(l, 'Second line').trim() ? '<small>' + esc(attr(l, 'Second line')) + '</small>' : '') +
+        '<small>' + esc(fmt) + ', ' + esc(pal) + (pairOf ? ', second palette' : '') + '</small>' + extras + '</div>' +
+        '<div class="end"><span>' + price(l) + '</span><button type="button" data-rm="' + esc(item) + '">Remove</button></div></div>';
+    }).join('') : '<p class="cart-empty">Your cart is empty. Design a map and add it here.</p>';
+    $('cartList').querySelectorAll('[data-rm]').forEach(function (b) { b.onclick = function () { b.disabled = true; removeMap(b.dataset.rm); }; });
+    // Line subtotals are before the second map discount, totals after it
+    var lines = cart ? cart.lines.nodes : [], tot = cart ? +cart.cost.totalAmount.amount : 0;
+    var full = lines.reduce(function (s, l) { return s + +l.cost.subtotalAmount.amount; }, 0);
+    var saved = Math.round((full - lines.reduce(function (s, l) { return s + +l.cost.totalAmount.amount; }, 0)) * 100) / 100;
+    $('cartBill').innerHTML = n ? '<div><span>' + n + (n > 1 ? ' maps' : ' map') + '</span><span>' + money(full) + '</span></div>' +
+      (saved > 0 ? '<div class="save"><span>Second map, ' + Math.round(EXTRA.off * 100) + '% off</span><span>-' + money(saved) + '</span></div>' : '') +
+      '<div><span>Shipping</span><span>At checkout</span></div><div class="total"><span>Total</span><span>' + money(tot) + '</span></div>' : '';
+    $('cartBill').hidden = !n; $('cartCheckout').hidden = !n;
+  }
+  var noticeTimer;
+  function notice(text) {
+    var n = $('notice'); n.textContent = text; n.classList.add('on');
+    clearTimeout(noticeTimer); noticeTimer = setTimeout(function () { n.classList.remove('on'); }, 5200);
+  }
+  function price(l) {
+    var was = +l.cost.subtotalAmount.amount, now = +l.cost.totalAmount.amount;
+    return (was - now > 0.005 ? '<s>' + money(was) + '</s> ' : '') + money(now);
+  }
+  function openCart(note) {
+    var n = mapsIn(cart).length, off = Math.round(EXTRA.off * 100) + '% off';
+    var nudge = n === 1 ? 'Add a second map and it is ' + off + '.' : n > 1 ? 'Your second map is ' + off + ', applied to the lower priced one.' : '';
+    $('cartNote').textContent = ((note ? note + ' ' : '') + nudge) || 'Check out when you are ready.';
+    $('cartErr').textContent = '';
+    $('cartSheet').classList.add('on'); cartUI();
+    setTimeout(function () { ($('cartCheckout').hidden ? $('cartMore') : $('cartCheckout')).focus(); }, 50);
+  }
+  function closeCart() { $('cartSheet').classList.remove('on'); }
+  $('cartBtn').onclick = function () { openCart(); };
+  $('cartClose').onclick = closeCart;
+  $('cartSheet').addEventListener('click', function (e) { if (e.target === this) closeCart(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && $('cartSheet').classList.contains('on')) closeCart(); });
+  // Another map starts from the one just added, so a matching set takes only a few changes
+  $('cartMore').onclick = function () { closeCart(); go(0); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  $('cartCheckout').onclick = function () {
+    if (!cart) return;
+    var n = mapsIn(cart).length;
+    track('track', 'InitiateCheckout', { content_ids: [PRODUCT_ID], content_type: 'product', contents: [{ id: PRODUCT_ID, quantity: n }], num_items: n, value: +cart.cost.totalAmount.amount, currency: 'USD' });
+    $('cartCheckout').disabled = true; $('cartCheckoutLabel').textContent = 'Opening checkout';
+    window.location.href = withAdParams(cart.checkoutUrl);
+  };
+  window.addEventListener('pageshow', function (e) {
+    if (!e.persisted) return;
+    $('next').disabled = false; if (step === STEPS.length - 1) setNext('Add to cart'); pairAsked = false;
+    $('cartCheckout').disabled = false; $('cartCheckoutLabel').textContent = 'Checkout';
+    loadCart();  // back from checkout: the cart may have changed or been bought
+  });
+  loadCart();
 
   // Links from the home page and from ads can open on a specific look:
   // ?place=mount-rainier&style=contour&palette=sage&km=15&roads=off&pin=off (place is a suggested place's name, any case;
