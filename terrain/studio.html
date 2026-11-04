@@ -39,7 +39,7 @@ try {
 <link rel="preconnect" href="https://api.fontshare.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
 <link href="https://api.fontshare.com/v2/css?f[]=gambarino@400&f[]=satoshi@400,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=202611031635">
+<link rel="stylesheet" href="style.css?v=202611032321">
 <style>
 /* Studio look from the Studio Workbench: Gambarino headings, Satoshi text, black panels, grey accent, white button.
    Only the studio changes; the home page keeps the shared style.css look. */
@@ -67,6 +67,58 @@ body::before { background: radial-gradient(60vw 50vh at 78% 8%, rgba(255,255,255
 .stage > .core::after { content: ""; position: absolute; left: 18%; right: 18%; bottom: 10%; height: 60px; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(0,0,0,0.45), transparent 70%); pointer-events: none; }
 .frame { position: relative; z-index: 1; width: min(100%, 540px, calc((100dvh - 190px) * 0.75)); transform: scale(var(--scale, 1)); transition: transform 0.9s var(--spring), padding 0.6s var(--spring), background 0.6s var(--spring); box-shadow: 0 50px 90px -30px rgba(0,0,0,0.7); }
 .frame.framed { padding: 14px; background: linear-gradient(145deg, #23201d, #070605); box-shadow: 0 50px 90px -30px rgba(0,0,0,0.75), inset 0 0 0 1px rgba(255,255,255,0.06); }
+/* Review showcase: the finished piece lifts off the wall. Framed prints spin and hover; a loose print is redrawn as a
+   curling sheet in WebGL (.paper3d); a file rises. A halo in the print's own colors blooms behind it. */
+.stage > .core { perspective: 1600px; }
+.frame { transform-style: preserve-3d; }
+.poster { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+/* The frame as a solid object: four wooden sides running back --depth, and a back with a hardboard backing, metal
+   flexi points, a sawtooth hanger and a maker's label */
+.frame { --depth: 16px; }
+.frame-edge { position: absolute; display: none; background: linear-gradient(90deg, #191715, #0c0b0a 45%, #1d1a17); }
+.frame.framed .frame-edge { display: block; }
+.frame-edge.et { left: 0; right: 0; top: 0; height: var(--depth); transform-origin: top; transform: rotateX(-90deg); background: linear-gradient(180deg, #24211e, #0e0d0c); }
+.frame-edge.eb { left: 0; right: 0; bottom: 0; height: var(--depth); transform-origin: bottom; transform: rotateX(90deg); background: linear-gradient(0deg, #0b0a09, #050404); }
+.frame-edge.el { top: 0; bottom: 0; left: 0; width: var(--depth); transform-origin: left; transform: rotateY(90deg); background: linear-gradient(90deg, #1c1a17, #0d0c0b); }
+.frame-edge.er { top: 0; bottom: 0; right: 0; width: var(--depth); transform-origin: right; transform: rotateY(-90deg); background: linear-gradient(270deg, #121110, #070606); }
+.frame-back { position: absolute; inset: 0; display: none; transform: translateZ(calc(var(--depth) * -1)) rotateY(180deg); backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  background: linear-gradient(145deg, #1e1b18, #0b0a09 55%, #151311); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05); }
+.frame.framed .frame-back { display: block; }
+.frame-back .board { position: absolute; inset: 11px; border-radius: 1px;
+  background: radial-gradient(120% 80% at 30% 15%, rgba(255,255,255,0.07), transparent 60%),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 7px),
+    linear-gradient(165deg, #6e5a45, #4f4031 70%, #463829);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.55), inset 0 3px 8px rgba(0,0,0,0.4); }
+.frame-back .tab { position: absolute; width: 16px; height: 5px; border-radius: 1px; background: linear-gradient(180deg, #d6d3cd, #8e8b86); box-shadow: 0 1px 1px rgba(0,0,0,0.5); }
+.frame-back .tab.v { width: 5px; height: 16px; background: linear-gradient(90deg, #d6d3cd, #8e8b86); }
+.frame-back .hanger { position: absolute; left: 50%; top: 7%; width: 18%; height: 9px; transform: translateX(-50%); border-radius: 1px;
+  background: linear-gradient(180deg, #e2dfd9, #9d9a94); box-shadow: 0 1px 2px rgba(0,0,0,0.55);
+  -webkit-mask: linear-gradient(#000 0 0) top / 100% 55% no-repeat, conic-gradient(from -45deg at 50% 100%, #000 90deg, transparent 0) bottom / 6px 45% repeat-x;
+  mask: linear-gradient(#000 0 0) top / 100% 55% no-repeat, conic-gradient(from -45deg at 50% 100%, #000 90deg, transparent 0) bottom / 6px 45% repeat-x; }
+.frame-back .tag { position: absolute; right: 9%; bottom: 8%; width: 40%; padding: 3.2% 3.6%; background: #efe9dd; color: #2b251f; box-shadow: 0 1px 2px rgba(0,0,0,0.35); font: 400 9px/1.45 var(--mono); letter-spacing: 0.04em; }
+.frame-back .tag b { display: block; font: 500 10px/1.3 var(--sans); letter-spacing: 0.16em; margin-bottom: 3px; }
+.frame-back .tag span { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.frame.glow { box-shadow: 0 60px 90px -30px rgba(0,0,0,0.75), 0 0 56px 0 var(--glow); }
+.frame.framed.glow { box-shadow: 0 60px 90px -30px rgba(0,0,0,0.75), inset 0 0 0 1px rgba(255,255,255,0.06), 0 0 56px 0 var(--glow); }
+/* One long, gliding turn: a gentle start and a slow settle, run on the compositor */
+.frame.spin { will-change: transform; animation: frameLift 2.9s cubic-bezier(0.5, 0, 0.12, 1) forwards, frameHover 6.5s 2.9s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate; }
+.frame.float { animation: frameRise 1.5s cubic-bezier(0.65, 0, 0.35, 1) forwards, frameBob 4.6s 1.5s ease-in-out infinite alternate; }
+@keyframes frameLift { from { transform: translateY(0) rotateY(0deg) scale(var(--scale, 1)); } to { transform: translateY(var(--lift)) rotateY(360deg) scale(var(--scale, 1)); } }
+@keyframes frameHover {
+  0% { transform: translateY(var(--lift)) rotateX(0deg) rotateY(0deg) scale(var(--scale, 1)); }
+  50% { transform: translateY(calc(var(--lift) - 6px)) rotateX(2deg) rotateY(-6deg) scale(var(--scale, 1)); }
+  100% { transform: translateY(calc(var(--lift) - 2px)) rotateX(-1.5deg) rotateY(5deg) scale(var(--scale, 1)); }
+}
+@keyframes frameRise { from { transform: translateY(0) scale(var(--scale, 1)); } to { transform: translateY(var(--lift)) scale(var(--scale, 1)); } }
+@keyframes frameBob { from { transform: translateY(var(--lift)) rotateX(0deg) scale(var(--scale, 1)); } to { transform: translateY(calc(var(--lift) - 7px)) rotateX(2deg) scale(var(--scale, 1)); } }
+.halo { position: absolute; z-index: 0; border-radius: 50%; pointer-events: none; opacity: 0; filter: blur(44px); transform: scale(0.6); }
+.halo.on { animation: haloIn 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards, haloPulse 5s 1.8s ease-in-out infinite alternate; }
+@keyframes haloIn { 0% { opacity: 0; transform: scale(0.6); } 40% { opacity: 0.95; transform: scale(1.12); } 100% { opacity: 0.62; transform: scale(1); } }
+@keyframes haloPulse { from { opacity: 0.62; transform: scale(1); } to { opacity: 0.42; transform: scale(1.06); } }
+.stage > .core::after { transition: transform 1.8s var(--spring), opacity 1.8s var(--spring); }
+.stage.lifted > .core::after { transform: scale(0.72); opacity: 0.5; }
+.paper3d { position: absolute; z-index: 5; pointer-events: none; }
 .poster { --poster: "Cormorant Garamond", Garamond, Georgia, serif; position: relative; aspect-ratio: 3 / 4; container-type: inline-size; transition: background 0.5s var(--spring), color 0.5s var(--spring); overflow: hidden; }
 .view { position: absolute; left: 7%; top: 5%; width: 86%; height: 78%; overflow: hidden; cursor: grab; touch-action: none; }
 .view.drag { cursor: grabbing; }
@@ -275,6 +327,22 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .dock .sum small { display: block; font-size: 11px; color: var(--faint); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dock .sum strong { font: 400 20px/1 var(--mono); letter-spacing: -0.01em; }
 .dock .cta { height: 52px; }
+/* On the review step the checkout button gets a ring of the print's own colors turning around its outside edge,
+   with a soft bloom of the same colors behind it */
+@property --ring { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.dock .cta { position: relative; }
+.dock .cta.ring::before, .dock .cta.ring::after { content: ""; position: absolute; border-radius: inherit; pointer-events: none;
+  background: conic-gradient(from var(--ring), transparent 0deg, var(--ring1) 80deg, var(--ring2) 130deg, transparent 200deg, transparent 230deg, var(--ring1) 290deg, var(--ring2) 330deg, transparent 360deg);
+  animation: ringTurn 5s linear infinite, ringIn 1.2s var(--out) both; }
+/* A hairline of color right on the edge, masked so it never crosses the button's face */
+.dock .cta.ring::before { inset: -2px; padding: 2px; opacity: 0.9;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+/* The glow sits behind the button and is blurred, so it is strongest at the edge and fades away from it */
+.dock .cta.ring::after { z-index: -1; inset: -5px; filter: blur(14px); opacity: 0.85; }
+@keyframes ringTurn { to { --ring: 360deg; } }
+@keyframes ringIn { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .dock .cta.ring::before, .dock .cta.ring::after { animation: ringIn 0.9s var(--out) both; } }
 .dock .cta .ic { width: 42px; height: 42px; }
 .dockErr { padding: 0 30px; }
 .dockErr:empty { display: none; }
@@ -337,7 +405,15 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   <div class="stage shell" id="stage" data-step="place" aria-label="Preview">
     <div class="core">
       <button class="resetview" id="resetView" type="button" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M2.5 8a5.5 5.5 0 1 0 1.6-3.9"/><path d="M2.5 2.5v3h3"/></svg>Reset view</button>
+      <div class="halo" id="halo" aria-hidden="true"></div>
       <div class="frame" id="frame">
+        <i class="frame-edge et"></i><i class="frame-edge eb"></i><i class="frame-edge el"></i><i class="frame-edge er"></i>
+        <div class="frame-back" aria-hidden="true"><div class="board">
+          <i class="tab" style="left:28%;top:-2px"></i><i class="tab" style="right:28%;top:-2px"></i><i class="tab" style="left:28%;bottom:-2px"></i><i class="tab" style="right:28%;bottom:-2px"></i>
+          <i class="tab v" style="left:-2px;top:30%"></i><i class="tab v" style="left:-2px;bottom:30%"></i><i class="tab v" style="right:-2px;top:30%"></i><i class="tab v" style="right:-2px;bottom:30%"></i>
+          <div class="hanger"></div>
+          <div class="tag"><b>CIEL TERRAIN</b><span id="tagPlace"></span><span id="tagSize"></span><span>Made to order</span></div>
+        </div></div>
         <div class="poster" id="poster">
           <div class="view" id="view">
             <div class="pan" id="pan">
@@ -687,7 +763,9 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     $('price').textContent = money(total());
     $('sumLabel').textContent = 'Total';
     var late = (name === 'format' || name === 'review') && !digital();
-    $('frame').style.setProperty('--scale', late ? SIZE_INFO[state.size].scale : 1);
+    var scale = late ? SIZE_INFO[state.size].scale : 1;
+    if (scale !== lastScale) { lastScale = scale; scaleChangedAt = Date.now(); }
+    $('frame').style.setProperty('--scale', scale);
     if (name === 'review') review();
   }
 
@@ -700,6 +778,193 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   }
   ['title', 'sub'].forEach(function (id) { $(id).addEventListener('input', words); });
   ['coords', 'pinOn'].forEach(function (id) { $(id).addEventListener('change', words); });
+
+  /* Review showcase. Entering the review step lifts the finished piece off the wall: a framed print spins and hovers,
+     a loose print curls into a soft sheet with its corners slowly flapping, a file rises. A halo mixed from the print's
+     palette blooms behind it as it lifts, then settles into a glow. Leaving the step puts everything back. */
+  var lastScale = 1, scaleChangedAt = 0;
+  var show = { on: false, timer: null, gl: null };
+  var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function showcase(on) {
+    clearTimeout(show.timer);
+    var p = pal(), cta = $('next');
+    cta.style.setProperty('--ring1', p.ramp[2]); cta.style.setProperty('--ring2', p.ramp[3]);
+    cta.classList.toggle('ring', on);
+    if (!on) { endShowcase(); return; }
+    if (show.on) return;
+    show.on = true;
+    // Let the print finish resizing to its chosen size before it lifts
+    show.timer = setTimeout(startShowcase, Math.max(350, 950 - (Date.now() - scaleChangedAt)));
+  }
+  function startShowcase() {
+    if (!show.on) return;
+    // Wait out a preview that is still rendering, so the piece lifts with its finished map
+    if ($('poster').classList.contains('busy')) { show.timer = setTimeout(startShowcase, 300); return; }
+    var p = pal(), core = $('stage').querySelector('.core'), fr = $('frame');
+    var cr = core.getBoundingClientRect(), r = fr.getBoundingClientRect();
+    var w = r.width * 1.55, h = r.height * 1.3, halo = $('halo');
+    halo.style.left = (r.left - cr.left + r.width / 2 - w / 2) + 'px'; halo.style.top = (r.top - cr.top + r.height / 2 - h / 2) + 'px';
+    halo.style.width = w + 'px'; halo.style.height = h + 'px';
+    halo.style.background = 'radial-gradient(closest-side, ' + p.ramp[3] + ' 0%, ' + p.ramp[2] + ' 42%, ' + p.ramp[1] + '80 70%, transparent 100%)';
+    halo.classList.remove('on'); void halo.offsetWidth; halo.classList.add('on');
+    fr.style.setProperty('--glow', p.ramp[2] + '8c');
+    fr.style.setProperty('--lift', -Math.round(r.height * 0.045) + 'px');
+    fr.style.setProperty('--depth', Math.round(fr.offsetWidth * 0.035) + 'px');
+    $('tagPlace').textContent = [$('title').value.toUpperCase(), $('sub').value.toUpperCase()].filter(Boolean).join(', ');
+    $('tagSize').textContent = state.size + ', ' + (custom() ? 'custom palette' : state.palette.toLowerCase());
+    fr.classList.add('glow'); $('stage').classList.add('lifted');
+    if (calm.matches) return;
+    if (digital()) fr.classList.add('float');
+    else if (state.frame !== 'Unframed') fr.classList.add('spin');
+    else if (!paperSheet(core, cr)) fr.classList.add('float');
+  }
+  function endShowcase() {
+    show.on = false;
+    var fr = $('frame');
+    fr.classList.remove('spin', 'float', 'glow'); fr.style.visibility = '';
+    $('halo').classList.remove('on'); $('stage').classList.remove('lifted');
+    if (show.gl) { show.gl.stop(); show.gl = null; }
+  }
+  // Restart on a real width change only; phones fire resize when the address bar slides while scrolling
+  var resizeTimer, lastWidth = window.innerWidth;
+  window.addEventListener('resize', function () {
+    if (!show.on || window.innerWidth === lastWidth) return;
+    lastWidth = window.innerWidth;
+    clearTimeout(resizeTimer); resizeTimer = setTimeout(function () { endShowcase(); showcase(true); }, 250);
+  });
+
+  // The poster as one image: background, map, pin and lettering, drawn from the live preview at a higher resolution
+  function posterImage(pr) {
+    var c = document.createElement('canvas'), TW = 900, s = TW / pr.width;
+    c.width = TW; c.height = Math.round(pr.height * s);
+    // Colors come from the palette itself, not the page, which may still be easing between palettes
+    var x = c.getContext('2d'), p = pal();
+    x.fillStyle = p.bg; x.fillRect(0, 0, c.width, c.height);
+    var at = function (el) { var b = el.getBoundingClientRect(); return [(b.left - pr.left) * s, (b.top - pr.top) * s, b.width * s, b.height * s]; };
+    var v = at($('view')); x.drawImage($('map'), v[0], v[1], v[2], v[3]);
+    var pin = $('pin'), pcs = getComputedStyle(pin);
+    if ($('pinOn').checked && pin.style.opacity !== '0') {
+      var q = at(pin), bw = parseFloat(pcs.borderTopWidth) * s;
+      x.beginPath(); x.arc(q[0] + q[2] / 2, q[1] + q[3] / 2, q[2] / 2 - bw / 2, 0, Math.PI * 2);
+      x.lineWidth = bw; x.strokeStyle = p.bg; x.stroke();
+      x.beginPath(); x.arc(q[0] + q[2] / 2, q[1] + q[3] / 2, q[2] / 2 - bw, 0, Math.PI * 2); x.fillStyle = p.pin; x.fill();
+    }
+    ['t1', 't2', 't3'].forEach(function (id) {
+      var el = $(id), cs = getComputedStyle(el), t = el.textContent.trim();
+      if (!t) return;
+      var q = at(el);
+      x.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + parseFloat(cs.fontSize) * s + 'px ' + cs.fontFamily;
+      if ('letterSpacing' in x) x.letterSpacing = (parseFloat(cs.letterSpacing) || 0) * s + 'px';
+      x.fillStyle = p.ink; x.globalAlpha = parseFloat(cs.opacity) || 1;
+      x.textAlign = 'center'; x.textBaseline = 'middle';
+      x.fillText(t, q[0] + q[2] / 2, q[1] + q[3] / 2 + parseFloat(cs.fontSize) * s * 0.06);
+      x.globalAlpha = 1;
+    });
+    return c;
+  }
+
+  // A loose print as a sheet of paper: a grid of points bowed and curled in the vertex shader, lit from the upper left
+  var SHEET_VS = [
+    'attribute vec2 aUV;',
+    'uniform mat4 uMVP; uniform mat3 uRot; uniform vec2 uSize; uniform float uBend, uCurl, uTime;',
+    'varying vec2 vUV; varying vec3 vN;',
+    'float corner(vec2 c, vec2 k, float ph) { float f = max(0.0, 1.0 - length(c - k) / 0.8); return f * f * (1.0 + 0.5 * sin(uTime * 1.6 + ph)); }',
+    'vec3 sheet(vec2 uv) {',
+    '  vec2 c = (uv - 0.5) * 2.0;',
+    '  vec3 p = vec3((uv.x - 0.5) * uSize.x, (0.5 - uv.y) * uSize.y, 0.0);',
+    '  p.z += uBend * c.x * c.x;',
+    '  float a = corner(c, vec2(-1.0, -1.0), 0.0) + corner(c, vec2(1.0, -1.0), 1.9) + corner(c, vec2(-1.0, 1.0), 3.7) + corner(c, vec2(1.0, 1.0), 5.3);',
+    '  p.z += uCurl * a * uSize.x * 0.2;',
+    '  p.xy *= 1.0 - uCurl * a * 0.05;',
+    '  return p;',
+    '}',
+    'void main() {',
+    '  vec3 p = sheet(aUV); float e = 0.004;',
+    '  vec3 n = normalize(cross(sheet(aUV + vec2(0.0, e)) - sheet(aUV - vec2(0.0, e)), sheet(aUV + vec2(e, 0.0)) - sheet(aUV - vec2(e, 0.0))));',
+    '  vUV = aUV; vN = uRot * n;',
+    '  gl_Position = uMVP * vec4(p, 1.0);',
+    '}'
+  ].join('\n');
+  var SHEET_FS = [
+    'precision mediump float;',
+    'uniform sampler2D uTex; uniform vec3 uGlow;',
+    'varying vec2 vUV; varying vec3 vN;',
+    'void main() {',
+    '  vec3 n = normalize(vN); vec3 L = normalize(vec3(-0.35, 0.55, 0.76));',
+    '  if (!gl_FrontFacing) n = -n;',
+    '  float d = max(dot(n, L), 0.0);',
+    '  vec3 col = gl_FrontFacing ? texture2D(uTex, vUV).rgb : vec3(0.93, 0.92, 0.89);',
+    '  col *= 0.64 + 0.47 * d;',
+    '  col += pow(max(dot(reflect(-L, n), vec3(0.0, 0.0, 1.0)), 0.0), 28.0) * 0.07 + uGlow * 0.05;',
+    '  gl_FragColor = vec4(col, 1.0);',
+    '}'
+  ].join('\n');
+  function paperSheet() {
+    var poster = $('poster'), pr = poster.getBoundingClientRect(), stage = $('stage'), sr = stage.getBoundingClientRect();
+    // The canvas reaches past the preview panel, so curling corners float in front of its border instead of being cut off
+    var M = Math.round(pr.height * 0.3);
+    var cr = { left: Math.max(0, sr.left - M), top: sr.top - M };
+    cr.width = Math.min(window.innerWidth, sr.right + M) - cr.left; cr.height = sr.height + 2 * M;
+    var cv = document.createElement('canvas'), dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.className = 'paper3d'; cv.width = Math.round(cr.width * dpr); cv.height = Math.round(cr.height * dpr);
+    cv.style.left = (cr.left - sr.left) + 'px'; cv.style.top = -M + 'px'; cv.style.width = cr.width + 'px'; cv.style.height = cr.height + 'px';
+    var gl = cv.getContext('webgl', { alpha: true, antialias: true, premultipliedAlpha: true });
+    if (!gl) return false;
+    function shader(type, src) { var sh = gl.createShader(type); gl.shaderSource(sh, src); gl.compileShader(sh); return gl.getShaderParameter(sh, gl.COMPILE_STATUS) ? sh : null; }
+    var vs = shader(gl.VERTEX_SHADER, SHEET_VS), fs = shader(gl.FRAGMENT_SHADER, SHEET_FS);
+    if (!vs || !fs) return false;
+    var prog = gl.createProgram(); gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return false;
+    gl.useProgram(prog);
+    // A 48 x 64 grid of quads across the sheet
+    var NX = 48, NY = 64, uv = [], idx = [];
+    for (var j = 0; j <= NY; j++) for (var i = 0; i <= NX; i++) uv.push(i / NX, j / NY);
+    for (j = 0; j < NY; j++) for (i = 0; i < NX; i++) { var a = j * (NX + 1) + i, b = a + 1, c = a + NX + 1, d = c + 1; idx.push(a, c, b, b, c, d); }
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uv), gl.STATIC_DRAW);
+    var loc = gl.getAttribLocation(prog, 'aUV'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), gl.STATIC_DRAW);
+    gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, posterImage(pr));
+    [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(function (k) { gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE); });
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.enable(gl.DEPTH_TEST); gl.viewport(0, 0, cv.width, cv.height); gl.clearColor(0, 0, 0, 0);
+    var U = {}; ['uMVP', 'uRot', 'uSize', 'uBend', 'uCurl', 'uTime', 'uGlow'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+    var glow = rgb(pal().ramp[2]).map(function (v) { return v / 255; });
+    gl.uniform2f(U.uSize, pr.width, pr.height); gl.uniform3f(U.uGlow, glow[0], glow[1], glow[2]);
+    // Camera in CSS pixels: at z = 0 one unit is one pixel, so the first frame sits exactly over the flat preview
+    var fov = 30 * Math.PI / 180, focal = cr.height / 2 / Math.tan(fov / 2);
+    var proj = persp(fov, cr.width / cr.height, focal * 0.2, focal * 3);
+    var ox = pr.left + pr.width / 2 - (cr.left + cr.width / 2), oy = -(pr.top + pr.height / 2 - (cr.top + cr.height / 2));
+    var t0 = performance.now(), raf, H = pr.height, deg = Math.PI / 180;
+    function draw(now) {
+      // Lift and one quick turn over the first 1.8 s, then a slow drifting hover
+      var t = (now - t0) / 1000, e = ease(Math.min(1, t / 1.8)), hv = Math.max(0, t - 1.8), k = ease(Math.min(1, hv / 1.5));
+      var spin = ease(Math.min(1, Math.max(0, (t - 0.15) / 1.45))) * Math.PI * 2;
+      var lift = H * 0.045 * e + Math.sin(hv * 0.9) * H * 0.018 * k, toward = H * 0.06 * e + Math.sin(hv * 0.6 + 1) * H * 0.012 * k;
+      var tilt = (7 * e + Math.sin(hv * 0.7) * 2.5 * k) * deg, yaw = spin + Math.sin(hv * 0.45) * 7 * deg * k, roll = Math.sin(hv * 0.5 + 0.8) * 1.6 * deg * k;
+      var rot = mul(rotZ(roll), mul(rotX(-tilt), rotY(yaw)));
+      var mvp = mul(proj, mul(trans(0, 0, -focal), mul(trans(ox, oy + lift, toward), rot)));
+      gl.uniformMatrix4fv(U.uMVP, false, mvp);
+      gl.uniformMatrix3fv(U.uRot, false, new Float32Array([rot[0], rot[1], rot[2], rot[4], rot[5], rot[6], rot[8], rot[9], rot[10]]));
+      gl.uniform1f(U.uBend, pr.width * 0.07 * e); gl.uniform1f(U.uCurl, e * (1 + 0.15 * k)); gl.uniform1f(U.uTime, t);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.drawElements(gl.TRIANGLES, idx.length, gl.UNSIGNED_SHORT, 0);
+      raf = requestAnimationFrame(draw);
+    }
+    stage.appendChild(cv);
+    $('frame').style.visibility = 'hidden';
+    raf = requestAnimationFrame(draw);
+    show.gl = { stop: function () { cancelAnimationFrame(raf); cv.remove(); } };
+    return true;
+  }
+  function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  // Column-major 4 x 4 matrices
+  function mul(a, b) { var o = new Float32Array(16); for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) { var s = 0; for (var k = 0; k < 4; k++) s += a[k * 4 + j] * b[i * 4 + k]; o[i * 4 + j] = s; } return o; }
+  function trans(x, y, z) { return new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y, z, 1]); }
+  function rotX(a) { var c = Math.cos(a), s = Math.sin(a); return new Float32Array([1, 0, 0, 0, 0, c, s, 0, 0, -s, c, 0, 0, 0, 0, 1]); }
+  function rotZ(a) { var c = Math.cos(a), s = Math.sin(a); return new Float32Array([c, s, 0, 0, -s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]); }
+  function rotY(a) { var c = Math.cos(a), s = Math.sin(a); return new Float32Array([c, 0, -s, 0, 0, 1, 0, 0, s, 0, c, 0, 0, 0, 0, 1]); }
+  function persp(fov, aspect, n, f) { var t = 1 / Math.tan(fov / 2); return new Float32Array([t / aspect, 0, 0, 0, 0, t, 0, 0, 0, 0, (f + n) / (n - f), -1, 0, 0, 2 * f * n / (n - f), 0]); }
 
   /* Steps */
   STEPS.forEach(function (s, i) {
@@ -727,6 +992,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     setNext(step === STEPS.length - 1 ? 'Checkout' : 'Continue to ' + STEPS[step + 1][1]);
     $('buyErr').textContent = '';
     refresh();
+    showcase(name === 'review');
     // Bring the new step into view: under the pinned map on phones, at the console top on desktop
     if (prev !== step) {
       var top = $('consoleCore').getBoundingClientRect().top;
