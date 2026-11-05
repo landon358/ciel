@@ -4,6 +4,14 @@
   publish = "."
   command = ""
 
+# The Products page is archived for now: /products goes to the map studio. Temporary (302), and forced because
+# products.html still exists. Delete this rule to bring the page back.
+[[redirects]]
+  from = "/products"
+  to = "/terrain/studio.html"
+  status = 302
+  force = true
+
 # Product pages. The Onde Clock has its own page; its copy loads live from Shopify (shop.js).
 [[redirects]]
   from = "/products/onde-clock"
