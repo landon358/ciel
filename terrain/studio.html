@@ -39,7 +39,7 @@ try {
 <link rel="preconnect" href="https://api.fontshare.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
 <link href="https://api.fontshare.com/v2/css?f[]=gambarino@400&f[]=satoshi@400,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=202611040930">
+<link rel="stylesheet" href="style.css?v=202611050936">
 <style>
 /* Studio look from the Studio Workbench: Gambarino headings, Satoshi text, black panels, grey accent, white button.
    Only the studio changes; the home page keeps the shared style.css look. */
@@ -223,6 +223,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .suggest button { display: block; width: 100%; text-align: left; padding: 12px 14px; border-radius: 14px; background: none; border: 0; cursor: pointer; font-size: 14px; color: var(--mute); }
 .suggest button:hover, .suggest button:focus { background: rgba(243,238,233,0.06); color: var(--linen); outline: none; }
 .suggest button strong { color: var(--linen); font-weight: 500; }
+.suggest .searching { padding: 10px 14px; font: 400 10px/1.9 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); animation: searching 1.4s ease-in-out infinite; }
+@keyframes searching { 50% { opacity: 0.4; } }
 .suggest button em { float: right; margin-left: 12px; font: 400 10px/1.9 var(--mono); font-style: normal; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 16px 0 5px; border-radius: 999px; border: 0; background: rgba(243,238,233,0.03); box-shadow: inset 0 0 0 1px var(--hair2); cursor: pointer; font-size: 13px; color: var(--mute); transition: box-shadow 0.4s var(--spring), color 0.4s, transform 0.4s var(--spring); }
@@ -1120,58 +1122,92 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     if (p.housenumber || p.osm_key === 'highway' || p.osm_key === 'building' || p.type === 'house' || p.type === 'street') return ['Address', 6];
     return KINDS[p.osm_value] || ['Place', 3];
   }
-  function photon(q, outdoor) {
-    var url = PHOTON + encodeURIComponent(q) + '&limit=' + (outdoor ? 12 : 8) + (outdoor ? OUTDOOR_TAGS.map(function (t) { return '&osm_tag=' + t; }).join('') : '');
-    return fetch(url).then(function (r) { return r.json(); }).then(function (d) { return (d.features || []).filter(function (f) { return f.properties.countrycode === 'US'; }); }).catch(function () { return []; });
+  // Popular parks, ski hills, peaks and lakes, prebuilt from Photon (assets/places.json), so the usual searches list instantly
+  var POPULAR = [];
+  fetch('assets/places.json').then(function (r) { return r.json(); }).then(function (d) { POPULAR = d; }).catch(function () {});
+  function popular(lq) {
+    return POPULAR.filter(function (f) {
+      var n = f.properties.name.toLowerCase();
+      return n.indexOf(lq) === 0 || n.indexOf(' ' + lq) >= 0 || n.replace(/^mount /, 'mt ').indexOf(lq) === 0;
+    });
   }
-  var timer, results = [], searchSeq = 0;
+  // The public Photon server takes 2 to 5 seconds and sometimes refuses a burst, so answers are cached and a failure is retried once
+  var cache = {};
+  function photon(q, outdoor, signal) {
+    var url = PHOTON + encodeURIComponent(q) + '&limit=' + (outdoor ? 12 : 8) + (outdoor ? OUTDOOR_TAGS.map(function (t) { return '&osm_tag=' + t; }).join('') : '');
+    if (cache[url]) return Promise.resolve(cache[url]);
+    function get() { return fetch(url, { signal: signal }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }
+    return get().catch(function (e) { if (e.name === 'AbortError') throw e; return new Promise(function (ok) { setTimeout(ok, 700); }).then(get); })
+      .then(function (d) { return (cache[url] = (d.features || []).filter(function (f) { return f.properties.countrycode === 'US'; })); });
+  }
+  var timer, results = [], resultsFor = '', searchSeq = 0, inflight, enterWaiting = false;
+  function listPlaces(q, address, local, remote, pending, failed) {
+    var lq = q.toLowerCase(), seenKeys = {}, list = [];
+    ALIASES.forEach(function (a) { if (a.keys.some(function (k) { return lq.indexOf(k) >= 0 || k.indexOf(lq) === 0; })) list.push({ alias: a, kind: [a.kind, -1], order: -1 }); });
+    local.concat(remote).forEach(function (f, i) {
+      var p = f.properties, kind = kindOf(p);
+      var k = ([p.housenumber, p.street].filter(Boolean).join(' ') || p.name || '') + '|' + (p.city || '') + '|' + (p.state || '');
+      if (seenKeys[k]) return; seenKeys[k] = 1;
+      list.push({ f: f, kind: kind, order: i });
+    });
+    // Outdoor places first when searching by name; for an address, keep the geocoder's order
+    if (!address) list.sort(function (a, b) { return (a.kind[1] - b.kind[1]) || (a.order - b.order); });
+    results = list.slice(0, 8); resultsFor = q;
+    var box = $('suggest'); box.innerHTML = '';
+    if (address) {
+      var ex = document.createElement('button'); ex.type = 'button';
+      ex.innerHTML = '<strong>Use this exact address</strong> ' + esc(q);
+      ex.onclick = function () { exact(q); };
+      box.appendChild(ex);
+    }
+    results.forEach(function (r, i) {
+      var b = document.createElement('button'); b.type = 'button';
+      if (r.alias) b.innerHTML = '<strong>' + esc(r.alias.name) + '</strong> ' + esc(r.alias.where) + '<em>' + r.kind[0] + '</em>';
+      else {
+        var p = r.f.properties;
+        var main = [p.housenumber, p.street || p.name].filter(Boolean).join(' ') || p.name;
+        var rest = [r.kind[1] < 4 ? p.county : p.city || p.county, p.state].filter(Boolean).join(', ');
+        b.innerHTML = '<strong>' + esc(main) + '</strong> ' + esc(rest) + '<em>' + r.kind[0] + '</em>';
+      }
+      b.onclick = function () { choose(i); };
+      box.appendChild(b);
+    });
+    if (pending) { var s = document.createElement('div'); s.className = 'searching'; s.textContent = results.length ? 'Searching for more' : 'Searching'; box.appendChild(s); }
+    box.classList.toggle('on', box.children.length > 0);
+    $('addrErr').textContent = results.length || pending || address ? '' : failed ? 'Search is slow right now. Give it a moment and try again.' : 'No US matches yet. Try adding the state, like "Lone Mountain Montana".';
+    // Enter pressed before anything matched picks the first place as soon as one arrives
+    if (enterWaiting && results.length) { enterWaiting = false; choose(0); }
+  }
   $('addr').addEventListener('input', function () {
-    clearTimeout(timer);
-    var q = this.value.trim();
-    if (q.length < 3) { $('suggest').classList.remove('on'); return; }
+    clearTimeout(timer); enterWaiting = false;
+    if (inflight) inflight.abort();
+    var q = this.value.trim(), my = ++searchSeq;
+    if (q.length < 2) { $('suggest').classList.remove('on'); results = []; return; }
+    var address = /^\d/.test(q), local = address ? [] : popular(q.toLowerCase()), remote = q.length >= 3;
+    listPlaces(q, address, local, [], remote, false);
+    if (!remote) return;
     timer = setTimeout(function () {
-      var my = ++searchSeq, address = /^\d/.test(q), lq = q.toLowerCase();
-      Promise.all([address ? [] : photon(q, true), photon(q, false)]).then(function (r) {
-        if (my !== searchSeq) return;
-        var seenKeys = {}, list = [];
-        ALIASES.forEach(function (a) { if (a.keys.some(function (k) { return lq.indexOf(k) >= 0 || k.indexOf(lq) === 0; })) list.push({ alias: a, kind: [a.kind, -1], order: -1 }); });
-        r[0].concat(r[1]).forEach(function (f, i) {
-          var p = f.properties, kind = kindOf(p);
-          var k = ([p.housenumber, p.street].filter(Boolean).join(' ') || p.name || '') + '|' + (p.city || '') + '|' + (p.state || '');
-          if (seenKeys[k]) return; seenKeys[k] = 1;
-          list.push({ f: f, kind: kind, order: i });
+      inflight = new AbortController();
+      var got = [[], []], done = 0, failed = 0;
+      [address ? Promise.resolve([]) : photon(q, true, inflight.signal), photon(q, false, inflight.signal)].forEach(function (job, k) {
+        // Each answer shows as it lands instead of waiting for both
+        job.then(function (f) { got[k] = f; }, function (e) { if (e.name !== 'AbortError') failed++; }).then(function () {
+          if (my !== searchSeq) return;
+          done++;
+          listPlaces(q, address, local, got[0].concat(got[1]), done < 2, failed > 0);
         });
-        // Outdoor places first when searching by name; for an address, keep the geocoder's order
-        if (!address) list.sort(function (a, b) { return (a.kind[1] - b.kind[1]) || (a.order - b.order); });
-        results = list.slice(0, 8);
-        var box = $('suggest'); box.innerHTML = '';
-        if (address) {
-          var ex = document.createElement('button'); ex.type = 'button';
-          ex.innerHTML = '<strong>Use this exact address</strong> ' + esc(q);
-          ex.onclick = function () { exact(q); };
-          box.appendChild(ex);
-        }
-        results.forEach(function (r, i) {
-          var b = document.createElement('button'); b.type = 'button';
-          if (r.alias) b.innerHTML = '<strong>' + esc(r.alias.name) + '</strong> ' + esc(r.alias.where) + '<em>' + r.kind[0] + '</em>';
-          else {
-            var p = r.f.properties;
-            var main = [p.housenumber, p.street || p.name].filter(Boolean).join(' ') || p.name;
-            var rest = [r.kind[1] < 4 ? p.county : p.city || p.county, p.state].filter(Boolean).join(', ');
-            b.innerHTML = '<strong>' + esc(main) + '</strong> ' + esc(rest) + '<em>' + r.kind[0] + '</em>';
-          }
-          b.onclick = function () { choose(i); };
-          box.appendChild(b);
-        });
-        box.classList.toggle('on', box.children.length > 0);
-        $('addrErr').textContent = box.children.length ? '' : 'No US matches yet. Try adding the state, like "Lone Mountain Montana".';
       });
-    }, 260);
+    }, 350);
   });
   // The box opens holding the current place; select it so typing starts a new search instead of appending
   $('addr').addEventListener('focus', function () { var el = this; setTimeout(function () { el.select(); }); });
   $('addr').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') { e.preventDefault(); var q = this.value.trim(); if (/^\d/.test(q)) exact(q); else if (results.length) choose(0); }
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    var q = this.value.trim();
+    if (/^\d/.test(q)) exact(q);
+    else if (resultsFor === q && results.length) choose(0);
+    else if (q.length >= 2) enterWaiting = true;
   });
   // US Census geocoder (JSONP): precise for street addresses
   var STATES = { AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California', CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', DC: 'Washington DC', FL: 'Florida', GA: 'Georgia', HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland', MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri', MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey', NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio', OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina', SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont', VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming' };
