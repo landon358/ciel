@@ -401,54 +401,56 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .modal .skip:hover { color: var(--linen); }
 
 @media (max-width: 960px) {
-  .top { padding-top: 16px; padding-bottom: 10px; }
-  .studio-grid { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 0; }
-  .stage { position: sticky; top: 0; z-index: 4; --r: 0px; --pad: 0px; background: var(--bg); box-shadow: none; }
-  .stage > .core { height: 46svh; min-height: 330px; border-radius: 0; padding: 14px 16px 6px; box-shadow: inset 0 -1px 0 var(--hair); }
-  .frame { width: min(100%, calc((max(46svh, 330px) - 58px) * 0.75)); }
-  .lowres { margin-top: 6px; font-size: 10.5px; line-height: 1.35; }
+  /* Phones and small tablets: the preview fills the top of the screen and stays put; every step's options scroll
+     inside a card pinned to the bottom, with Back and Continue at its foot. Nothing on the page itself scrolls. */
+  :root { --card: clamp(300px, 42dvh, 400px); --cardgap: max(8px, env(safe-area-inset-bottom)); }
+  body { overflow: hidden; }
+  .top { position: fixed; top: 0; left: 0; right: 0; z-index: 6; padding: max(12px, env(safe-area-inset-top)) 16px 0; }
+  .studio-grid { display: block; padding: 0; }
+  .stage { position: fixed; top: 0; left: 0; right: 0; bottom: calc(var(--card) + var(--cardgap)); z-index: 1; --r: 0px; --pad: 0px; background: var(--bg); box-shadow: none; }
+  .stage > .core { height: 100%; min-height: 0; border-radius: 0; padding: 66px 16px 14px; box-shadow: none; }
   .stage > .core::after { display: none; }
-  .console { margin-top: 0; --r: 26px; --pad: 0px; background: none; box-shadow: none; }
-  .console > .core { min-height: 0; background: transparent; box-shadow: none; }
-  .progress { padding: 16px var(--gut) 0; }
-  .progress .now strong { font-size: 30px; }
-  .segs { margin-top: 18px; }
-  .segs button span { display: none; }
-  .segs button i { width: 28px; height: 28px; font-size: 11px; }
-  .segs button::before { top: 14px; left: calc(-50% + 19px); right: calc(50% + 19px); }
-  .panels { padding: 30px var(--gut) 24px; }
-  .dock { margin: 0 10px max(10px, env(safe-area-inset-bottom)); bottom: max(10px, env(safe-area-inset-bottom)); }
-  .dockErr { padding: 0 var(--gut); }
-
-  /* Phones: the pinned preview and the dock leave only a third of the screen for the controls, so each step opens
-     straight onto its controls. The step name above the dots replaces each panel's heading and intro. */
-  .stage > .core { height: 38svh; min-height: 270px; padding-bottom: 10px; }
-  .frame { width: min(100%, calc((max(38svh, 270px) - 34px) * 0.75)); }
+  .frame { width: min(100%, calc((100dvh - var(--card) - var(--cardgap) - 80px) * 0.75)); }
   .lowres { display: none; }
-  .stage[data-step="review"] .lowres { display: block; }
-  .stage[data-step="review"] > .core { height: 46svh; min-height: 330px; }
-  .stage[data-step="review"] .frame { width: min(100%, calc((max(46svh, 330px) - 58px) * 0.75)); }
-  .progress { padding-top: 12px; }
-  .progress .now strong { font-size: 24px; }
-  .segs { margin-top: 10px; }
-  .segs button i { width: 24px; height: 24px; font-size: 10px; }
-  .segs button::before { top: 12px; left: calc(-50% + 17px); right: calc(50% + 17px); }
-  .panels { padding-top: 18px; }
+  .resetview { top: 66px; right: 12px; }
+  .console { position: fixed; left: 8px; right: 8px; bottom: var(--cardgap); height: var(--card); z-index: 5; margin: 0; --r: 28px; --pad: 0px; background: none; box-shadow: none; transition: height 0.5s var(--spring); }
+  .console > .core { height: 100%; min-height: 0; border-radius: 28px; background: #0f0f0f; box-shadow: inset 0 0 0 1px var(--hair2), 0 -18px 40px rgba(0,0,0,0.6); overflow: hidden; }
+  /* A keyboard would cover a bottom card, so while one of its text fields has focus the card rises to the top */
+  body.typing .console { height: calc(100dvh - 16px - var(--cardgap)); }
+  .top { transition: opacity 0.3s; }
+  body.typing .top { opacity: 0; pointer-events: none; }
+  .suggest { background: #121212; }
+  /* Header: thin step bars (still tappable to go back), then the step's name */
+  .progress { display: flex; flex-direction: column-reverse; gap: 10px; padding: 12px 18px 0; }
+  .progress .now strong { font-size: 22px; }
+  .segs { margin-top: 0; gap: 6px; }
+  .segs button { height: 18px; align-content: center; }
+  .segs button span, .segs button::before { display: none; }
+  .segs button i { width: 100%; height: 3px; border-radius: 2px; font-size: 0; box-shadow: none; background: var(--hair2); }
+  .segs button.seen i { background: rgba(239,237,235,0.45); }
+  .segs button[aria-current="step"] i { background: var(--linen); }
+  .segs button:disabled { opacity: 1; }
+  .segs button:disabled i { box-shadow: none; background: var(--hair2); }
+  .panels { position: relative; flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 12px 18px 16px; }
   .panel h1, .panel > .lede { display: none; }
-  .panel[data-step="review"] h1 { display: block; font-size: 28px; margin-bottom: 4px; }
   .panel .facts { margin-top: 0; }
-  .field { margin-top: 22px; }
-  .panel > .field:first-of-type, .panel > .facts + .field { margin-top: 14px; }
+  .panel .summary { margin-top: 0; }
+  .panel .summary .row:first-child { padding-top: 4px; }
+  .field { margin-top: 18px; }
+  .panel > .field:first-of-type, .panel > .facts + .field { margin-top: 12px; }
+  .dock { position: relative; bottom: auto; flex: none; margin: 0 8px 8px; }
+  .dockErr { padding: 0 18px; }
   /* Color: the two styles side by side, the palettes in one row to swipe through */
   #styles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   #styles .opt { --r: 18px; }
-  #styles .opt .core { grid-template-columns: auto 1fr; gap: 10px; padding: 10px 12px; }
-  #styles .opt .name { font-size: 17px; }
+  #styles .opt .core { grid-template-columns: auto minmax(0, 1fr); gap: 8px; padding: 6px 10px 6px 6px; }
+  #styles .opt .name { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   #styles .opt .desc { display: none; }
-  #styles .opt .glyph { width: 36px; height: 36px; border-radius: 11px; }
-  #styles .opt .glyph svg { width: 24px; height: 24px; }
+  #styles .opt .glyph { width: 32px; height: 32px; border-radius: 10px; }
+  #styles .opt .glyph svg { width: 22px; height: 22px; }
+  #styles + .field { margin-top: 12px; }
   .pals { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 74px; overflow-x: auto; scroll-snap-type: x proximity;
-    margin: 0 calc(-1 * var(--gut)); padding: 2px var(--gut) 6px; scroll-padding: 0 var(--gut); scrollbar-width: none; }
+    margin: 0 -18px; padding: 2px 18px 6px; scroll-padding: 0 18px; scrollbar-width: none; }
   .pals::-webkit-scrollbar { display: none; }
   .pal { scroll-snap-align: start; }
   /* Thumb-sized targets */
@@ -803,6 +805,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     $('customOpts').classList.toggle('shut', name !== 'Custom');
     if (state.extra === name) state.extra = null;
     restyle();
+    // Phones: the color circles open above the palette row, so bring them into the card's view
+    if (name === 'Custom' && mobile()) setTimeout(function () { $('panels').scrollTo({ top: $('palName').closest('.field').offsetTop - 12, behavior: 'smooth' }); }, 80);
   }
   // Dragging around the color wheel repaints straight away; no pause for every nudge
   var colorFrame;
@@ -1091,6 +1095,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   function setNext(text) { $('nextLabel').textContent = text; }
   function go(i) {
     var prev = step;
+    if (i !== prev) document.body.classList.remove('typing');
     step = Math.max(0, Math.min(STEPS.length - 1, i));
     var name = STEPS[step][0];
     // The first visit to each step goes to Meta, so Events Manager shows where in the studio visitors stop
@@ -1120,17 +1125,30 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     // Bring the new step into view: under the pinned map on phones, at the console top on desktop
     if (prev !== step) {
       var top = $('consoleCore').getBoundingClientRect().top;
-      if (mobile()) window.scrollTo({ top: window.scrollY + $('panels').getBoundingClientRect().top - $('stage').offsetHeight - $('rail').parentNode.offsetHeight - 10, behavior: 'smooth' });
+      if (mobile()) $('panels').scrollTop = 0;  // phones: each step opens at the top of the card
       else if (top < 0 || top > window.innerHeight * 0.5) window.scrollTo({ top: window.scrollY + top - 20, behavior: 'smooth' });
     }
   }
-  // On phones the search sits under the pinned preview and the dock, so ad visitors saw only the sample map and
-  // "Continue". The dock's Search button on step 1 brings the search box into view; Continue keeps the map shown.
+  // The dock's Search button on step 1 brings the search box to the top of the card on phones; Continue keeps the map
+  // shown. Focusing it raises the card (below), so the matches list above the keyboard.
   function findPlace(noFocus) {
     var a = $('addr');
-    if (mobile()) window.scrollTo({ top: window.scrollY + a.getBoundingClientRect().top - $('stage').offsetHeight - 48, behavior: 'smooth' });
+    if (mobile()) $('panels').scrollTo({ top: a.closest('.field').offsetTop - 12, behavior: 'smooth' });
     if (!noFocus) a.focus({ preventScroll: mobile() });
   }
+  // Phones: a keyboard would cover the bottom card, so while one of its text fields has focus the card rises to the
+  // top of the screen. It drops back a moment after focus leaves, so a tap on a search match lands first.
+  var typingOff;
+  $('consoleCore').addEventListener('focusin', function (e) {
+    if (!mobile() || e.target.tagName !== 'INPUT' || e.target.type !== 'text') return;
+    clearTimeout(typingOff);
+    document.body.classList.add('typing');
+    var field = e.target.closest('.field');
+    setTimeout(function () { $('panels').scrollTo({ top: field.offsetTop - 12, behavior: 'smooth' }); }, 60);
+  });
+  $('consoleCore').addEventListener('focusout', function () {
+    typingOff = setTimeout(function () { document.body.classList.remove('typing'); }, 300);
+  });
   $('findPlace').onclick = function () { findPlace(); };
   $('next').onclick = function () { if (step === STEPS.length - 1) offerPair(); else go(step + 1); };
   $('back').onclick = function () { go(step - 1); };
@@ -1340,6 +1358,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     goTo(lat, lon, span);
   }
   function goTo(lat, lon, span) {
+    document.body.classList.remove('typing');  // a place was picked: lower the card so the map shows
     state.lat = state.clat = lat; state.lon = state.clon = lon; state.span = span || DEFAULT_SPAN;
     words(); spanUI(); load();
   }
@@ -1899,6 +1918,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   if (asked && !picked) {
     $('addr').value = asked;
     $('addr').dispatchEvent(new Event('input'));
+    // Phones: raise the card so the matches show (no keyboard yet); picking one or moving on lowers it again
+    if (mobile()) document.body.classList.add('typing');
     setTimeout(function () { findPlace(true); }, 400);
   }
 })();
