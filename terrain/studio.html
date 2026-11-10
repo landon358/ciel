@@ -755,8 +755,10 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   .picks { height: 48px; }
   /* Place: no dimmed Back on the first page, so Continue spans the card */
   #back[hidden] { display: none; }
-  /* The cart icon alone, centered (its label is hidden text) */
-  .cartbtn, .cartbtn[hidden] { display: flex; align-items: center; justify-content: center; }
+  /* The cart icon alone, centered: its label is hidden text, so no gap beside it */
+  .cartbtn, .cartbtn[hidden] { display: flex; align-items: center; justify-content: center; gap: 0; }
+  /* The mark is a circle cut off on the right (the C's opening), so its box sits left of the circle; center the circle */
+  .top .logo svg { transform: translateX(-1.33px); }
   /* Options: one Edit text button (showing the current lines) and the three toggles; the button raises the card with
      the two text fields, like the search */
   .panel[data-step="options"].on { grid-template-columns: 1fr; gap: 8px; }
