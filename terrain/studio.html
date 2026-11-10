@@ -294,8 +294,10 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .check input::after { content: ""; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--linen); transition: transform 0.5s var(--spring); }
 .check input:checked { background: var(--thatch); }
 .check input:checked::after { transform: translateX(16px); }
-.check .short { display: none; }
-.kinds, .details-btn { display: none; }
+.check .short, .pick .short { display: none; }
+.kinds, .details-btn, .step-extra, .sthumb, .pick-back, .grabber, .collapse { display: none; }
+.pal.custom i { display: grid; place-items: center; }
+.pal.custom i b { color: #fff; font: 600 22px/1 var(--sans); text-shadow: 0 1px 3px rgba(0,0,0,0.55); }
 .extra { --r: 22px; --pad: 5px; transition: box-shadow 0.5s var(--spring); }
 .extra .core { padding: 20px; }
 .extra[data-on="true"] { box-shadow: inset 0 0 0 1px rgba(243,238,233,0.42); }
@@ -624,7 +626,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   .kind .name { font-size: 15px; font-weight: 600; white-space: nowrap; }
   .kind .name small { font-size: 12px; font-weight: 400; color: var(--c-soft); }
   .kind .from { font-size: 13px; color: var(--c-soft); }
-  .kind .cm { font-size: 11px; color: var(--c-sub); }
+  .kind .cm { font-size: 11px; color: var(--c-soft); }
   .kind.dim { min-height: 92px; }
   /* Typing: the card jumps (no slide) to the top of the visible area and ends where the keyboard begins */
   body.typing .console { top: calc(var(--vvtop, 0px) + 8px); bottom: auto; height: calc(var(--vvh, 100dvh) - 16px); min-height: 0; max-height: none; }
@@ -638,6 +640,57 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   body.reviewing .dock .details-btn { display: inline-flex; align-items: center; justify-content: center; flex: none; height: 52px; padding: 0 18px; border: 0; border-radius: 26px; background: var(--c-field); color: var(--c-text); font: 600 15px var(--c-sys); white-space: nowrap; cursor: pointer; }
   body.details .console { max-height: 78dvh; }
   body.details .panel[data-step="review"] h1 { display: none; }
+
+  /* Thinner pages: no labels the title already gives (the palette, the scope, the price), tighter padding */
+  :root { --card-min: 248px; }
+  .progress { padding: 14px 18px 0; }
+  .panels { padding: 10px 14px 10px; }
+  .dock { margin: 0 12px 12px; }
+  .progress .now strong .step-extra { display: inline; margin-left: 6px; font-style: normal; font-weight: 500; color: var(--c-soft); }
+  .step-extra b { margin-left: 4px; font-size: 14px; font-weight: 600; color: #e6c9a8; }
+  .panel[data-page="find"] .facts { display: none; }
+  .panel[data-page="scale"] .field:nth-of-type(3) > .label { display: none; }
+  .panel[data-page="scale"] .ticks { margin-top: 2px; }
+  .panel[data-page="scale"] .hint { margin-top: 8px; padding: 9px 12px; align-items: center; }
+  .panel[data-step="style"] .field > .label, .premium { display: none; }
+  .panel[data-step="style"] #styles + .field { margin-top: 10px; }
+  #costNote { display: none; }
+  .kind { min-height: 82px; padding: 8px 4px; gap: 3px; }
+  .kind .glyph { height: 28px; }
+  .kind .glyph i { width: 18px; height: 24px; }
+  .kind.dim { min-height: 70px; }
+  .panel.on > * { animation-duration: 0.45s; }
+  /* Color: the styles carry a live sample; Custom (first, with a plus) swaps the swatch row for its five colors */
+  #styles .opt .core { height: 44px; justify-content: flex-start; gap: 9px; padding: 0 10px 0 5px; }
+  #styles .opt .sthumb { display: block; flex: none; width: 34px; height: 34px; border-radius: 8px; overflow: hidden; background: #111; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12); }
+  #styles .opt .sthumb img { display: block; width: 100%; height: 100%; object-fit: cover; transform: scale(2.4); filter: url(#tint); }
+  #styles .opt .sthumb.contour { background: var(--t-low, #141414); }
+  #styles .opt .sthumb.contour svg { display: block; width: 100%; height: 100%; fill: none; stroke: var(--t-high, #f2b880); stroke-width: 1.2; stroke-linecap: round; }
+  #customOpts { display: none; }
+  .field.editing .pals { display: none; }
+  .field.editing #customOpts { display: grid; grid-template-rows: 1fr; opacity: 1; }
+  .picks { grid-template-columns: 36px repeat(5, minmax(0, 1fr)); gap: 4px; margin-top: 0; height: 50px; align-items: center; }
+  .pick { padding: 0; gap: 3px; border-radius: 0; background: none; box-shadow: none; font-size: 11px; color: var(--c-soft); white-space: nowrap; }
+  .pick input { width: 32px; height: 32px; }
+  .pick .long { display: none; }
+  .pick .short { display: inline; }
+  /* Framed prints on phones: no back panel or 3D sides (they only matter for the desktop spin, and iOS can paint them
+     over the map) */
+  .frame .frame-back, .frame .frame-edge { display: none !important; }
+  .pick-back { display: grid; place-items: center; width: 36px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: var(--c-fill); color: var(--c-text); cursor: pointer; }
+  .pick-back svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .pal.custom i b { font-size: 24px; font-family: var(--c-sys); }
+  /* The preview and the card glide between pages instead of jumping */
+  .stage { transition: bottom 0.45s var(--spring); }
+  .frame { transition: width 0.45s var(--spring), transform 0.9s var(--spring), padding 0.6s var(--spring), background 0.6s var(--spring); }
+  /* A raised card (typing, or the review details) has a grabber to drag it down and a button to close it */
+  .console > .core { position: relative; }
+  body.typing .grabber, body.details .grabber { display: grid; place-items: center; height: 16px; margin-bottom: -8px; touch-action: none; }
+  .grabber i { display: block; width: 36px; height: 5px; border-radius: 3px; background: rgba(235,235,245,0.3); }
+  body.typing .progress, body.details .progress { touch-action: none; }
+  body.typing .collapse, body.details .collapse { display: grid; place-items: center; position: absolute; z-index: 2; top: 18px; right: 14px; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 17px; background: var(--c-field); color: var(--c-text); cursor: pointer; }
+  .collapse svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  body.typing #stepOf, body.details #stepOf { visibility: hidden; }
 }
 @media (max-width: 767px) {
   .row { grid-template-columns: 1fr auto; }
@@ -650,6 +703,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="tint" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0 0 0 1 0"/><feComponentTransfer><feFuncR id="tintR" type="table" tableValues="0 1"/><feFuncG id="tintG" type="table" tableValues="0 1"/><feFuncB id="tintB" type="table" tableValues="0 1"/></feComponentTransfer></filter>
   <symbol id="ciel" viewBox="0.1 0.1 148.387 168.8"><g fill="currentColor"><path d="M141.628 22.373A84.4 84.4 0 1 0 148.487 139.537L133.779 126.886A65.0 65.0 0 1 1 128.497 36.654Z"/><path d="M53.008 38.679A55.6 55.6 0 0 0 37.712 54.463L53.869 64.835A36.4 36.4 0 0 1 63.883 54.502Z"/><path d="M32.057 66.032A55.6 55.6 0 0 0 45.877 124.495L59.214 110.684A36.4 36.4 0 0 1 50.167 72.409Z"/><path d="M122.561 125.031A55.6 55.6 0 0 0 117.961 40.096L106.406 55.43A36.4 36.4 0 0 1 109.418 111.034Z"/><path d="M111.711 82.3A27.3 27.3 0 1 0 110.539 92.7L92.985 92.7A11.8 11.8 0 1 1 96.093 82.3Z"/><path d="M72 77.2H97V82.3H72Z"/></g></symbol>
 </svg>
 
@@ -695,8 +749,10 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 
   <div class="console shell" aria-label="Configure your map">
     <div class="core" id="consoleCore">
+      <div class="grabber" id="grabber" aria-hidden="true"><i></i></div>
+      <button class="collapse" id="collapse" type="button" aria-label="Close"><svg viewBox="0 0 16 16"><path d="M3.5 6l4.5 4.5L12.5 6"/></svg></button>
       <div class="progress">
-        <div class="now"><strong><span id="stepNum">01</span><em id="stepName">Place</em></strong><small id="stepOf">1 of 5</small></div>
+        <div class="now"><strong><span id="stepNum">01</span><em id="stepName">Place</em><i class="step-extra" id="stepExtra"></i></strong><small id="stepOf">1 of 5</small></div>
         <nav class="segs" id="rail" aria-label="Steps"></nav>
       </div>
 
@@ -723,7 +779,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
             <div class="ticks"><span>Street</span><span>Neighborhood</span><span>Town</span><span>Region</span></div>
           </div>
           <div class="hint"><svg viewBox="0 0 22 22"><path d="M11 3v16M3 11h16M11 3L8.5 5.5M11 3l2.5 2.5M11 19l-2.5-2.5M11 19l2.5-2.5M3 11l2.5-2.5M3 11l2.5 2.5M19 11l-2.5-2.5M19 11l-2.5 2.5"/></svg>
-            <span>Drag the map to move it. Your pin stays on the exact spot, wherever it lands in the frame.</span></div>
+            <span>Drag the map to move it.</span></div>
         </div>
 
         <div class="panel" data-step="style">
@@ -734,8 +790,9 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
             <div class="label">Palette <b id="palName">Ember</b></div>
             <div class="collapse shut" id="customOpts"><div>
               <div class="picks">
-                <label class="pick"><input type="color" id="cLow" value="#1f2a44">Low ground</label>
-                <label class="pick"><input type="color" id="cHigh" value="#e9c88f">High ground</label>
+                <button class="pick-back" id="customBack" type="button" aria-label="Back to the palettes"><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg></button>
+                <label class="pick"><input type="color" id="cLow" value="#1f2a44"><span class="long">Low ground</span><span class="short">Low</span></label>
+                <label class="pick"><input type="color" id="cHigh" value="#e9c88f"><span class="long">High ground</span><span class="short">High</span></label>
                 <label class="pick"><input type="color" id="cWater" value="#4f7ea8">Water</label>
                 <label class="pick"><input type="color" id="cPaper" value="#f5efe6">Paper</label>
                 <label class="pick"><input type="color" id="cText" value="#141b2c">Text</label>
@@ -972,30 +1029,37 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   [['Relief', 'Shaded relief', 'Light and shadow across every hill and hollow.', '<span class="glyph"><svg viewBox="0 0 30 30"><path d="M3 22l7-9 5 6 4-4 8 7"/><path d="M10 13l2 6M19 15l1 4" opacity=".5"/></svg></span>'],
    ['Contour', 'Contour lines', 'Flowing lines with small heights in feet.', '<span class="glyph"><svg viewBox="0 0 30 30"><path d="M5 20c4-8 10-12 20-10"/><path d="M8 24c5-7 10-9 17-7"/><path d="M12 15c3-3 6-4 9-3"/></svg></span>']].forEach(function (s) {
     var b = option(s[1], s[2], s[3]);
+    // Phones show a small sample of each style, tinted live in the chosen palette
+    b.querySelector('.core').insertAdjacentHTML('afterbegin', s[0] === 'Relief' ? '<span class="sthumb"><img src="assets/print-halfdome.jpg" alt=""></span>' :
+      '<span class="sthumb contour"><svg viewBox="0 0 34 34" aria-hidden="true"><path d="M-2 26c6-9 13-12 22-9s12 1 16-4"/><path d="M-2 31c7-8 15-10 23-7s11 2 15-2"/><path d="M-2 20c5-8 11-11 18-9s13 0 18-6"/><path d="M4 12c4-5 9-6 13-4s9 0 12-4"/><path d="M11 6c3-3 6-3 9-2"/></svg></span>');
     b.setAttribute('aria-pressed', state.style === s[0]);
     b.onclick = function () { if (state.style === s[0]) return; state.style = s[0]; select($('styles'), b); restyle(); };
     styleCards[s[0]] = b; $('styles').appendChild(b);
   });
 
   var paletteTiles = {};
-  Object.keys(PALETTES).concat(['Custom']).forEach(function (name) {
+  ['Custom'].concat(Object.keys(PALETTES)).forEach(function (name) {
     var b = document.createElement('button');
     b.type = 'button'; b.className = 'pal' + (name === 'Custom' ? ' custom' : '');
-    b.innerHTML = '<i' + (name === 'Custom' ? '' : ' style="background:' + gradient(PALETTES[name]) + '"') + '></i>' + name + (name === 'Custom' ? '<small id="customCost"></small>' : '');
+    b.innerHTML = '<i' + (name === 'Custom' ? '' : ' style="background:' + gradient(PALETTES[name]) + '"') + '>' + (name === 'Custom' ? '<b>+</b>' : '') + '</i>' + name + (name === 'Custom' ? '<small id="customCost"></small>' : '');
     b.setAttribute('aria-pressed', state.palette === name);
     b.onclick = function () { choosePalette(name); };
     paletteTiles[name] = b; $('palettes').appendChild(b);
   });
+  // Phones: choosing Custom swaps the swatch row for the five color circles; the back arrow shows the row again
+  var browsing = false;
+  function markEditing() { $('palName').closest('.field').classList.toggle('editing', custom() && !browsing); }
+  $('customBack').onclick = function () { browsing = true; markEditing(); };
   function choosePalette(name) {
-    if (state.palette === name) return;
+    if (state.palette === name) { if (name === 'Custom') { browsing = false; markEditing(); } return; }
+    browsing = false;
     state.palette = name;
     Object.keys(paletteTiles).forEach(function (n) { paletteTiles[n].setAttribute('aria-pressed', n === name); });
     $('palName').textContent = name;
     $('customOpts').classList.toggle('shut', name !== 'Custom');
     if (state.extra === name) state.extra = null;
+    markEditing();
     restyle();
-    // Phones: the color circles open above the palette row, so bring them into the card's view
-    if (name === 'Custom' && mobile()) setTimeout(function () { $('panels').scrollTo({ top: $('palName').closest('.field').offsetTop - 12, behavior: 'smooth' }); }, 80);
   }
   // Dragging around the color wheel repaints straight away; no pause for every nudge
   var colorFrame;
@@ -1089,6 +1153,21 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   }
 
   /* Everything that shows a choice; the total lives in the review step's bill, not the dock */
+  function stepExtras() {
+    var page = STEPS[step][2] || '', name = STEPS[step][0], extra = '';
+    if (mobile() && name === 'style') extra = '· ' + esc(custom() ? 'Custom' : state.palette) + (custom() ? ' <b>+' + money(customVariant ? customVariant.price : FALLBACK.custom) + '</b>' : '');
+    if (mobile() && page === 'scale') extra = '· ' + (state.span / 1000).toFixed(1).replace('.0', '') + ' km';
+    $('stepExtra').innerHTML = extra;
+    if (mobile() && page === 'find') $('stepOf').textContent = 'Prints from ' + money(priceOf(SIZES[0] + '|Unframed'));
+  }
+  // The style samples take the palette's four tones, darkest to lightest
+  function tint() {
+    var ramp = pal().ramp;
+    $('styles').style.setProperty('--t-low', ramp[0]); $('styles').style.setProperty('--t-high', ramp[3]);
+    ['tintR', 'tintG', 'tintB'].forEach(function (id, k) {
+      $(id).setAttribute('tableValues', ramp.map(function (h) { return (parseInt(h.slice(1 + 2 * k, 3 + 2 * k), 16) / 255).toFixed(3); }).join(' '));
+    });
+  }
   function refresh() {
     var name = STEPS[step][0];
     costs();
@@ -1101,6 +1180,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     if (scale !== lastScale) { lastScale = scale; scaleChangedAt = Date.now(); }
     $('frame').style.setProperty('--scale', scale);
     if (name === 'review') review();
+    stepExtras(); tint();
   }
 
   function words() {
@@ -1149,7 +1229,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     fr.classList.add('glow'); $('stage').classList.add('lifted');
     if (calm.matches) return;
     if (digital()) fr.classList.add('float');
-    else if (state.frame !== 'Unframed') fr.classList.add('spin');
+    else if (state.frame !== 'Unframed') fr.classList.add(mobile() ? 'float' : 'spin');
     else if (!paperSheet(core, cr)) fr.classList.add('float');
   }
   function endShowcase() {
@@ -1327,12 +1407,14 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     // The count leaves out a skipped page (a digital file has no Dimensions)
     var shown = STEPS.filter(function (s, j) { return !skipped(j); }).length, at = STEPS.slice(0, step + 1).filter(function (s, j) { return !skipped(j); }).length;
     $('stepOf').textContent = at + ' of ' + shown;
+    stepExtras();
     if (step === STEPS.length - 1) return setNext('Add to cart');
     setNext('Continue to ' + STEPS[nextIndex(step)][1]);
   }
   function go(i) {
-    var prev = step;
-    if (i !== prev) document.body.classList.remove('typing');
+    var prev = step, card = document.querySelector('.console');
+    var h0 = mobile() && !document.body.classList.contains('typing') ? card.getBoundingClientRect().height : 0;
+    if (i !== prev) { dropKeyboard(); document.body.classList.remove('typing'); }
     step = Math.max(0, Math.min(STEPS.length - 1, i));
     if (skipped(step)) step = step > prev ? nextIndex(step) : prevIndex(step);
     var name = STEPS[step][0], page = STEPS[step][2] || '';
@@ -1355,8 +1437,10 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     $('findPlace').hidden = step !== 0;
     updateNext();
     $('buyErr').textContent = '';
+    if (name === 'style') { browsing = false; markEditing(); }
     refresh();
     fitCard();
+    glideCard(card, h0);
     showcase(name === 'review');
     // On phones the palettes are one row to swipe; open it on the chosen one, which may sit off screen to the right
     if (name === 'style' && mobile()) {
@@ -1381,6 +1465,51 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   // to the space above the keyboard. It moves on the tap itself, before the keyboard opens, so iOS has nothing to scroll
   // into view; it drops back a moment after focus leaves, so a tap on a search match lands first.
   var typingOff;
+  // A text field that still has focus keeps the keyboard up after the card drops back, which pushes the page around on
+  // iOS; picking a place or changing page lets go of it
+  function dropKeyboard() {
+    var a = document.activeElement;
+    if (mobile() && a && a.tagName === 'INPUT' && a.type === 'text') a.blur();
+  }
+  // Phones: the card's height glides from page to page (the preview's size follows it in CSS)
+  function glideCard(card, h0) {
+    if (!h0) return;
+    var h1 = card.getBoundingClientRect().height;
+    if (Math.abs(h1 - h0) < 2) return;
+    card.style.height = h0 + 'px';
+    void card.offsetHeight;
+    card.style.transition = 'height 0.45s cubic-bezier(0.32, 0.72, 0, 1)';
+    card.style.height = h1 + 'px';
+    clearTimeout(card.glide);
+    card.glide = setTimeout(function () { card.style.height = ''; card.style.transition = ''; }, 480);
+  }
+  function collapseCard() {
+    if (document.body.classList.contains('typing')) { dropKeyboard(); document.body.classList.remove('typing'); fitCard(); }
+    else if (document.body.classList.contains('details')) $('details').click();
+  }
+  $('collapse').onclick = collapseCard;
+  // Dragging the raised card (typing, or the review details) down by its top closes it
+  (function () {
+    var card = document.querySelector('.console'), drag = null;
+    card.addEventListener('pointerdown', function (e) {
+      var raised = document.body.classList.contains('typing') || document.body.classList.contains('details');
+      if (!mobile() || !raised || !e.target.closest('.grabber, .progress') || e.target.closest('button, input')) return;
+      drag = { y: e.clientY, dy: 0 }; card.style.transition = 'none';
+    });
+    window.addEventListener('pointermove', function (e) {
+      if (!drag) return;
+      drag.dy = Math.max(0, e.clientY - drag.y);
+      card.style.transform = 'translateY(' + drag.dy + 'px)';
+    });
+    var end = function () {
+      if (!drag) return;
+      var far = drag.dy > 80; drag = null;
+      card.style.transition = 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)'; card.style.transform = '';
+      setTimeout(function () { card.style.transition = ''; }, 360);
+      if (far) collapseCard();
+    };
+    window.addEventListener('pointerup', end); window.addEventListener('pointercancel', end);
+  })();
   function textField(el) { return el.tagName === 'INPUT' && el.type === 'text' && $('consoleCore').contains(el); }
   function startTyping(el) {
     clearTimeout(typingOff);
@@ -1395,7 +1524,11 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     setTimeout(function () { window.scrollTo(0, 0); }, 0);
   });
   $('consoleCore').addEventListener('focusout', function () {
-    typingOff = setTimeout(function () { if (!textField(document.activeElement)) { document.body.classList.remove('typing'); fitCard(); } }, 300);
+    typingOff = setTimeout(function () {
+      if (textField(document.activeElement)) return;
+      document.body.classList.remove('typing'); fitCard();
+      window.scrollTo(0, 0);  // iOS can leave the page shifted once the keyboard goes
+    }, 300);
   });
   // The card follows the visible area while the keyboard is open (iOS shrinks and shifts the visual viewport)
   if (window.visualViewport) {
@@ -1640,7 +1773,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     goTo(lat, lon, span);
   }
   function goTo(lat, lon, span) {
-    document.body.classList.remove('typing');  // a place was picked: lower the card so the map shows
+    // A place was picked: close the keyboard and lower the card so the map shows
+    dropKeyboard(); document.body.classList.remove('typing');
     markChips(); fitCard();
     state.lat = state.clat = lat; state.lon = state.clon = lon; state.span = span || DEFAULT_SPAN;
     words(); spanUI(); load();
@@ -1971,6 +2105,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   function spanUI() {
     var km = (state.span / 1000).toFixed(1).replace('.0', '') + ' km';
     $('scopeVal').textContent = km + ' across';
+    if (STEPS[step]) stepExtras();
     $('scope').value = SPANS.indexOf(state.span);
     var rv = $('resetView'), off = moved();
     rv.classList.toggle('on', off); rv.tabIndex = off ? 0 : -1; rv.setAttribute('aria-hidden', off ? 'false' : 'true');
