@@ -745,7 +745,39 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   #back { width: 48px; height: 48px; }
   .dock #next.cta { height: 48px; }
   body.reviewing .dock .details-btn { height: 48px; }
+
+  /* Even spacing: every page is only as tall as its content (the preview takes the rest), 10px under the title, 12px
+     above the buttons, and no edge fade on pages that don't scroll, so nothing at the top or bottom looks cut off */
+  :root { --card-min: 0px; }
+  .panels { padding: 10px 12px 12px; }
+  body:not(.details):not(.typing) .panels { -webkit-mask-image: none; mask-image: none; }
+  .pals { padding: 3px 12px; }
+  .picks { height: 48px; }
+  /* Place: no dimmed Back on the first page, so Continue spans the card */
+  #back[hidden] { display: none; }
+  /* The cart icon alone, centered (its label is hidden text) */
+  .cartbtn, .cartbtn[hidden] { display: flex; align-items: center; justify-content: center; }
+  /* Options: one Edit text button (showing the current lines) and the three toggles; the button raises the card with
+     the two text fields, like the search */
+  .panel[data-step="options"].on { grid-template-columns: 1fr; gap: 8px; }
+  .panel[data-step="options"] .field:has(#title), .panel[data-step="options"] .field:has(#sub) { display: none; }
+  .edit-text { display: flex; align-items: center; gap: 10px; width: 100%; height: 40px; padding: 0 14px; border: 0; border-radius: 11px; background: var(--c-field); color: var(--c-text); font: 600 14px var(--c-sys); text-align: left; cursor: pointer; }
+  .edit-text svg { flex: none; width: 15px; height: 15px; stroke: currentColor; stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .edit-text span { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: 400; color: var(--c-sub); text-align: right; }
+  body.typing .panel[data-step="options"].on { display: block; }
+  body.typing .panel[data-step="options"] .field:has(#title), body.typing .panel[data-step="options"] .field:has(#sub) { display: block; margin-top: 12px !important; }
+  body.typing .panel[data-step="options"] .label { display: block; }
+  body.typing .panel[data-step="options"] .edit-text, body.typing .panel[data-step="options"] .field:has(#pinOn) { display: none; }
+  /* Framed prints on phones only float, so the frame is drawn flat: iOS can drop the map from a 3D-composited frame */
+  .frame { transform-style: flat; }
+  .poster { backface-visibility: visible; -webkit-backface-visibility: visible; }
+  /* Cart: Checkout across the sheet, Design another map a full button under it */
+  .modal .row2 { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .modal .row2 .cta { width: 100%; justify-content: space-between; }
+  .modal .skip { height: 48px; padding: 0 16px; border-radius: 24px; background: var(--c-field); color: var(--c-text); font: 600 15px var(--c-sys); }
+  .modal .skip:hover { color: var(--c-text); }
 }
+@media (min-width: 961px) { .edit-text { display: none; } }
 @media (max-width: 767px) {
   .row { grid-template-columns: 1fr auto; }
   .row dt { grid-column: 1 / -1; }
@@ -860,6 +892,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
         <div class="panel" data-step="options">
           <h1 class="display">Options</h1>
           <p class="lede">Change the text and toggle pin and road visibility.</p>
+          <button class="edit-text" id="editText" type="button"><svg viewBox="0 0 16 16"><path d="M10.5 3l2.5 2.5L6 12.5H3.5V10z"/></svg>Edit text<span id="editTextNow"></span></button>
           <div class="field">
             <div class="label">Title</div>
             <div class="well shell"><input class="input" id="title" maxlength="22" value="BIG SKY" aria-label="Title" placeholder="Title"></div>
@@ -1492,6 +1525,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     updateNext();
     $('buyErr').textContent = '';
     if (name === 'style') { browsing = false; markEditing(); }
+    if (name === 'options') showText();
     // Phones: one bar fills as the steps go by; past Scale the map is locked so a stray swipe can't move it
     var shownAll = STEPS.filter(function (s, j) { return !skipped(j); }).length, done = STEPS.slice(0, step + 1).filter(function (s, j) { return !skipped(j); }).length;
     $('rail').style.setProperty('--progress', (done / shownAll * 100).toFixed(1) + '%');
@@ -1606,20 +1640,30 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   }
   if (window.ResizeObserver) new ResizeObserver(fitCard).observe(document.querySelector('.console'));
   // Phones: the logo and cart float over the preview's top corners. If the print would sit under them (a short, wide
-  // screen), push it down until it clears; it shrinks to fit. Checked once the preview has finished resizing.
-  var cornerTimer;
+  // screen, or Review's lift), push it down until it clears; it shrinks to fit. Worked out from where the preview will
+  // end up (the card's new height), so it is right before the preview finishes gliding there.
   function clearCorners() {
-    clearTimeout(cornerTimer);
-    cornerTimer = setTimeout(function () {
-      var root = document.documentElement;
-      if (!mobile()) { root.style.removeProperty('--corner-push'); return; }
-      root.style.setProperty('--corner-push', '0px');
-      var f = $('frame').getBoundingClientRect(), l = document.querySelector('.top .logo').getBoundingClientRect(), c = $('cartBtn').getBoundingClientRect(), gap = 6;
-      if (f.top < l.bottom + gap && (f.left < l.right + gap || f.right > c.left - gap)) root.style.setProperty('--corner-push', Math.ceil(l.bottom + gap - f.top) + 'px');
-    }, 520);
+    var root = document.documentElement;
+    if (!mobile()) { root.style.removeProperty('--corner-push'); return; }
+    var fr = $('frame'), l = document.querySelector('.top .logo').getBoundingClientRect(), c = $('cartBtn').getBoundingClientRect();
+    var vw = window.innerWidth, vh = window.innerHeight, gap = 6;
+    var card = parseFloat(root.style.getPropertyValue('--card-h')) || 230;
+    var below = vh - document.querySelector('.console').getBoundingClientRect().bottom;
+    var ratio = fr.offsetHeight / fr.offsetWidth || 4 / 3, lifted = document.body.classList.contains('reviewing'), push = 0;
+    for (var k = 0; k < 6; k++) {
+      var w = Math.min(vw - 32, (vh - card - below - 52 - push) * 0.75), h = w * ratio;
+      var room = vh - card - below - 6 - 24 - push - 14;
+      var top = 24 + push + Math.max(0, room - h) / 2 - (lifted ? Math.round(h * 0.045) + 8 : 0), left = (vw - w) / 2;
+      if (top >= l.bottom + gap || (left >= l.right + gap && left + w <= c.left - gap)) break;
+      push += Math.ceil(l.bottom + gap - top);
+    }
+    root.style.setProperty('--corner-push', push + 'px');
   }
   window.addEventListener('resize', clearCorners);
   $('findPlace').onclick = function () { findPlace(); };
+  function showText() { $('editTextNow').textContent = [$('title').value, $('sub').value].filter(Boolean).join(' · '); }
+  $('title').addEventListener('input', showText); $('sub').addEventListener('input', showText);
+  $('editText').onclick = function () { startTyping($('title')); $('title').focus(); };
   $('next').onclick = function () { if (step === STEPS.length - 1) offerPair(); else go(nextIndex(step)); };
   $('back').onclick = function () { go(prevIndex(step)); };
   $('details').onclick = function () {
