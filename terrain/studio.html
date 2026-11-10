@@ -273,8 +273,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .pal[aria-pressed="true"] { color: var(--linen); background: rgba(243,238,233,0.07); box-shadow: inset 0 0 0 1px rgba(243,238,233,0.45); }
 .pal.custom i { background: conic-gradient(from 90deg, #e85d5d, #e8c25d, #8ae85d, #5de8c9, #5d8ae8, #b05de8, #e85d5d); }
 .pal small { font: 400 9px/1 var(--mono); color: var(--thatch); margin-top: -3px; }
-.picks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
-.pick { display: grid; justify-items: center; gap: 8px; padding: 14px 4px 12px; border-radius: 18px; background: var(--bg2); box-shadow: inset 0 1px 2px rgba(0,0,0,0.3); font-size: 12px; color: var(--mute); cursor: pointer; }
+.picks { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+.pick { display: grid; justify-items: center; text-align: center; gap: 8px; padding: 14px 4px 12px; border-radius: 18px; background: var(--bg2); box-shadow: inset 0 1px 2px rgba(0,0,0,0.3); font-size: 12px; color: var(--mute); cursor: pointer; }
 .pick input { -webkit-appearance: none; appearance: none; width: 40px; height: 40px; border: 0; border-radius: 50%; padding: 0; background: none; cursor: pointer; box-shadow: 0 0 0 1px var(--hair2); }
 .pick input::-webkit-color-swatch-wrapper { padding: 0; }
 .pick input::-webkit-color-swatch { border: 0; border-radius: 50%; }
@@ -513,6 +513,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
                 <label class="pick"><input type="color" id="cHigh" value="#e9c88f">High ground</label>
                 <label class="pick"><input type="color" id="cWater" value="#4f7ea8">Water</label>
                 <label class="pick"><input type="color" id="cPaper" value="#f5efe6">Paper</label>
+                <label class="pick"><input type="color" id="cText" value="#141b2c">Text</label>
               </div>
               <p class="premium">Tap a circle to open the color wheel. Custom colors add <span id="customCost2">$15</span> to any print or file.</p>
             </div></div>
@@ -670,6 +671,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   var state = { lat: START.lat, lon: START.lon, clat: START.lat, clon: START.lon, span: START.span, place: START.place, style: 'Relief', palette: START.palette, roads: true, format: 'print', size: '18 x 24 in', frame: 'Unframed', extra: null };
   var variants = {}, customVariant = null;
   var elev = null, view = null, vec = null, seq = 0, step = 0, seen = 0, pairAsked = false;
+  var picked = false;  // the visitor has chosen a place (or came from a link that names one), not just the sample map
   var $ = function (id) { return document.getElementById(id); };
   var track = function () { if (window.fbq) fbq.apply(null, arguments); };
   var mobile = function () { return window.matchMedia('(max-width: 960px)').matches; };
@@ -708,14 +710,20 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   function hex(c) { return '#' + c.map(function (v) { return ('0' + Math.round(Math.max(0, Math.min(255, v))).toString(16)).slice(-2); }).join(''); }
   function mix(a, b, t) { return a.map(function (x, i) { return x + (b[i] - x) * t; }); }
   // Same derivation as make_print.custom_palette, so the preview matches the print
-  function customPalette() {
+  function autoInk() {
     var low = rgb($('cLow').value), high = rgb($('cHigh').value), paper = rgb($('cPaper').value);
     var lum = (0.2126 * paper[0] + 0.7152 * paper[1] + 0.0722 * paper[2]) / 255;
-    var ink = hex(lum > 0.5 ? mix(low, [0, 0, 0], 0.35) : high);
-    return { ramp: [hex(low), hex(mix(low, high, 0.4)), hex(mix(low, high, 0.75)), hex(high)], water: $('cWater').value, road: ink, bg: $('cPaper').value, ink: ink, pin: ink };
+    return hex(lum > 0.5 ? mix(low, [0, 0, 0], 0.35) : high);
+  }
+  // The text circle follows the derived ink until the customer picks a text color of their own
+  var textPicked = false;
+  function syncText() { if (!textPicked) $('cText').value = autoInk(); }
+  function customPalette() {
+    var low = rgb($('cLow').value), high = rgb($('cHigh').value), ink = autoInk();
+    return { ramp: [hex(low), hex(mix(low, high, 0.4)), hex(mix(low, high, 0.75)), hex(high)], water: $('cWater').value, road: ink, bg: $('cPaper').value, ink: $('cText').value, pin: ink };
   }
   function pal() { return custom() ? customPalette() : PALETTES[state.palette]; }
-  function customColors() { return [$('cLow').value, $('cHigh').value, $('cWater').value, $('cPaper').value].join(','); }
+  function customColors() { return [$('cLow').value, $('cHigh').value, $('cWater').value, $('cPaper').value, $('cText').value].join(','); }
 
   /* Option cards */
   function option(name, desc, lead) {
@@ -756,9 +764,13 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   }
   // Dragging around the color wheel repaints straight away; no pause for every nudge
   var colorFrame;
-  ['cLow', 'cHigh', 'cWater', 'cPaper'].forEach(function (id) {
-    $(id).addEventListener('input', function () { cancelAnimationFrame(colorFrame); colorFrame = requestAnimationFrame(function () { paint(); refresh(); }); });
+  ['cLow', 'cHigh', 'cWater', 'cPaper', 'cText'].forEach(function (id) {
+    $(id).addEventListener('input', function () {
+      if (id === 'cText') textPicked = true; else syncText();
+      cancelAnimationFrame(colorFrame); colorFrame = requestAnimationFrame(function () { paint(); refresh(); });
+    });
   });
+  syncText();
   $('roadsOn').addEventListener('change', function () { state.roads = this.checked; restyle(); });
 
   /* Printing: all seven choices at once. Each size is a row with its unframed and framed price side by side, and the
@@ -1053,7 +1065,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     $('stepOf').textContent = (step + 1) + ' of ' + STEPS.length;
     $('stage').dataset.step = name;
     $('back').hidden = step === 0;
-    setNext(step === STEPS.length - 1 ? 'Add to cart' : 'Continue to ' + STEPS[step + 1][1]);
+    setNext(step === 0 && !picked ? 'Find your place' : step === STEPS.length - 1 ? 'Add to cart' : 'Continue to ' + STEPS[step + 1][1]);
     $('buyErr').textContent = '';
     refresh();
     showcase(name === 'review');
@@ -1064,7 +1076,14 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
       else if (top < 0 || top > window.innerHeight * 0.5) window.scrollTo({ top: window.scrollY + top - 20, behavior: 'smooth' });
     }
   }
-  $('next').onclick = function () { if (step === STEPS.length - 1) offerPair(); else go(step + 1); };
+  // On phones the search sits under the pinned preview and the dock, so ad visitors saw only the sample map and
+  // "Continue". Until they choose a place, the dock button takes them to the search box instead.
+  function findPlace(noFocus) {
+    var a = $('addr');
+    if (mobile()) window.scrollTo({ top: window.scrollY + a.getBoundingClientRect().top - $('stage').offsetHeight - 48, behavior: 'smooth' });
+    if (!noFocus) a.focus({ preventScroll: mobile() });
+  }
+  $('next').onclick = function () { if (step === 0 && !picked) findPlace(); else if (step === STEPS.length - 1) offerPair(); else go(step + 1); };
   $('back').onclick = function () { go(step - 1); };
 
   var TICK = '<svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7"/></svg>';
@@ -1272,6 +1291,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     goTo(lat, lon, span);
   }
   function goTo(lat, lon, span) {
+    if (!picked) { picked = true; if (step === 0) setNext('Continue to ' + STEPS[1][1]); }
     state.lat = state.clat = lat; state.lon = state.clon = lon; state.span = span || DEFAULT_SPAN;
     words(); spanUI(); load();
   }
@@ -1798,7 +1818,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 
   // Links from the home page and from ads can open on a specific look:
   // ?place=mount-rainier&style=contour&palette=sage&km=15&roads=off&pin=off (place is a suggested place's name, any case;
-  // km is the map width, snapped to the nearest scope the studio offers)
+  // km is the map width, snapped to the nearest scope the studio offers). Any other spot:
+  // ?lat=45.2781&lon=-111.4503&name=Lone+Peak,+Montana&title=LONE+PEAK&sub=BIG+SKY,+MONTANA
   var qs = new URLSearchParams(location.search);
   var cap = function (v) { return v ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : ''; };
   var want = cap(qs.get('palette'));
@@ -1810,6 +1831,13 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     state.lat = state.clat = fav.lat; state.lon = state.clon = fav.lon; state.span = fav.span; state.place = fav.place;
     $('title').value = fav.title; $('sub').value = fav.sub;
   }
+  var lat = parseFloat(qs.get('lat')), lon = parseFloat(qs.get('lon'));
+  if (!fav && isFinite(lat) && isFinite(lon)) {
+    state.lat = state.clat = lat; state.lon = state.clon = lon;
+    state.place = qs.get('name') || qs.get('title') || lat.toFixed(4) + ', ' + lon.toFixed(4);
+    $('title').value = (qs.get('title') || '').toUpperCase().slice(0, 22); $('sub').value = (qs.get('sub') || '').toUpperCase();
+  }
+  picked = !!fav || (isFinite(lat) && isFinite(lon));
   var km = parseFloat(qs.get('km'));
   if (km > 0) state.span = SPANS.reduce(function (a, b) { return Math.abs(b - km * 1000) < Math.abs(a - km * 1000) ? b : a; });
   if (qs.get('roads') === 'off') { state.roads = false; $('roadsOn').checked = false; }
@@ -1817,6 +1845,14 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 
   $('addr').value = state.place;
   words(); paint(); spanUI(); go(0); load();
+  // The home page's search box sends what was typed (?q=), so the matches are already listed when the studio opens.
+  // No focus: on phones the keyboard would cover the list.
+  var asked = (qs.get('q') || '').trim();
+  if (asked && !picked) {
+    $('addr').value = asked;
+    $('addr').dispatchEvent(new Event('input'));
+    setTimeout(function () { findPlace(true); }, 400);
+  }
 })();
 </script>
 </body>

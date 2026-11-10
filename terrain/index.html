@@ -54,6 +54,12 @@ try {
 .hero { min-height: 100dvh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: clamp(32px, 5vw, 96px); max-width: 1480px; margin: 0 auto; padding: 140px var(--gut) 96px; }
 .hero h1 { font-size: clamp(56px, 7.4vw, 132px); margin-bottom: 30px; }
 .hero .cta { margin-top: 40px; }
+/* Ad visitors land here: typing their place starts the design, and the studio opens with the matches showing */
+.find { display: flex; align-items: center; gap: 6px; max-width: 480px; margin-top: 40px; --r: 999px; --pad: 5px; }
+.find:focus-within { box-shadow: inset 0 0 0 1px rgba(243,238,233,0.35); }
+.find input { flex: 1; min-width: 0; height: 56px; padding: 0 6px 0 22px; border: 0; background: transparent; color: var(--linen); font: 400 16px/1 var(--sans); outline: none; }
+.find input::placeholder { color: var(--faint); }
+.hero .find .cta { margin-top: 0; flex: none; padding-left: 22px; }
 .facts { display: flex; gap: 36px; flex-wrap: wrap; margin-top: 56px; padding-top: 28px; box-shadow: inset 0 1px 0 var(--hair); max-width: 520px; }
 .facts div { font: 400 12px/1.5 var(--mono); color: var(--faint); letter-spacing: 0.02em; }
 .facts b { display: block; font: 400 italic 23px/1.1 var(--serif); color: var(--linen); letter-spacing: 0; margin-bottom: 4px; }
@@ -128,7 +134,10 @@ try {
     <div>
       <h1 class="display rv">Any place.</h1>
       <p class="lede rv" style="--d:80ms">The ground beneath a home, a lake, a first apartment. Rendered from one meter lidar, with every hill and hollow cast in light and shadow.</p>
-      <a class="cta rv" style="--d:160ms" href="studio.html">Design your map <span class="ic"><svg viewBox="0 0 16 16"><path d="M4 12L12 4M5.5 4H12v6.5"/></svg></span></a>
+      <form class="find shell rv" style="--d:160ms" action="studio.html" method="get" role="search" onsubmit="if (!this.q.value.trim()) { location.href = 'studio.html'; return false; }">
+        <input name="q" type="text" autocomplete="off" enterkeyhint="go" placeholder="Address, park or peak" aria-label="Your place">
+        <button class="cta" type="submit">Design <span class="ic"><svg viewBox="0 0 16 16"><path d="M4 12L12 4M5.5 4H12v6.5"/></svg></span></button>
+      </form>
       <div class="facts rv" style="--d:240ms">
         <div><b>From $15</b>Prints and digital files</div>
         <div><b>Preview first</b>24 hours to make changes</div>
