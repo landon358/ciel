@@ -419,6 +419,41 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   .panels { padding: 30px var(--gut) 24px; }
   .dock { margin: 0 10px max(10px, env(safe-area-inset-bottom)); bottom: max(10px, env(safe-area-inset-bottom)); }
   .dockErr { padding: 0 var(--gut); }
+
+  /* Phones: the pinned preview and the dock leave only a third of the screen for the controls, so each step opens
+     straight onto its controls. The step name above the dots replaces each panel's heading and intro. */
+  .stage > .core { height: 38svh; min-height: 270px; padding-bottom: 10px; }
+  .frame { width: min(100%, calc((max(38svh, 270px) - 34px) * 0.75)); }
+  .lowres { display: none; }
+  .stage[data-step="review"] .lowres { display: block; }
+  .stage[data-step="review"] > .core { height: 46svh; min-height: 330px; }
+  .stage[data-step="review"] .frame { width: min(100%, calc((max(46svh, 330px) - 58px) * 0.75)); }
+  .progress { padding-top: 12px; }
+  .progress .now strong { font-size: 24px; }
+  .segs { margin-top: 10px; }
+  .segs button i { width: 24px; height: 24px; font-size: 10px; }
+  .segs button::before { top: 12px; left: calc(-50% + 17px); right: calc(50% + 17px); }
+  .panels { padding-top: 18px; }
+  .panel h1, .panel > .lede { display: none; }
+  .panel[data-step="review"] h1 { display: block; font-size: 28px; margin-bottom: 4px; }
+  .panel .facts { margin-top: 0; }
+  .field { margin-top: 22px; }
+  .panel > .field:first-of-type, .panel > .facts + .field { margin-top: 14px; }
+  /* Color: the two styles side by side, the palettes in one row to swipe through */
+  #styles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  #styles .opt { --r: 18px; }
+  #styles .opt .core { grid-template-columns: auto 1fr; gap: 10px; padding: 10px 12px; }
+  #styles .opt .name { font-size: 17px; }
+  #styles .opt .desc { display: none; }
+  #styles .opt .glyph { width: 36px; height: 36px; border-radius: 11px; }
+  #styles .opt .glyph svg { width: 24px; height: 24px; }
+  .pals { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 74px; overflow-x: auto; scroll-snap-type: x proximity;
+    margin: 0 calc(-1 * var(--gut)); padding: 2px var(--gut) 6px; scroll-padding: 0 var(--gut); scrollbar-width: none; }
+  .pals::-webkit-scrollbar { display: none; }
+  .pal { scroll-snap-align: start; }
+  /* Thumb-sized targets */
+  .check { min-height: 44px; margin-top: 4px; }
+  .row button { padding: 14px 12px; margin: -10px -6px; }
 }
 @media (max-width: 767px) {
   .row { grid-template-columns: 1fr auto; }
@@ -1077,6 +1112,11 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     $('buyErr').textContent = '';
     refresh();
     showcase(name === 'review');
+    // On phones the palettes are one row to swipe; open it on the chosen one, which may sit off screen to the right
+    if (name === 'style' && mobile()) {
+      var row = $('palettes'), tile = paletteTiles[state.palette];
+      row.scrollLeft += tile.getBoundingClientRect().left - row.getBoundingClientRect().left - (row.clientWidth - tile.offsetWidth) / 2;
+    }
     // Bring the new step into view: under the pinned map on phones, at the console top on desktop
     if (prev !== step) {
       var top = $('consoleCore').getBoundingClientRect().top;
