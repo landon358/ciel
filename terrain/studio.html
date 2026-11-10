@@ -295,6 +295,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .check input:checked { background: var(--thatch); }
 .check input:checked::after { transform: translateX(16px); }
 .check .short { display: none; }
+.kinds, .details-btn { display: none; }
 .extra { --r: 22px; --pad: 5px; transition: box-shadow 0.5s var(--spring); }
 .extra .core { padding: 20px; }
 .extra[data-on="true"] { box-shadow: inset 0 0 0 1px rgba(243,238,233,0.42); }
@@ -593,6 +594,50 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   #back { flex: none; display: grid; place-items: center; width: 52px; height: 52px; padding: 0; border: 0; border-radius: 26px; background: var(--c-field); box-shadow: none; color: var(--c-text); }
   #back[hidden] { display: grid; opacity: 0.35; pointer-events: none; }
   #back svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Pages instead of scrolling: the card sizes to each page (never shorter than --card-min, so the preview holds its size
+     from page to page) and the preview takes the rest of the screen, measured as --card-h by script */
+  :root { --card-min: 290px; }
+  .console { height: auto; min-height: var(--card-min); max-height: calc(100dvh - 130px); display: flex; flex-direction: column; transition: none; }
+  .console > .core { height: auto; flex: 1; min-height: 0; }
+  .panels { flex: 1 1 auto; }
+  .stage { bottom: calc(var(--card-h, 268px) + var(--cardgap) + 6px); }
+  .frame { width: min(100%, calc((100dvh - var(--card-h, 268px) - var(--cardgap) - 100px) * 0.75)); }
+  .facts-more { display: none; }
+  .panel[data-page="find"] .field:nth-of-type(3), .panel[data-page="find"] .hint { display: none; }
+  .panel[data-page="scale"] .field-search, .panel[data-page="scale"] .field:nth-of-type(2), .panel[data-page="scale"] .facts { display: none; }
+  .panel[data-page="scale"] .field:nth-of-type(3) { margin-top: 0; }
+  .panel[data-page="scale"] .hint { margin-top: 10px; padding: 10px 12px; font-size: 12px; line-height: 1.4; }
+  .panel[data-step="options"] .label { display: none; }
+  .panel[data-step="options"] .field { margin-top: 8px; }
+  .panel[data-step="options"] .field:first-of-type { margin-top: 0; }
+  .panel[data-step="options"] .field:last-child { margin-top: 12px; }
+  /* Size: print or file first, then the size, each choice a tile with its price */
+  .panel[data-step="format"] .field, .panel[data-step="format"] .choice { display: none; }
+  .panel[data-page="kind"] #kinds, .panel[data-page="dims"] #dims { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .kind { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-height: 104px; padding: 10px 4px; border: 0; border-radius: 14px; background: var(--c-fill); color: var(--c-text); font-family: var(--c-sys); cursor: pointer; transition: background 0.3s, box-shadow 0.3s; }
+  .kind[aria-pressed="true"] { background: var(--c-on); box-shadow: var(--c-ring); }
+  .kind .glyph { height: 34px; display: grid; place-items: center; }
+  .kind .glyph i { display: block; position: relative; width: 22px; height: 30px; border-radius: 2px; box-shadow: inset 0 0 0 1.5px var(--c-soft); }
+  .kind .glyph i.fr { box-shadow: inset 0 0 0 4px var(--c-text); }
+  .kind .glyph i.file::after { content: ""; position: absolute; left: 5px; right: 5px; bottom: 7px; height: 1.5px; background: var(--c-soft); }
+  .kind .name { font-size: 15px; font-weight: 600; white-space: nowrap; }
+  .kind .name small { font-size: 12px; font-weight: 400; color: var(--c-soft); }
+  .kind .from { font-size: 13px; color: var(--c-soft); }
+  .kind .cm { font-size: 11px; color: var(--c-sub); }
+  .kind.dim { min-height: 92px; }
+  /* Typing: the card jumps (no slide) to the top of the visible area and ends where the keyboard begins */
+  body.typing .console { top: calc(var(--vvtop, 0px) + 8px); bottom: auto; height: calc(var(--vvh, 100dvh) - 16px); min-height: 0; max-height: none; }
+  body.typing .console > .core { height: 100%; }
+  body.typing #chips, body.typing .facts { visibility: hidden; }
+  /* Review: the piece full screen with its animation, and just Back, See details and Add to cart below it */
+  body.reviewing .console { min-height: 0; }
+  body.reviewing .console > .core { overflow: visible; }
+  body.reviewing:not(.details) .progress, body.reviewing:not(.details) .panels { display: none; }
+  body.reviewing:not(.details) .dock { margin-top: 14px; }
+  body.reviewing .dock .details-btn { display: inline-flex; align-items: center; justify-content: center; flex: none; height: 52px; padding: 0 18px; border: 0; border-radius: 26px; background: var(--c-field); color: var(--c-text); font: 600 15px var(--c-sys); white-space: nowrap; cursor: pointer; }
+  body.details .console { max-height: 78dvh; }
+  body.details .panel[data-step="review"] h1 { display: none; }
 }
 @media (max-width: 767px) {
   .row { grid-template-columns: 1fr auto; }
@@ -706,11 +751,11 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
           <p class="lede">Change the text and toggle pin and road visibility.</p>
           <div class="field">
             <div class="label">Title</div>
-            <div class="well shell"><input class="input" id="title" maxlength="22" value="BIG SKY" aria-label="Title"></div>
+            <div class="well shell"><input class="input" id="title" maxlength="22" value="BIG SKY" aria-label="Title" placeholder="Title"></div>
           </div>
           <div class="field">
             <div class="label">Second line <b>Optional</b></div>
-            <div class="well shell"><input class="input" id="sub" maxlength="32" value="MONTANA" aria-label="Second line"></div>
+            <div class="well shell"><input class="input" id="sub" maxlength="32" value="MONTANA" aria-label="Second line" placeholder="Second line (optional)"></div>
           </div>
           <div class="field">
             <label class="check"><input type="checkbox" id="pinOn"> <span class="long">Mark the exact spot</span><span class="short">Pin</span></label>
@@ -722,6 +767,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
         <div class="panel" data-step="format">
           <h1 class="display">Print or file.</h1>
           <p class="lede">We print it on premium heavyweight matte paper and ship it to you, or email you the high resolution file to print however you like.</p>
+          <div class="kinds" id="kinds" role="group" aria-label="Print or file"></div>
+          <div class="kinds dims" id="dims" role="group" aria-label="Print size"></div>
           <div class="field">
             <div class="label">Printed and shipped <b>Premium matte paper</b></div>
             <div class="matrix" id="matrix" role="group" aria-label="Print size and frame">
@@ -748,6 +795,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
       <div class="err dockErr" id="buyErr"></div>
       <div class="dock shell"><div class="core">
         <button class="round" id="back" type="button" aria-label="Previous step" hidden><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg></button>
+        <button class="details-btn" id="details" type="button">See details</button>
         <button class="find-place" id="findPlace" type="button" hidden><svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>Search</button>
         <div class="sum off" id="sum"><small id="sumLabel">Total</small><strong id="price"></strong></div>
         <button class="cta" id="next" type="button"><span id="nextLabel">Continue</span><span class="ic"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></button>
@@ -843,7 +891,11 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   // Map width across the print, in meters. The renderer reads the same value from the order.
   // Relief reads best wide, so new places open at 15 km
   var SPANS = [1500, 2000, 2500, 3000, 3600, 4500, 6000, 8000, 10000, 12000, 15000, 20000, 25000], DEFAULT_SPAN = 15000;
-  var STEPS = [['place', 'Place'], ['style', 'Color'], ['options', 'Options'], ['format', 'Printing'], ['review', 'Review']];
+  // Desktop has five steps. Phones split Place (search, then scale) and Printing (print or file, then size) so no page
+  // needs scrolling. Each entry is [panel, name, page]; a page shows part of its panel (see the phone CSS).
+  var DESK = [['place', 'Place'], ['style', 'Color'], ['options', 'Options'], ['format', 'Printing'], ['review', 'Review']];
+  var PHONE = [['place', 'Place', 'find'], ['place', 'Scale', 'scale'], ['style', 'Color'], ['options', 'Options'], ['format', 'Size', 'kind'], ['format', 'Dimensions', 'dims'], ['review', 'Review']];
+  var STEPS = window.matchMedia('(max-width: 960px)').matches ? PHONE : DESK;
   // How long each preview takes to "render": long enough to feel made, short enough not to drag
   var DWELL = { load: 1900, restyle: 1100 };
 
@@ -976,7 +1028,28 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   var fileCard = option('Digital file', 'A 7200 x 9600 pixel JPG by email. No printing, no shipping.', '<span class="glyph"><i class="file" style="width:24px;height:32px"></i></span>');
   fileCard.onclick = function () { state.format = 'digital'; markFormat(); refresh(); };
   $('formats').appendChild(fileCard);
+  // Phones pick in two pages: print or file first (each with its starting price), then the size
+  var kinds = {}, dims = {};
+  [['digital', 'Digital file', '<i class="file"></i>'], ['Unframed', 'Poster', '<i></i>'], ['Black frame', 'Framed', '<i class="fr"></i>']].forEach(function (k) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'kind';
+    b.innerHTML = '<span class="glyph">' + k[2] + '</span><span class="name">' + k[1] + '</span><span class="from"></span>';
+    b.onclick = function () {
+      if (k[0] === 'digital') state.format = 'digital';
+      else { state.format = 'print'; state.frame = k[0]; }
+      markFormat(); refresh();
+    };
+    kinds[k[0]] = b; $('kinds').appendChild(b);
+  });
+  SIZES.forEach(function (sz) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'kind dim';
+    b.innerHTML = '<span class="name">' + esc(sz.replace(' in', '')) + '<small> in</small></span><span class="from"></span><span class="cm">' + SIZE_INFO[sz].cm + '</span>';
+    b.onclick = function () { state.format = 'print'; state.size = sz; markFormat(); refresh(); };
+    dims[sz] = b; $('dims').appendChild(b);
+  });
   function markFormat() {
+    Object.keys(kinds).forEach(function (k) { kinds[k].setAttribute('aria-pressed', k === 'digital' ? digital() : !digital() && k === state.frame); });
+    SIZES.forEach(function (sz) { dims[sz].setAttribute('aria-pressed', !digital() && sz === state.size); });
+    updateNext();
     Object.keys(cells).forEach(function (k) { cells[k].setAttribute('aria-pressed', !digital() && k === state.size + '|' + state.frame); });
     SIZES.forEach(function (s) { rowHeads[s].classList.toggle('on', !digital() && s === state.size); });
     FRAMES.forEach(function (f) { colHeads[f].classList.toggle('on', !digital() && f === state.frame); });
@@ -1006,9 +1079,13 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     $('costNote').textContent = 'Prices include your custom palette (' + money(add) + ').';
     var upcharge = money(customVariant ? customVariant.price : FALLBACK.custom);
     $('customCost').textContent = '+' + upcharge; $('customCost2').textContent = upcharge;
+    kinds.digital.querySelector('.from').textContent = money(priceOf(DIGITAL) + add);
+    kinds.Unframed.querySelector('.from').textContent = 'from ' + money(priceOf(SIZES[0] + '|Unframed') + add);
+    kinds['Black frame'].querySelector('.from').textContent = 'from ' + money(priceOf(SIZES[0] + '|Black frame') + add);
+    SIZES.forEach(function (sz) { dims[sz].querySelector('.from').textContent = money(priceOf(sz + '|' + (digital() ? 'Unframed' : state.frame)) + add); });
     // Ad visitors land on step 1, so it states the price range before they put time into a design
-    $('facts').textContent = 'Prints from ' + money(priceOf(SIZES[0] + '|Unframed')) + ', framed from ' + money(priceOf(SIZES[0] + '|Black frame')) +
-      '. You approve a free preview before anything prints.';
+    $('facts').innerHTML = 'Prints from ' + money(priceOf(SIZES[0] + '|Unframed')) + ', framed from ' + money(priceOf(SIZES[0] + '|Black frame')) +
+      '.<span class="facts-more"> You approve a free preview before anything prints.</span>';
   }
 
   /* Everything that shows a choice; the total lives in the review step's bill, not the dock */
@@ -1018,7 +1095,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     $('sum').classList.add('off');
     $('price').textContent = money(total());
     $('sumLabel').textContent = 'Total';
-    var late = (name === 'format' || name === 'review') && !digital();
+    // The print shrinks to its chosen size while sizes are on screen; the phone's full screen Review shows it at full size
+    var late = (name === 'format' || (name === 'review' && !mobile())) && !digital();
     var scale = late ? SIZE_INFO[state.size].scale : 1;
     if (scale !== lastScale) { lastScale = scale; scaleChangedAt = Date.now(); }
     $('frame').style.setProperty('--scale', scale);
@@ -1223,22 +1301,48 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   function persp(fov, aspect, n, f) { var t = 1 / Math.tan(fov / 2); return new Float32Array([t / aspect, 0, 0, 0, 0, t, 0, 0, 0, 0, (f + n) / (n - f), -1, 0, 0, 2 * f * n / (n - f), 0]); }
 
   /* Steps */
-  STEPS.forEach(function (s, i) {
-    var b = document.createElement('button');
-    b.type = 'button'; b.innerHTML = '<i>' + (i + 1) + '</i><span>' + esc(s[1]) + '</span>'; b.setAttribute('aria-label', 'Step ' + (i + 1) + ', ' + s[1]);
-    b.onclick = function () { if (i <= seen) go(i); };
-    $('rail').appendChild(b);
-  });
+  function buildRail() {
+    $('rail').innerHTML = '';
+    $('rail').style.gridTemplateColumns = 'repeat(' + STEPS.length + ', minmax(0, 1fr))';
+    STEPS.forEach(function (s, i) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.innerHTML = '<i>' + (i + 1) + '</i><span>' + esc(s[1]) + '</span>'; b.setAttribute('aria-label', 'Step ' + (i + 1) + ', ' + s[1]);
+      b.onclick = function () { if (i <= seen) go(i); };
+      $('rail').appendChild(b);
+    });
+  }
+  buildRail();
+  // A digital file has no size to pick, so its Dimensions page is skipped
+  function skipped(i) { return STEPS[i] && STEPS[i][2] === 'dims' && digital(); }
+  function nextIndex(i) { var j = i + 1; while (j < STEPS.length - 1 && skipped(j)) j++; return Math.min(j, STEPS.length - 1); }
+  function prevIndex(i) { var j = i - 1; while (j > 0 && skipped(j)) j--; return Math.max(j, 0); }
+  // 'place' or 'place:scale': the first step showing that panel (and page, when this list has it)
+  function stepIndex(key) {
+    var k = key.split(':'), at = -1;
+    STEPS.forEach(function (s, i) { if (at < 0 && s[0] === k[0] && (!k[1] || !s[2] || s[2] === k[1])) at = i; });
+    return Math.max(at, 0);
+  }
   function setNext(text) { $('nextLabel').textContent = text; }
+  function updateNext() {
+    // The count leaves out a skipped page (a digital file has no Dimensions)
+    var shown = STEPS.filter(function (s, j) { return !skipped(j); }).length, at = STEPS.slice(0, step + 1).filter(function (s, j) { return !skipped(j); }).length;
+    $('stepOf').textContent = at + ' of ' + shown;
+    if (step === STEPS.length - 1) return setNext('Add to cart');
+    setNext('Continue to ' + STEPS[nextIndex(step)][1]);
+  }
   function go(i) {
     var prev = step;
     if (i !== prev) document.body.classList.remove('typing');
     step = Math.max(0, Math.min(STEPS.length - 1, i));
-    var name = STEPS[step][0];
+    if (skipped(step)) step = step > prev ? nextIndex(step) : prevIndex(step);
+    var name = STEPS[step][0], page = STEPS[step][2] || '';
     // The first visit to each step goes to Meta, so Events Manager shows where in the studio visitors stop
-    if (step > seen) track('trackCustom', 'StudioStep', { step: name, number: step + 1 });
+    if (step > seen) track('trackCustom', 'StudioStep', { step: page ? name + '-' + page : name, number: step + 1 });
     seen = Math.max(seen, step);
-    document.querySelectorAll('.panel').forEach(function (p) { p.classList.toggle('on', p.dataset.step === name); });
+    document.querySelectorAll('.panel').forEach(function (p) { p.classList.toggle('on', p.dataset.step === name); p.dataset.page = p.dataset.step === name ? page : ''; });
+    // Phones: Review shows the piece full screen with just the buttons; See details opens the summary and bill
+    document.body.classList.toggle('reviewing', mobile() && name === 'review');
+    if (name !== 'review') { document.body.classList.remove('details'); $('details').textContent = 'See details'; }
     $('rail').querySelectorAll('button').forEach(function (b, j) {
       b.classList.toggle('seen', j <= seen);
       b.disabled = j > seen;
@@ -1246,13 +1350,13 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     });
     $('stepNum').textContent = '0' + (step + 1);
     $('stepName').textContent = STEPS[step][1];
-    $('stepOf').textContent = (step + 1) + ' of ' + STEPS.length;
     $('stage').dataset.step = name;
     $('back').hidden = step === 0;
     $('findPlace').hidden = step !== 0;
-    setNext(step === STEPS.length - 1 ? 'Add to cart' : 'Continue to ' + STEPS[step + 1][1]);
+    updateNext();
     $('buyErr').textContent = '';
     refresh();
+    fitCard();
     showcase(name === 'review');
     // On phones the palettes are one row to swipe; open it on the chosen one, which may sit off screen to the right
     if (name === 'style' && mobile()) {
@@ -1273,37 +1377,78 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     if (mobile()) $('panels').scrollTo({ top: a.closest('.field').offsetTop - 12, behavior: 'smooth' });
     if (!noFocus) a.focus({ preventScroll: mobile() });
   }
-  // Phones: a keyboard would cover the bottom card, so while one of its text fields has focus the card rises to the
-  // top of the screen. It drops back a moment after focus leaves, so a tap on a search match lands first.
+  // Phones: a keyboard would cover the bottom card, so a text field in it moves the card to the top of the screen, sized
+  // to the space above the keyboard. It moves on the tap itself, before the keyboard opens, so iOS has nothing to scroll
+  // into view; it drops back a moment after focus leaves, so a tap on a search match lands first.
   var typingOff;
-  $('consoleCore').addEventListener('focusin', function (e) {
-    if (!mobile() || e.target.tagName !== 'INPUT' || e.target.type !== 'text') return;
+  function textField(el) { return el.tagName === 'INPUT' && el.type === 'text' && $('consoleCore').contains(el); }
+  function startTyping(el) {
     clearTimeout(typingOff);
     document.body.classList.add('typing');
-    var field = e.target.closest('.field');
-    setTimeout(function () { $('panels').scrollTo({ top: field.offsetTop - 12, behavior: 'smooth' }); }, 60);
+    var field = el.closest('.field');
+    requestAnimationFrame(function () { $('panels').scrollTop = Math.max(0, field.offsetTop - 8); });
+  }
+  $('consoleCore').addEventListener('pointerdown', function (e) { if (mobile() && textField(e.target)) startTyping(e.target); });
+  $('consoleCore').addEventListener('focusin', function (e) {
+    if (!mobile() || !textField(e.target)) return;
+    startTyping(e.target);
+    setTimeout(function () { window.scrollTo(0, 0); }, 0);
   });
   $('consoleCore').addEventListener('focusout', function () {
-    typingOff = setTimeout(function () { document.body.classList.remove('typing'); }, 300);
+    typingOff = setTimeout(function () { if (!textField(document.activeElement)) { document.body.classList.remove('typing'); fitCard(); } }, 300);
   });
+  // The card follows the visible area while the keyboard is open (iOS shrinks and shifts the visual viewport)
+  if (window.visualViewport) {
+    var fitViewport = function () {
+      document.documentElement.style.setProperty('--vvh', Math.round(visualViewport.height) + 'px');
+      document.documentElement.style.setProperty('--vvtop', Math.round(visualViewport.offsetTop) + 'px');
+    };
+    visualViewport.addEventListener('resize', fitViewport); visualViewport.addEventListener('scroll', fitViewport); fitViewport();
+  }
+  // The preview fills whatever the card leaves; the card's height follows each page's content. Measured on every page
+  // change, and whenever the card's content changes size (a custom palette opening, a search error)
+  function fitCard() {
+    // Typing and the review details cover the preview like a sheet, so the preview keeps its size under them
+    if (!mobile() || document.body.classList.contains('typing') || document.body.classList.contains('details')) return;
+    document.documentElement.style.setProperty('--card-h', Math.round(document.querySelector('.console').getBoundingClientRect().height) + 'px');
+  }
+  if (window.ResizeObserver) new ResizeObserver(fitCard).observe(document.querySelector('.console'));
   $('findPlace').onclick = function () { findPlace(); };
-  $('next').onclick = function () { if (step === STEPS.length - 1) offerPair(); else go(step + 1); };
-  $('back').onclick = function () { go(step - 1); };
+  $('next').onclick = function () { if (step === STEPS.length - 1) offerPair(); else go(nextIndex(step)); };
+  $('back').onclick = function () { go(prevIndex(step)); };
+  $('details').onclick = function () {
+    var open = document.body.classList.toggle('details');
+    if (!open) fitCard();
+    this.textContent = open ? 'Hide details' : 'See details';
+    if (open) $('panels').scrollTop = 0;
+  };
+  // A screen turned past the breakpoint (a tablet, mostly) swaps the step list, keeping the step it was on
+  function syncSteps() {
+    var want = mobile() ? PHONE : DESK;
+    if (STEPS === want) return;
+    var cur = STEPS[step];
+    STEPS = want;
+    var j = stepIndex(cur[0] + (cur[2] ? ':' + cur[2] : ''));
+    seen = j; step = j; buildRail(); go(j);
+    if (!mobile()) document.body.classList.remove('typing', 'reviewing', 'details');
+  }
+  window.matchMedia('(max-width: 960px)').addEventListener('change', syncSteps);
+  window.addEventListener('resize', syncSteps);
 
   var TICK = '<svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7"/></svg>';
   function review() {
     $('reviewTitle').textContent = digital() ? 'Your file.' : 'Your print.';
     var rows = [
-      ['Place', esc(state.place) + '<small>' + ($('coords').checked ? 'Coordinates shown' : 'No coordinates') + ', ' + ($('pinOn').checked ? 'spot marked' : 'no pin') + '</small>', 0],
-      ['View', (state.span / 1000).toFixed(1).replace('.0', '') + ' km across' + (moved() ? '<small>Framed by hand</small>' : '<small>Centered on the place</small>'), 0],
-      ['Style', esc(STYLES[state.style]) + ' in ' + esc(state.palette) + '<small>' + (state.roads ? 'With roads' : 'Without roads') + (custom() ? ', your own colors' : '') + '</small>', 1],
-      ['Words', esc($('title').value.toUpperCase() || 'No title') + ($('sub').value.trim() ? '<small>' + esc($('sub').value.toUpperCase()) + '</small>' : ''), 2],
-      ['Format', digital() ? 'Digital file<small>7200 x 9600 pixels, emailed</small>' : esc(state.size) + '<small>' + SIZE_INFO[state.size].cm + ', ' + esc(state.frame.toLowerCase()) + '</small>', 3]
+      ['Place', esc(state.place) + '<small>' + ($('coords').checked ? 'Coordinates shown' : 'No coordinates') + ', ' + ($('pinOn').checked ? 'spot marked' : 'no pin') + '</small>', 'place'],
+      ['View', (state.span / 1000).toFixed(1).replace('.0', '') + ' km across' + (moved() ? '<small>Framed by hand</small>' : '<small>Centered on the place</small>'), 'place:scale'],
+      ['Style', esc(STYLES[state.style]) + ' in ' + esc(state.palette) + '<small>' + (state.roads ? 'With roads' : 'Without roads') + (custom() ? ', your own colors' : '') + '</small>', 'style'],
+      ['Words', esc($('title').value.toUpperCase() || 'No title') + ($('sub').value.trim() ? '<small>' + esc($('sub').value.toUpperCase()) + '</small>' : ''), 'options'],
+      ['Format', digital() ? 'Digital file<small>7200 x 9600 pixels, emailed</small>' : esc(state.size) + '<small>' + SIZE_INFO[state.size].cm + ', ' + esc(state.frame.toLowerCase()) + '</small>', 'format']
     ];
     $('summary').innerHTML = rows.map(function (r) {
       return '<div class="row"><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd><button type="button" data-go="' + r[2] + '">Edit</button></div>';
     }).join('');
-    $('summary').querySelectorAll('[data-go]').forEach(function (b) { b.onclick = function () { go(+b.dataset.go); }; });
+    $('summary').querySelectorAll('[data-go]').forEach(function (b) { b.onclick = function () { go(stepIndex(b.dataset.go)); }; });
     var what = digital() ? 'Digital file' : 'Print, ' + esc(state.size) + ', ' + esc(state.frame.toLowerCase());
     // Shipping is shown up front so the total here is what checkout charges (before any tax)
     var ship = digital() ? 0 : SHIPPING[state.frame];
@@ -1496,7 +1641,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   }
   function goTo(lat, lon, span) {
     document.body.classList.remove('typing');  // a place was picked: lower the card so the map shows
-    markChips();
+    markChips(); fitCard();
     state.lat = state.clat = lat; state.lon = state.clon = lon; state.span = span || DEFAULT_SPAN;
     words(); spanUI(); load();
   }
