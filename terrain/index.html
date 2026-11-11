@@ -31,6 +31,12 @@ if (window.META_PIXEL_ID) {
   fbq('init', window.META_PIXEL_ID);
   fbq('track', 'PageView');
 }
+/* Microsoft Clarity: anonymized session replays and heatmaps, to see where visitors stop. It loads on the live site
+   only, so local tests never show up in the replays. */
+window.CLARITY_ID = 'zc6bpfn6zs';
+if (window.CLARITY_ID && /(^|\.)cieldesign\.shop$/.test(location.hostname)) {
+  (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script",window.CLARITY_ID);
+}
 /* Ad click params (fbclid, utm_*) are kept for the session and added to the Shopify checkout URL */
 try {
   var adp = new URLSearchParams(location.search), ad = adp.has('fbclid');
@@ -135,7 +141,7 @@ try {
       <h1 class="display rv">Any place.</h1>
       <p class="lede rv" style="--d:80ms">The ground beneath a home, a lake, a first apartment. Rendered from one meter lidar, with every hill and hollow cast in light and shadow.</p>
       <form class="find shell rv" style="--d:160ms" action="studio.html" method="get" role="search" onsubmit="if (!this.q.value.trim()) { location.href = 'studio.html'; return false; }">
-        <input name="q" type="text" autocomplete="off" enterkeyhint="go" placeholder="Address, park or peak" aria-label="Your place">
+        <input name="q" type="text" data-clarity-mask="True" autocomplete="off" enterkeyhint="go" placeholder="Address, park or peak" aria-label="Your place">
         <button class="cta" type="submit">Design <span class="ic"><svg viewBox="0 0 16 16"><path d="M4 12L12 4M5.5 4H12v6.5"/></svg></span></button>
       </form>
       <div class="facts rv" style="--d:240ms">

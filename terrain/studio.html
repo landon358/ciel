@@ -27,6 +27,12 @@ if (window.META_PIXEL_ID) {
   fbq('init', window.META_PIXEL_ID);
   fbq('track', 'PageView');
 }
+/* Microsoft Clarity: anonymized session replays and heatmaps, to see where visitors stop. It loads on the live site
+   only, so local tests never show up in the replays. */
+window.CLARITY_ID = 'zc6bpfn6zs';
+if (window.CLARITY_ID && /(^|\.)cieldesign\.shop$/.test(location.hostname)) {
+  (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script",window.CLARITY_ID);
+}
 /* Ad click params (fbclid, utm_*) are kept for the session and added to the Shopify checkout URL */
 try {
   var adp = new URLSearchParams(location.search), ad = adp.has('fbclid');
@@ -721,6 +727,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   .progress { padding: 12px 16px 0; }
   .progress .now strong { font-size: 17px; line-height: 22px; }
   .progress .now small { font-size: 12px; }
+  /* Where you are, before the page name: "Step 1 of 7" */
+  .progress .now strong span { display: inline-block; margin-right: 8px; padding: 2px 8px; border-radius: 999px; background: rgba(235,235,245,0.14); color: var(--c-text); font: 600 12px/18px var(--c-sys); letter-spacing: 0; vertical-align: 2px; white-space: nowrap; }
   .panels { padding: 8px 12px 8px; }
   .field { margin-top: 8px; }
   .panel > .field:first-of-type, .panel > .facts + .field { margin-top: 0; }
@@ -814,7 +822,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
           <i class="tab" style="left:28%;top:-2px"></i><i class="tab" style="right:28%;top:-2px"></i><i class="tab" style="left:28%;bottom:-2px"></i><i class="tab" style="right:28%;bottom:-2px"></i>
           <i class="tab v" style="left:-2px;top:30%"></i><i class="tab v" style="left:-2px;bottom:30%"></i><i class="tab v" style="right:-2px;top:30%"></i><i class="tab v" style="right:-2px;bottom:30%"></i>
           <div class="hanger"></div>
-          <div class="tag"><b>CIEL TERRAIN</b><span id="tagPlace"></span><span id="tagSize"></span><span>Made to order</span></div>
+          <div class="tag" data-clarity-mask="True"><b>CIEL TERRAIN</b><span id="tagPlace"></span><span id="tagSize"></span><span>Made to order</span></div>
         </div></div>
         <div class="poster" id="poster">
           <div class="view" id="view">
@@ -824,7 +832,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
             </div>
           </div>
           <div class="loading" id="loading"><span id="busyMsg">Rendering</span><i><b></b></i></div>
-          <div class="words">
+          <div class="words" data-clarity-mask="True">
             <div class="t1" id="t1">BIG SKY</div>
             <div class="t2" id="t2">MONTANA</div>
             <div class="t3" id="t3">45.2590° N &nbsp; 111.3087° W</div>
@@ -852,8 +860,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
           <div class="field field-search">
             <div class="label">Search</div>
             <div class="search">
-              <div class="well shell"><input class="input" id="addr" type="text" autocomplete="off" placeholder="An address, lake, park or town" aria-label="Address"></div>
-              <div class="suggest" id="suggest" role="listbox"></div>
+              <div class="well shell"><input class="input" id="addr" data-clarity-mask="True" type="text" autocomplete="off" placeholder="An address, lake, park or town" aria-label="Address"></div>
+              <div class="suggest" id="suggest" data-clarity-mask="True" role="listbox"></div>
             </div>
             <div class="err" id="addrErr"></div>
           </div>
@@ -894,14 +902,14 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
         <div class="panel" data-step="options">
           <h1 class="display">Options</h1>
           <p class="lede">Change the text and toggle pin and road visibility.</p>
-          <button class="edit-text" id="editText" type="button"><svg viewBox="0 0 16 16"><path d="M10.5 3l2.5 2.5L6 12.5H3.5V10z"/></svg>Edit text<span id="editTextNow"></span></button>
+          <button class="edit-text" id="editText" type="button"><svg viewBox="0 0 16 16"><path d="M10.5 3l2.5 2.5L6 12.5H3.5V10z"/></svg>Edit text<span id="editTextNow" data-clarity-mask="True"></span></button>
           <div class="field">
             <div class="label">Title</div>
-            <div class="well shell"><input class="input" id="title" maxlength="22" value="BIG SKY" aria-label="Title" placeholder="Title"></div>
+            <div class="well shell"><input class="input" id="title" data-clarity-mask="True" maxlength="22" value="BIG SKY" aria-label="Title" placeholder="Title"></div>
           </div>
           <div class="field">
             <div class="label">Second line <b>Optional</b></div>
-            <div class="well shell"><input class="input" id="sub" maxlength="32" value="MONTANA" aria-label="Second line" placeholder="Second line (optional)"></div>
+            <div class="well shell"><input class="input" id="sub" data-clarity-mask="True" maxlength="32" value="MONTANA" aria-label="Second line" placeholder="Second line (optional)"></div>
           </div>
           <div class="field">
             <label class="check"><input type="checkbox" id="pinOn"> <span class="long">Mark the exact spot</span><span class="short">Pin</span></label>
@@ -932,7 +940,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
         <div class="panel" data-step="review">
           <h1 class="display" id="reviewTitle">Your print.</h1>
           <p class="lede">Look it over. Anything can still change.</p>
-          <dl class="summary" id="summary"></dl>
+          <dl class="summary" id="summary" data-clarity-mask="True"></dl>
           <div class="bill" id="bill"></div>
           <div class="promise" id="promise"></div>
         </div>
@@ -972,7 +980,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
       <button class="round" id="cartClose" type="button" aria-label="Close cart"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
     </div>
     <p class="cart-note" id="cartNote"></p>
-    <div class="cart-list" id="cartList"></div>
+    <div class="cart-list" id="cartList" data-clarity-mask="True"></div>
     <div class="bill" id="cartBill" hidden></div>
     <div class="err" id="cartErr"></div>
     <div class="row2">
@@ -1052,7 +1060,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   var elev = null, view = null, vec = null, seq = 0, step = 0, seen = 0, pairAsked = false;
   var picked = false;  // the link names a place, so a search typed on the home page (?q=) is not run over it
   var $ = function (id) { return document.getElementById(id); };
-  var track = function () { if (window.fbq) fbq.apply(null, arguments); };
+  var track = function () { if (window.fbq) fbq.apply(null, arguments); if (window.clarity) clarity('event', arguments[1]); };
   var mobile = function () { return window.matchMedia('(max-width: 960px)').matches; };
   function money(n) { n = Math.round(n * 100) / 100; return '$' + (n % 1 ? n.toFixed(2) : n); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -1496,9 +1504,11 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     // The count leaves out a skipped page (a digital file has no Dimensions)
     var shown = STEPS.filter(function (s, j) { return !skipped(j); }).length, at = STEPS.slice(0, step + 1).filter(function (s, j) { return !skipped(j); }).length;
     $('stepOf').textContent = at + ' of ' + shown;
+    // Phones: a "Step 1 of 7" tag before the page name, and Continue names the next step by number
+    if (mobile()) $('stepNum').textContent = 'Step ' + at + ' of ' + shown;
     stepExtras();
     if (step === STEPS.length - 1) return setNext('Add to cart');
-    setNext('Continue to ' + STEPS[nextIndex(step)][1]);
+    setNext(mobile() ? 'Continue to step ' + (at + 1) : 'Continue to ' + STEPS[nextIndex(step)][1]);
   }
   function go(i) {
     var prev = step, card = document.querySelector('.console');
@@ -1508,7 +1518,15 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     if (skipped(step)) step = step > prev ? nextIndex(step) : prevIndex(step);
     var name = STEPS[step][0], page = STEPS[step][2] || '';
     // The first visit to each step goes to Meta, so Events Manager shows where in the studio visitors stop
-    if (step > seen) track('trackCustom', 'StudioStep', { step: page ? name + '-' + page : name, number: step + 1 });
+    if (step > seen) {
+      track('trackCustom', 'StudioStep', { step: page ? name + '-' + page : name, number: step + 1 });
+      // The same visit under its own event name, so Events Manager lists the funnel step by step: ViewContent (the
+      // studio opened), then StudioScale, StudioColor, StudioOptions, StudioSize, StudioDimensions (phones only),
+      // StudioReview, then AddToCart and InitiateCheckout. Desktop's Printing step counts as Size.
+      var key = { scale: 'Scale', style: 'Color', options: 'Options', format: 'Size', kind: 'Size', dims: 'Dimensions', review: 'Review' }[page || name];
+      if (key) track('trackCustom', 'Studio' + key, { device: mobile() ? 'phone' : 'desktop' });
+      if (key && window.clarity) clarity('set', 'reached', key);
+    }
     seen = Math.max(seen, step);
     document.querySelectorAll('.panel').forEach(function (p) { p.classList.toggle('on', p.dataset.step === name); p.dataset.page = p.dataset.step === name ? page : ''; });
     // Phones: Review shows the piece full screen with just the buttons; See details opens the summary and bill
@@ -1519,7 +1537,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
       b.disabled = j > seen;
       if (j === step) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
     });
-    $('stepNum').textContent = '0' + (step + 1);
+    $('stepNum').textContent = '0' + (step + 1);  // phones replace this with "Step N of 7" in updateNext
     $('stepName').textContent = STEPS[step][1];
     $('stage').dataset.step = name;
     $('back').hidden = step === 0;
