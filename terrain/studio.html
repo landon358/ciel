@@ -2303,7 +2303,9 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
      design several maps and check out once. The cart sheet lists every map with a small picture of it. */
   var CART_KEY = 'ciel_cart', cart = null;
   var CART_FIELDS = 'id checkoutUrl totalQuantity cost{subtotalAmount{amount} totalAmount{amount}} ' +
-    'lines(first:50){nodes{id attributes{key value} cost{subtotalAmount{amount} totalAmount{amount}} merchandise{...on ProductVariant{id title}}}}';
+    'discountCodes{code applicable} discountAllocations{discountedAmount{amount} ...on CartCodeDiscountAllocation{code}} ' +
+    'lines(first:50){nodes{id attributes{key value} cost{subtotalAmount{amount} totalAmount{amount}} ' +
+    'discountAllocations{discountedAmount{amount} ...on CartCodeDiscountAllocation{code}} merchandise{...on ProductVariant{id title}}}}';
   function keep(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
   function recall(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function attr(line, k) { for (var i = 0; i < line.attributes.length; i++) if (line.attributes[i].key === k) return line.attributes[i].value; return ''; }
@@ -2337,6 +2339,15 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
       keep('ciel_thumb_' + item, c.toDataURL('image/jpeg', 0.82));
     } catch (e) {}
   }
+  // A discount code from an ad link (?code=CIEL10) rides on the cart, so the cart sheet and checkout already show it.
+  // A code that no longer works never blocks the cart.
+  function adCode() { try { return sessionStorage.getItem('ciel_code') || ''; } catch (e) { return ''; } }
+  function withCode(c) {
+    var code = adCode(), have = (c.discountCodes || []).map(function (d) { return d.code.toUpperCase(); });
+    if (!code || have.indexOf(code) >= 0) return c;
+    return cartCall('mutation($c:ID!,$d:[String!]!){cartDiscountCodesUpdate(cartId:$c,discountCodes:$d){cart{' + CART_FIELDS + '} userErrors{message}}}', { c: c.id, d: have.concat([code]) }, 'cartDiscountCodesUpdate')
+      .catch(function () { return c; });
+  }
   // another: the customer chose to design a second map, so go straight back to the start instead of opening the cart
   function addToCart(another) {
     var built = mapLines();
@@ -2349,7 +2360,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
       : Promise.resolve(null);
     add.then(function (c) {
       return c || cartCall('mutation($l:[CartLineInput!]!){cartCreate(input:{lines:$l}){cart{' + CART_FIELDS + '} userErrors{message}}}', { l: built.lines }, 'cartCreate');
-    }).then(function (c) {
+    }).then(withCode).then(function (c) {
       track('track', 'AddToCart', { content_ids: [PRODUCT_ID], content_type: 'product', contents: [{ id: PRODUCT_ID, quantity: built.maps }], num_items: built.maps, value: built.value, currency: 'USD' });
       setCart(c);
       state.extra = null; pairAsked = false; refresh();
@@ -2393,12 +2404,19 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     var lines = cart ? cart.lines.nodes : [], tot = cart ? +cart.cost.totalAmount.amount : 0;
     var full = lines.reduce(function (s, l) { return s + +l.cost.subtotalAmount.amount; }, 0);
     var saved = Math.round((full - lines.reduce(function (s, l) { return s + +l.cost.totalAmount.amount; }, 0)) * 100) / 100;
+    // Savings from a code: on the lines (product discounts) or on the whole cart (order discounts)
+    var byCode = function (list) { return (list || []).reduce(function (t, a) { return t + (a.code ? +a.discountedAmount.amount : 0); }, 0); };
+    var lineCode = lines.reduce(function (s, l) { return s + byCode(l.discountAllocations); }, 0);
+    var coded = Math.round((lineCode + byCode(cart && cart.discountAllocations)) * 100) / 100;
+    var codeName = coded > 0 ? (((cart.discountCodes || []).filter(function (d) { return d.applicable; })[0] || {}).code || 'Code') : '';
+    saved = Math.round((saved - lineCode) * 100) / 100;
     // One standard rate per delivery profile in the cart: framed and unframed maps ship under separate profiles
     var ship = Object.keys(SHIPPING).reduce(function (s, f) {
       return s + (lines.some(function (l) { return l.merchandise.title.indexOf(f) >= 0; }) ? SHIPPING[f] : 0);
     }, 0);
     $('cartBill').innerHTML = n ? '<div><span>' + n + (n > 1 ? ' maps' : ' map') + '</span><span>' + money(full) + '</span></div>' +
       (saved > 0 ? '<div class="save"><span>Second map, ' + Math.round(EXTRA.off * 100) + '% off</span><span>-' + money(saved) + '</span></div>' : '') +
+      (coded > 0 ? '<div class="save"><span>' + esc(codeName) + ' applied</span><span>-' + money(coded) + '</span></div>' : '') +
       (ship ? '<div><span>Standard shipping</span><span>' + money(ship) + '</span></div>' : '') +
       '<div class="total"><span>Total</span><span>' + money(tot + ship) + '</span></div>' : '';
     $('cartBill').hidden = !n; $('cartCheckout').hidden = !n;
@@ -2468,6 +2486,17 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   if (km > 0) state.span = SPANS.reduce(function (a, b) { return Math.abs(b - km * 1000) < Math.abs(a - km * 1000) ? b : a; });
   if (qs.get('roads') === 'off') { state.roads = false; $('roadsOn').checked = false; }
   if (qs.get('pin') === 'off') $('pinOn').checked = false;
+  // Ads open on the print they show and carry their code: &size=12x16&frame=unframed (or framed)&code=CIEL10
+  var wantSize = (qs.get('size') || '').toLowerCase().replace(/[^0-9x]/g, '');
+  SIZES.forEach(function (sz) { if (sz.replace(/[^0-9x]/g, '') === wantSize) { state.format = 'print'; state.size = sz; } });
+  var wantFrame = (qs.get('frame') || '').toLowerCase();
+  if (wantFrame) state.frame = /^(framed|black)/.test(wantFrame) ? 'Black frame' : 'Unframed';
+  markFormat();
+  var linkCode = (qs.get('code') || '').trim().toUpperCase();
+  if (/^[A-Z0-9_-]{3,24}$/.test(linkCode)) {
+    try { sessionStorage.setItem('ciel_code', linkCode); } catch (e) {}
+    setTimeout(function () { notice('Code ' + linkCode + ' is saved. It comes off in your cart.'); }, 1800);
+  }
 
   $('addr').value = state.place;
   markChips();
