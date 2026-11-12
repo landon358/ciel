@@ -784,6 +784,16 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   .modal .skip { height: 48px; padding: 0 16px; border-radius: 24px; background: var(--c-field); color: var(--c-text); font: 600 15px var(--c-sys); }
   .modal .skip:hover { color: var(--c-text); }
 }
+/* Review: the piece's price above Add to cart. The line always holds room for a struck through full price. */
+.buyline { display: none; }
+body.reviewing .buyline { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 26px; margin: 14px 18px 0; font: 400 13px/1.2 var(--c-sys); color: var(--c-sub); }
+.buyline .what { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.buyline .cost { flex: none; display: flex; align-items: baseline; gap: 8px; }
+.buyline b { font: 600 20px/1 var(--c-sys); color: var(--c-text); font-variant-numeric: tabular-nums; }
+.buyline s { font: 400 15px/1 var(--c-sys); color: var(--c-sub); text-decoration-color: #e5484d; text-decoration-thickness: 2px; font-variant-numeric: tabular-nums; }
+.buyline em { padding: 2px 7px; border-radius: 999px; background: rgba(230,201,168,0.16); color: #e6c9a8; font: 600 11px/16px var(--c-sys); font-style: normal; }
+body.reviewing:not(.details) .dock { margin-top: 12px; }
+body.details .buyline { margin-top: 12px; }
 @media (max-width: 960px) {
   /* Framed prints on phones: no back panel or 3D sides (they only matter for the desktop spin, and iOS can paint them
      over the map). Phones only float the frame, so it is drawn flat: iOS can drop the map from a 3D-composited frame */
@@ -987,6 +997,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
         </div>
       </div>
 
+      <div class="buyline" id="buyLine" aria-live="polite"></div>
       <div class="err dockErr" id="buyErr"></div>
       <div class="dock shell"><div class="core">
         <button class="round" id="back" type="button" aria-label="Previous step" hidden><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg></button>
@@ -1074,8 +1085,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   // The digital file is its own Shopify variant: Size "Digital file", Frame "None"
   var DIGITAL = 'Digital file|None';
   // Standard rates of the "Framed prints" and "Unframed prints" delivery profiles; Shopify charges each profile once per order
-  var SHIPPING = { 'Black frame': 20, Unframed: 8 };
-  var FALLBACK = { '12 x 16 in|Unframed': 49, '12 x 16 in|Black frame': 129, '18 x 24 in|Unframed': 69, '18 x 24 in|Black frame': 169, '24 x 32 in|Unframed': 99, '24 x 32 in|Black frame': 229, 'Digital file|None': 15, custom: 15 };
+  var SHIPPING = { 'Black frame': 14, Unframed: 6 };  // only the cart shows shipping
+  var FALLBACK = { '12 x 16 in|Unframed': 49, '12 x 16 in|Black frame': 135, '18 x 24 in|Unframed': 69, '18 x 24 in|Black frame': 175, '24 x 32 in|Unframed': 99, '24 x 32 in|Black frame': 235, 'Digital file|None': 15, custom: 15 };
   var FAVORITES = [
     { name: 'Half Dome', lat: 37.7459, lon: -119.5332, title: 'HALF DOME', sub: 'YOSEMITE, CALIFORNIA', place: 'Half Dome, Yosemite National Park, California', span: 8000, img: 'assets/print-halfdome.jpg' },
     { name: 'Zion Canyon', lat: 37.2690, lon: -112.9480, title: 'ZION', sub: 'UTAH', place: 'Zion Canyon, Utah', span: 8000, img: 'assets/print-zion-relief.jpg' },
@@ -1143,6 +1154,9 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   function key() { return digital() ? DIGITAL : state.size + '|' + state.frame; }
   function unitPrice() { return priceOf(key()); }
   function customPrice() { return custom() ? (customVariant ? customVariant.price : FALLBACK.custom) : 0; }
+  // Codes an ad link can carry, so Review can show the price after the code (the cart then shows Shopify's own math)
+  var CODES = { CIEL10: { off: 0.10, ends: '2026-12-01T04:59:59Z' } };
+  function codeOff() { var c = CODES[adCode()]; return c && Date.now() < Date.parse(c.ends) ? c.off : 0; }
   function extraPrice() { return Math.round(unitPrice() * (1 - EXTRA.off) * 100) / 100; }
   function total() { return unitPrice() + customPrice() + (state.extra ? extraPrice() : 0); }
   function noun() { return digital() ? 'file' : 'print'; }
@@ -1781,12 +1795,14 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     }).join('');
     $('summary').querySelectorAll('[data-go]').forEach(function (b) { b.onclick = function () { go(stepIndex(b.dataset.go)); }; });
     var what = digital() ? 'Digital file' : 'Print, ' + esc(state.size) + ', ' + esc(state.frame.toLowerCase());
-    // Shipping is shown up front so the total here is what checkout charges (before any tax)
-    var ship = digital() ? 0 : SHIPPING[state.frame];
+    // Just this piece: shipping is worked out in the cart, once every map in the order is known
+    var off = Math.round(total() * codeOff() * 100) / 100;
     $('bill').innerHTML = '<div><span>' + what + '</span><span>' + money(unitPrice()) + '</span></div>' +
       (custom() ? '<div><span>Custom palette</span><span>' + money(customPrice()) + '</span></div>' : '') +
-      (digital() ? '' : '<div><span>Standard shipping</span><span>' + money(ship) + '</span></div>') +
-      '<div class="total"><span>Total</span><span>' + money(total() + ship) + '</span></div>';
+      (off ? '<div class="save"><span>' + esc(adCode()) + '</span><span>-' + money(off) + '</span></div>' : '') +
+      '<div class="total"><span>' + (digital() ? 'Total' : 'Before shipping') + '</span><span>' + money(total() - off) + '</span></div>';
+    $('buyLine').innerHTML = '<span class="what">' + (digital() ? 'Digital file' : esc(state.size) + ', ' + esc(state.frame.toLowerCase())) + (custom() ? ', custom colors' : '') + '</span>' +
+      '<span class="cost">' + (off ? '<em>' + esc(adCode()) + '</em><s>' + money(total()) + '</s>' : '') + '<b>' + money(total() - off) + '</b></span>';
     $('promise').innerHTML = (digital()
       ? ['Your file is emailed within a day, rendered at full resolution from USGS lidar.', 'Ask for a change any time after it arrives.']
       : ['A watermarked preview is emailed to you within a day.', 'You have 24 hours from that email to deny the file and ask for changes. After that, it heads to printing.', 'Printed on premium heavyweight matte paper and shipped within the United States.', 'Arrives damaged or with a printing defect? We replace it free. Since each map is made to order, we can\'t take change of mind returns. <a href="' + POLICY + 'refund-policy" target="_blank" rel="noopener">Returns policy</a>']
