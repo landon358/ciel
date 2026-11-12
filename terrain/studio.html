@@ -40,6 +40,8 @@ try {
   if (ad) sessionStorage.setItem('ad_params', adp.toString());
 } catch (e) {}
 </script>
+<link rel="preconnect" href="https://elevation-tiles-prod.s3.amazonaws.com" crossorigin>
+<link rel="preconnect" href="https://tigerweb.geo.census.gov" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://api.fontshare.com">
@@ -301,7 +303,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .check input:checked { background: var(--thatch); }
 .check input:checked::after { transform: translateX(16px); }
 .check .short, .pick .short { display: none; }
-.kinds, .details-btn, .step-extra, .sthumb, .pick-back, .grabber, .collapse { display: none; }
+.kinds, .details-btn, .step-extra, .sthumb, .pick-back, .grabber, #collapse { display: none; }
 .pal.custom i { display: grid; place-items: center; }
 .pal.custom i b { color: #fff; font: 600 22px/1 var(--sans); text-shadow: 0 1px 3px rgba(0,0,0,0.55); }
 .extra { --r: 22px; --pad: 5px; transition: box-shadow 0.5s var(--spring); }
@@ -410,8 +412,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 .modal .skip { background: none; border: 0; cursor: pointer; font-size: 14px; color: var(--mute); padding: 8px 0; transition: color 0.3s; }
 .modal .skip:hover { color: var(--linen); }
 
-@media (max-width: 960px) {
-  /* Phones and small tablets: the preview fills the top of the screen and stays put; every step's options scroll
+@media all {
+  /* Every screen (phone first): : the preview fills the top of the screen and stays put; every step's options scroll
      inside a card pinned to the bottom, with Back and Continue at its foot. Nothing on the page itself scrolls. */
   :root { --card: clamp(300px, 42dvh, 400px); --cardgap: max(8px, env(safe-area-inset-bottom)); }
   body { overflow: hidden; }
@@ -681,9 +683,6 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   .pick input { width: 32px; height: 32px; }
   .pick .long { display: none; }
   .pick .short { display: inline; }
-  /* Framed prints on phones: no back panel or 3D sides (they only matter for the desktop spin, and iOS can paint them
-     over the map) */
-  .frame .frame-back, .frame .frame-edge { display: none !important; }
   .pick-back { display: grid; place-items: center; width: 36px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: var(--c-fill); color: var(--c-text); cursor: pointer; }
   .pick-back svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .pal.custom i b { font-size: 24px; font-family: var(--c-sys); }
@@ -695,8 +694,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   body.typing .grabber, body.details .grabber { display: grid; place-items: center; height: 16px; margin-bottom: -8px; touch-action: none; }
   .grabber i { display: block; width: 36px; height: 5px; border-radius: 3px; background: rgba(235,235,245,0.3); }
   body.typing .progress, body.details .progress { touch-action: none; }
-  body.typing .collapse, body.details .collapse { display: grid; place-items: center; position: absolute; z-index: 2; top: 18px; right: 14px; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 17px; background: var(--c-field); color: var(--c-text); cursor: pointer; }
-  .collapse svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  body.typing #collapse, body.details #collapse { display: grid; place-items: center; position: absolute; z-index: 2; top: 18px; right: 14px; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 17px; background: var(--c-field); color: var(--c-text); cursor: pointer; }
+  #collapse svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   body.typing #stepOf, body.details #stepOf { visibility: hidden; }
 
   /* Top: one seamless bar at the very top that glows as it fills; the logo (home) and the cart float in the preview's
@@ -727,7 +726,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   .progress { padding: 12px 16px 0; }
   .progress .now strong { font-size: 17px; line-height: 22px; }
   .progress .now small { font-size: 12px; }
-  /* Where you are, before the page name: "Step 1 of 7" */
+  /* Where you are, before the page name: "Step 1 of 7". The title row stays on one line. */
+  .progress .now strong { white-space: nowrap; }
   .progress .now strong span { display: inline-block; margin-right: 8px; padding: 2px 8px; border-radius: 999px; background: rgba(235,235,245,0.14); color: var(--c-text); font: 600 12px/18px var(--c-sys); letter-spacing: 0; vertical-align: 2px; white-space: nowrap; }
   .panels { padding: 8px 12px 8px; }
   .field { margin-top: 8px; }
@@ -778,16 +778,57 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   body.typing .panel[data-step="options"] .field:has(#title), body.typing .panel[data-step="options"] .field:has(#sub) { display: block; margin-top: 12px !important; }
   body.typing .panel[data-step="options"] .label { display: block; }
   body.typing .panel[data-step="options"] .edit-text, body.typing .panel[data-step="options"] .field:has(#pinOn) { display: none; }
-  /* Framed prints on phones only float, so the frame is drawn flat: iOS can drop the map from a 3D-composited frame */
-  .frame { transform-style: flat; }
-  .poster { backface-visibility: visible; -webkit-backface-visibility: visible; }
   /* Cart: Checkout across the sheet, Design another map a full button under it */
   .modal .row2 { display: grid; grid-template-columns: 1fr; gap: 10px; }
   .modal .row2 .cta { width: 100%; justify-content: space-between; }
   .modal .skip { height: 48px; padding: 0 16px; border-radius: 24px; background: var(--c-field); color: var(--c-text); font: 600 15px var(--c-sys); }
   .modal .skip:hover { color: var(--c-text); }
 }
-@media (min-width: 961px) { .edit-text { display: none; } }
+@media (max-width: 960px) {
+  /* Framed prints on phones: no back panel or 3D sides (they only matter for the desktop spin, and iOS can paint them
+     over the map). Phones only float the frame, so it is drawn flat: iOS can drop the map from a 3D-composited frame */
+  .frame .frame-back, .frame .frame-edge { display: none !important; }
+  .frame { transform-style: flat; }
+  .poster { backface-visibility: visible; -webkit-backface-visibility: visible; }
+}
+@media (min-width: 961px) {
+  /* Desktop: the phone's card in the bottom right corner, the print centered in the rest of the screen */
+  :root { --pw: 384px; --edge: 28px; --gap: 64px;
+    --fw: min(620px, calc((100dvh - 150px) * 0.75), calc(100vw - 112px - var(--gap) - var(--pw))); }
+  html, body { overflow: hidden; }
+  .top { top: 34px; left: var(--edge); right: var(--edge); height: 44px; }
+  .top .logo, .cartbtn, .cartbtn[hidden] { width: 44px; height: 44px; border-radius: 22px; }
+  .segs { top: 14px; left: var(--edge); right: var(--edge); }
+  /* The print and the card are centered as a pair: the stage pads its right side by the card plus the gap */
+  .stage { inset: 0; transition: none; }
+  .stage > .core { padding: 92px calc(var(--gap) + var(--pw)) 48px 0;
+    background: radial-gradient(ellipse 60% 70% at calc(50% - (var(--gap) + var(--pw)) / 2) 48%, #1a1a1a 0%, #0a0a0a 55%, #000000 100%); }
+  .frame { width: var(--fw); }
+  .console { top: 0; bottom: 0; left: calc(50% + (var(--fw) + var(--gap) - var(--pw)) / 2); right: auto; width: var(--pw); height: fit-content; margin: auto 0; max-height: calc(100dvh - 120px); }
+  /* Rows that swipe on a phone wrap on desktop, where a mouse can't swipe */
+  #chips { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; gap: 6px; }
+  .pals { grid-auto-flow: row; grid-template-columns: repeat(auto-fill, 44px); grid-auto-columns: auto; justify-content: space-between; row-gap: 4px; overflow: visible; margin: 0; padding: 3px 0; }
+  /* The raised card has no grabber to drag on desktop; the round close button stays */
+  body.typing .grabber, body.details .grabber { display: none; }
+  .console > .core { border-radius: 28px; }
+  .progress { padding: 18px 20px 0; }
+  .panels { padding: 12px 16px 14px; }
+  .dock { margin: 0 16px 16px; }
+  body.details .console { max-height: calc(100dvh - 120px); }
+  /* No keyboard to dodge, so the text fields sit in the card and Edit text goes */
+  .edit-text { display: none; }
+  .panel[data-step="options"] .field:has(#title), .panel[data-step="options"] .field:has(#sub) { display: block; }
+  .panel[data-step="options"].on { grid-template-columns: 1fr 1fr; }
+  .panel[data-step="options"] .field:last-child { grid-column: 1 / -1; }
+  /* A mouse gets hover states the filled controls don't have on touch */
+  .chip, .cell, .kind, .check, .pal i, #styles .opt, .edit-text, #back, .dock #next.cta, .details-btn, .modal .skip { transition: background 0.25s, box-shadow 0.25s, transform 0.25s cubic-bezier(0.32, 0.72, 0, 1); }
+  .chip:hover, .cell:hover, .kind:hover, .check:hover, #back:hover, body.reviewing .dock .details-btn:hover { background: #3d3c3f; }
+  .chip[aria-pressed="true"]:hover, .cell[aria-pressed="true"]:hover, .kind[aria-pressed="true"]:hover, .check:has(input:checked):hover { background: #545250; }
+  #styles .opt:not([aria-pressed="true"]):hover { background: #424144; }
+  .pal:hover i { transform: scale(1.06); }
+  .dock #next.cta:hover { background: #ffffff; }
+  .dock #next.cta:active, #back:active { transform: scale(0.98); }
+}
 @media (max-width: 767px) {
   .row { grid-template-columns: 1fr auto; }
   .row dt { grid-column: 1 / -1; }
@@ -828,7 +869,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
           <div class="view" id="view">
             <div class="pan" id="pan">
               <canvas id="map" width="600" height="725" aria-label="Map preview. Drag to move the map."></canvas>
-              <div class="pin" id="pin"></div>
+              <div class="pin" id="pin" style="opacity:0"></div>
             </div>
           </div>
           <div class="loading" id="loading"><span id="busyMsg">Rendering</span><i><b></b></i></div>
@@ -951,7 +992,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
         <button class="round" id="back" type="button" aria-label="Previous step" hidden><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg></button>
         <button class="details-btn" id="details" type="button">See details</button>
         <button class="find-place" id="findPlace" type="button" hidden><svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>Search</button>
-        <div class="sum off" id="sum"><small id="sumLabel">Total</small><strong id="price"></strong></div>
+        <div class="sum off" id="sum"><small id="sumLabel">Subtotal</small><strong id="price"></strong></div>
         <button class="cta" id="next" type="button"><span id="nextLabel">Continue</span><span class="ic"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></button>
       </div></div>
     </div>
@@ -1049,9 +1090,23 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   // needs scrolling. Each entry is [panel, name, page]; a page shows part of its panel (see the phone CSS).
   var DESK = [['place', 'Place'], ['style', 'Color'], ['options', 'Options'], ['format', 'Printing'], ['review', 'Review']];
   var PHONE = [['place', 'Place', 'find'], ['place', 'Scale', 'scale'], ['style', 'Color'], ['options', 'Options'], ['format', 'Size', 'kind'], ['format', 'Dimensions', 'dims'], ['review', 'Review']];
-  var STEPS = window.matchMedia('(max-width: 960px)').matches ? PHONE : DESK;
+  var STEPS = PHONE;  // desktop uses the phone's pages too
   // How long each preview takes to "render": long enough to feel made, short enough not to drag
-  var DWELL = { load: 1900, restyle: 1100 };
+  // The map shows as soon as its data lands (no rendering pause); a new palette or style still takes a short moment
+  var DWELL = { load: 0, restyle: 1100 };
+  // Ad prints rendered ahead of time by prerender.mjs, keyed by preKey(): place, scope, style, palette and roads
+  var PRE = {
+    "37.2690|-112.9480|15000|Relief|Ember|roads":"assets/pre/zion-relief-study.webp",
+    "37.2690|-112.9480|3600|Contour|Ember|roads":"assets/pre/zion-contour-hallway.webp",
+    "37.8393|-119.5165|8000|Relief|Coastal|plain":"assets/pre/yosemite-livingroom.webp",
+    "44.8836|-86.0456|3600|Relief|Coastal|plain":"assets/pre/sleepingbear-lakehouse.webp",
+    "44.8836|-86.0456|3600|Contour|Desert|plain":"assets/pre/sleepingbear-bedroom.webp",
+    "46.8523|-121.7603|15000|Relief|Sage|roads":"assets/pre/trio-relief.webp",
+    "46.8523|-121.7603|15000|Contour|Sage|roads":"assets/pre/trio-contour.webp",
+    "45.2781|-111.4503|8000|Relief|Glacier|roads":"assets/pre/ski-it-hang-it.webp",
+    "45.2812|-111.4112|25000|Contour|Mono|roads":"assets/pre/bigsky-resort-49.webp",
+    "40.7596|-111.8868|25000|Relief|Ember|plain":"assets/pre/saltlake-hike.webp"
+  };
 
   // The map the studio opens on
   var START = { lat: 45.2590, lon: -111.3087, span: 15000, place: 'Big Sky, Montana', palette: 'Ember' };
@@ -1252,10 +1307,10 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   /* Everything that shows a choice; the total lives in the review step's bill, not the dock */
   function stepExtras() {
     var page = STEPS[step][2] || '', name = STEPS[step][0], extra = '';
-    if (mobile() && name === 'style') extra = '· ' + esc(custom() ? 'Custom' : state.palette) + (custom() ? ' <b>+' + money(customVariant ? customVariant.price : FALLBACK.custom) + '</b>' : '');
-    if (mobile() && page === 'scale') extra = '· ' + (state.span / 1000).toFixed(1).replace('.0', '') + ' km';
+    if (name === 'style') extra = '· ' + esc(custom() ? 'Custom' : state.palette) + (custom() ? ' <b>+' + money(customVariant ? customVariant.price : FALLBACK.custom) + '</b>' : '');
+    if (page === 'scale') extra = '· ' + (state.span / 1000).toFixed(1).replace('.0', '') + ' km';
     $('stepExtra').innerHTML = extra;
-    if (mobile()) $('stepOf').textContent = page === 'find' ? 'Prints from ' + money(priceOf(SIZES[0] + '|Unframed')) : page === 'scale' ? 'Drag the map to move it' : '';
+    $('stepOf').textContent = page === 'find' ? 'Prints from ' + money(priceOf(SIZES[0] + '|Unframed')) : page === 'scale' ? 'Drag to move' : '';
   }
   // The style samples take the palette's four tones, darkest to lightest
   function tint() {
@@ -1270,9 +1325,9 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     costs();
     $('sum').classList.add('off');
     $('price').textContent = money(total());
-    $('sumLabel').textContent = 'Total';
+    $('sumLabel').textContent = 'Subtotal';  // desktop's bar; shipping is added in Review's bill
     // The print shrinks to its chosen size while sizes are on screen; the phone's full screen Review shows it at full size
-    var late = (name === 'format' || (name === 'review' && !mobile())) && !digital();
+    var late = name === 'format' && !digital();
     var scale = late ? SIZE_INFO[state.size].scale : 1;
     if (scale !== lastScale) { lastScale = scale; scaleChangedAt = Date.now(); }
     $('frame').style.setProperty('--scale', scale);
@@ -1489,6 +1544,12 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     });
   }
   buildRail();
+  // Desktop shows the steps in the bottom bar, between Back and the price; phones keep them at the top of the card
+  function placeRail() {
+    var rail = $('rail');
+    if (rail.parentNode !== document.querySelector('.progress')) document.querySelector('.progress').appendChild(rail);
+  }
+  placeRail();
   // A digital file has no size to pick, so its Dimensions page is skipped
   function skipped(i) { return STEPS[i] && STEPS[i][2] === 'dims' && digital(); }
   function nextIndex(i) { var j = i + 1; while (j < STEPS.length - 1 && skipped(j)) j++; return Math.min(j, STEPS.length - 1); }
@@ -1505,18 +1566,20 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     var shown = STEPS.filter(function (s, j) { return !skipped(j); }).length, at = STEPS.slice(0, step + 1).filter(function (s, j) { return !skipped(j); }).length;
     $('stepOf').textContent = at + ' of ' + shown;
     // Phones: a "Step 1 of 7" tag before the page name, and Continue names the next step by number
-    if (mobile()) $('stepNum').textContent = 'Step ' + at + ' of ' + shown;
+    $('stepNum').textContent = 'Step ' + at + ' of ' + shown;
     stepExtras();
     if (step === STEPS.length - 1) return setNext('Add to cart');
-    setNext(mobile() ? 'Continue to step ' + (at + 1) : 'Continue to ' + STEPS[nextIndex(step)][1]);
+    setNext('Continue to step ' + (at + 1));
   }
   function go(i) {
     var prev = step, card = document.querySelector('.console');
-    var h0 = mobile() && !document.body.classList.contains('typing') ? card.getBoundingClientRect().height : 0;
+    var h0 = !document.body.classList.contains('typing') ? card.getBoundingClientRect().height : 0;
     if (i !== prev) { dropKeyboard(); document.body.classList.remove('typing'); }
     step = Math.max(0, Math.min(STEPS.length - 1, i));
     if (skipped(step)) step = step > prev ? nextIndex(step) : prevIndex(step);
     var name = STEPS[step][0], page = STEPS[step][2] || '';
+    // Desktop: the options card springs out from the print again for the new step
+    go.ran = true;
     // The first visit to each step goes to Meta, so Events Manager shows where in the studio visitors stop
     if (step > seen) {
       track('trackCustom', 'StudioStep', { step: page ? name + '-' + page : name, number: step + 1 });
@@ -1530,7 +1593,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     seen = Math.max(seen, step);
     document.querySelectorAll('.panel').forEach(function (p) { p.classList.toggle('on', p.dataset.step === name); p.dataset.page = p.dataset.step === name ? page : ''; });
     // Phones: Review shows the piece full screen with just the buttons; See details opens the summary and bill
-    document.body.classList.toggle('reviewing', mobile() && name === 'review');
+    document.body.classList.toggle('reviewing', name === 'review');
     if (name !== 'review') { document.body.classList.remove('details'); $('details').textContent = 'See details'; }
     $('rail').querySelectorAll('button').forEach(function (b, j) {
       b.classList.toggle('seen', j <= seen);
@@ -1549,21 +1612,19 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
     // Phones: one bar fills as the steps go by; past Scale the map is locked so a stray swipe can't move it
     var shownAll = STEPS.filter(function (s, j) { return !skipped(j); }).length, done = STEPS.slice(0, step + 1).filter(function (s, j) { return !skipped(j); }).length;
     $('rail').style.setProperty('--progress', (done / shownAll * 100).toFixed(1) + '%');
-    $('stage').classList.toggle('locked', mobile() && step > stepIndex('place:scale'));
+    $('stage').classList.toggle('locked', step > stepIndex('place:scale'));
     refresh();
     fitCard();
     glideCard(card, h0);
     showcase(name === 'review');
     // On phones the palettes are one row to swipe; open it on the chosen one, which may sit off screen to the right
-    if (name === 'style' && mobile()) {
+    if (name === 'style') {
       var row = $('palettes'), tile = paletteTiles[state.palette];
       row.scrollLeft += tile.getBoundingClientRect().left - row.getBoundingClientRect().left - (row.clientWidth - tile.offsetWidth) / 2;
     }
     // Bring the new step into view: under the pinned map on phones, at the console top on desktop
     if (prev !== step) {
-      var top = $('consoleCore').getBoundingClientRect().top;
-      if (mobile()) $('panels').scrollTop = 0;  // phones: each step opens at the top of the card
-      else if (top < 0 || top > window.innerHeight * 0.5) window.scrollTo({ top: window.scrollY + top - 20, behavior: 'smooth' });
+      $('panels').scrollTop = 0;  // each step opens at the top of the card
     }
   }
   // The dock's Search button on step 1 brings the search box to the top of the card on phones; Continue keeps the map
@@ -1694,13 +1755,13 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   };
   // A screen turned past the breakpoint (a tablet, mostly) swaps the step list, keeping the step it was on
   function syncSteps() {
-    var want = mobile() ? PHONE : DESK;
+    var want = PHONE;
     if (STEPS === want) return;
     var cur = STEPS[step];
     STEPS = want;
     var j = stepIndex(cur[0] + (cur[2] ? ':' + cur[2] : ''));
-    seen = j; step = j; buildRail(); go(j);
-    if (!mobile()) document.body.classList.remove('typing', 'reviewing', 'details');
+    seen = j; step = j; buildRail(); placeRail(); go(j);
+    if (!mobile()) document.body.classList.remove('typing');
   }
   window.matchMedia('(max-width: 960px)').addEventListener('change', syncSteps);
   window.addEventListener('resize', syncSteps);
@@ -1969,9 +2030,11 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 
   /* Terrain preview */
   var W = 600, H = 725;
-  function load() {
+  // quick: 'pre' (a pre-rendered print is already showing, so no rendering moment at all) or 'link' (a link opened on
+  // this map, so it shows as soon as the data lands instead of after the rendering pause)
+  function load(quick) {
     var my = ++seq; styleJob++;
-    busy(DWELL.load, ['Finding your place', 'Reading the elevation', shadeLine(), 'Setting the type']);
+    if (quick !== 'pre') busy(700, ['Finding your place', 'Reading the elevation', shadeLine(), 'Setting the type']);
     var Z = state.span > 9000 ? 12 : state.span > 4000 ? 13 : 14;
     var c0 = toWorld(state.clat, state.clon, Z), fx = c0[0], fy = c0[1];
     var mpp = 156543.03 * Math.cos(state.clat * Math.PI / 180) / Math.pow(2, Z);
@@ -1996,7 +2059,10 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
       }
       elev = { z: e, cell: state.span / W, smooth: null };
       view = v;
-      resetPan(); paint(); spanUI(); done();
+      resetPan();
+      // Over a pre-rendered print, wait for the roads (loadVectors paints when they land) so the live map matches it
+      if (quick !== 'pre' || vec || !state.roads) paint();
+      spanUI(); done();
     }).catch(function () { if (my === seq) { $('addrErr').textContent = 'Could not load terrain for this spot.'; done(); } });
   }
   function tile(g, z, x, y, dx, dy) {
@@ -2500,7 +2566,17 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
 
   $('addr').value = state.place;
   markChips();
-  words(); paint(); spanUI(); go(0); load();
+  words(); paint(); placePin(); spanUI(); go(0);  // placePin: a link's pin=off holds before the map lands
+  function preKey() { return [state.clat.toFixed(4), state.clon.toFixed(4), state.span, state.style, state.palette, state.roads ? 'roads' : 'plain'].join('|'); }
+  var preSrc = picked && !qs.get('nopre') && PRE[preKey()];
+  if (preSrc) {
+    var preImg = new Image();
+    preImg.onload = function () { if (!elev) $('map').getContext('2d').drawImage(preImg, 0, 0, W, H); };
+    preImg.src = preSrc;
+  }
+  load(preSrc ? 'pre' : picked ? 'link' : '');
+  // prerender.mjs reads the key and waits for a finished map (roads in) before saving the canvas
+  window.cielPreview = function () { return { key: preKey(), ready: !!(elev && (vec || !state.roads)) && !$('poster').classList.contains('busy') }; };
   // The home page's search box sends what was typed (?q=), so the matches are already listed when the studio opens.
   // No focus: on phones the keyboard would cover the list.
   var asked = (qs.get('q') || '').trim();
