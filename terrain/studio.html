@@ -1092,8 +1092,8 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   var PHONE = [['place', 'Place', 'find'], ['place', 'Scale', 'scale'], ['style', 'Color'], ['options', 'Options'], ['format', 'Size', 'kind'], ['format', 'Dimensions', 'dims'], ['review', 'Review']];
   var STEPS = PHONE;  // desktop uses the phone's pages too
   // How long each preview takes to "render": long enough to feel made, short enough not to drag
-  // The map shows as soon as its data lands (no rendering pause); a new palette or style still takes a short moment
-  var DWELL = { load: 0, restyle: 1100 };
+  // The map shows as soon as its data lands, and a new palette or style repaints at once: no rendering pauses
+  var DWELL = { load: 0 };
   // Ad prints rendered ahead of time by prerender.mjs, keyed by preKey(): place, scope, style, palette and roads
   var PRE = {
     "37.2690|-112.9480|15000|Relief|Ember|roads":"assets/pre/zion-relief-study.webp",
@@ -2011,11 +2011,11 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
   function shadeLine() { return state.style === 'Contour' ? 'Tracing contour lines' : 'Casting light and shadow'; }
   var styleJob = 0;
+  // A new palette or style repaints at once; the next frame lets the tapped swatch show as chosen first
   function restyle() {
     var my = ++styleJob, ticket = seq;
-    busy(DWELL.restyle, [custom() ? 'Mixing your colors' : 'Mixing the palette', shadeLine()]);
     refresh();
-    setTimeout(function () { if (my !== styleJob || ticket !== seq) return; paint(); done(); }, DWELL.restyle);
+    requestAnimationFrame(function () { if (my !== styleJob || ticket !== seq) return; paint(); });
   }
 
   /* Web mercator helpers (world pixels at zoom z) */
