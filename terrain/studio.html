@@ -1850,20 +1850,138 @@ body.details .buyline { margin-top: 12px; }
     { keys: ['lone peak'], name: 'Lone Peak', where: 'Big Sky, Montana', kind: 'Peak', lat: 45.2781, lon: -111.4503, title: 'LONE PEAK', sub: 'BIG SKY, MONTANA', place: 'Lone Peak, Big Sky, Montana' }
   ];
   function kindOf(p) {
+    if (p.fromIndex) return [p.kindLabel, p.town ? 4 : 1];
     if (/national park/i.test(p.name || '') && /nature_reserve|protected_area|national_park/.test(p.osm_value)) return KINDS.national_park;
     if (p.osm_key === 'place' || p.osm_key === 'boundary' && p.osm_value === 'administrative') return KINDS[p.type] || KINDS[p.osm_value] || ['Place', 4];
     if (p.housenumber || p.osm_key === 'highway' || p.osm_key === 'building' || p.type === 'house' || p.type === 'street') return ['Address', 6];
     return KINDS[p.osm_value] || ['Place', 3];
   }
-  // Popular parks, ski hills, peaks and lakes, prebuilt from Photon (assets/places.json), so the usual searches list instantly
-  var POPULAR = [];
-  fetch('assets/places.json').then(function (r) { return r.json(); }).then(function (d) { POPULAR = d; }).catch(function () {});
-  function popular(lq) {
-    return POPULAR.filter(function (f) {
-      var n = f.properties.name.toLowerCase();
-      return n.indexOf(lq) === 0 || n.indexOf(' ' + lq) >= 0 || n.replace(/^mount /, 'mt ').indexOf(lq) === 0;
+  /* The place index (assets/place-index.json, built by tools/places/build_index.py from Wikidata): every US peak, park,
+     ski area, lake, landmark and town with a Wikipedia article, each with a fame score (how many Wikipedias cover it, and
+     a town's population), so Mount Rainier outranks Rainier Drive and Bozeman, Montana outranks a namesake hamlet. It
+     loads when the search box is first touched and answers as each letter is typed. Photon fills in places it lacks. */
+  var INDEX = null, indexWait = null;
+  var ABBR = { mt: 'mount', mtn: 'mountain', mtns: 'mountains', st: 'saint', ste: 'sainte', ft: 'fort', pt: 'point', pk: 'peak', lk: 'lake', np: 'national park', nm: 'national monument', nf: 'national forest', natl: 'national', n: 'north', s: 'south', e: 'east', w: 'west' };
+  function norm(s) {
+    return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/&/g, ' and ').replace(/['’.]/g, '').replace(/[^a-z0-9]+/g, ' ').trim()
+      .split(' ').map(function (t) { return ABBR[t] || t; }).join(' ');
+  }
+  function loadIndex() {
+    function rows(list) { return list.map(function (r) { var n = norm(r[0]); return { r: r, n: n, t: n.split(' ') }; }); }
+    function rerun() { if ($('addr').value.trim().length >= 2 && document.activeElement === $('addr')) $('addr').dispatchEvent(new Event('input')); }
+    if (!indexWait) indexWait = fetch('assets/place-index.json').then(function (r) { return r.json(); }).then(function (d) {
+      var stateTok = {};
+      Object.keys(d.states).forEach(function (k) { stateTok[k.toLowerCase()] = k; stateTok[norm(d.states[k])] = k; });
+      INDEX = { kinds: d.kinds, spans: d.spans, states: d.states, stateTok: stateTok, p: rows(d.p) };
+      rerun();
+      // Smaller towns and lesser-known peaks and lakes follow in a second file
+      return fetch('assets/place-index-more.json').then(function (r) { return r.json(); }).then(function (m) { INDEX.p = INDEX.p.concat(rows(m.p)); rerun(); }).catch(function () {});
+    }).catch(function () { indexWait = null; });
+    return indexWait;
+  }
+  $('addr').addEventListener('pointerdown', loadIndex);
+  $('addr').addEventListener('focus', loadIndex);
+  // Edit distance with a cap, for typos ("brekenridge", "tellurdie")
+  function near(a, b, max) {
+    if (Math.abs(a.length - b.length) > max) return false;
+    var pp = null, prev = [], cur, i, j;
+    for (j = 0; j <= b.length; j++) prev[j] = j;
+    for (i = 1; i <= a.length; i++) {
+      cur = [i]; var low = i;
+      for (j = 1; j <= b.length; j++) {
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        if (pp && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) cur[j] = Math.min(cur[j], pp[j - 2] + 1);
+        low = Math.min(low, cur[j]);
+      }
+      if (low > max) return false;
+      pp = prev; prev = cur;
+    }
+    return prev[b.length] <= max;
+  }
+  // How one query word meets a place's words: 3 whole word, 2 start of a word (the word being typed), 1 a typo, 0 no
+  function wordMatch(q, words, typing, fuzzy) {
+    var best = 0;
+    for (var i = 0; i < words.length && best < 3; i++) {
+      var w = words[i];
+      if (w === q) best = 3;
+      else if (w.indexOf(q) === 0) best = Math.max(best, typing || q.length >= 4 ? 2 : 0);
+      else if (fuzzy && q.length >= 4 && best < 1) {
+        var max = q.length >= 8 ? 2 : 1;
+        if (near(q, typing ? w.slice(0, q.length) : w, max) || (!typing && near(q, w, max))) best = 1;
+      }
+    }
+    return best;
+  }
+  var GENERIC_WORDS = { mount: 1, mountain: 1, lake: 1, the: 1, saint: 1, national: 1, park: 1, peak: 1, river: 1, falls: 1, canyon: 1, north: 1, south: 1, east: 1, west: 1, big: 1, little: 1, upper: 1, lower: 1 };
+  function indexSearch(q) {
+    if (!INDEX) return [];
+    var all = norm(q).split(' ').filter(Boolean), typing = !/\s$/.test(q);
+    var TOWN = INDEX.kinds.indexOf('Town'), CITY = INDEX.kinds.indexOf('City');
+    if (!all.length) return [];
+    // Every place whose words cover the query's words, scored by fame and by how well the name matches
+    function find(words, st, fuzzy) {
+      var phrase = words.join(' '), hits = [];
+      for (var i = 0; i < INDEX.p.length; i++) {
+        var e = INDEX.p[i];
+        if (st && e.r[1] !== st) continue;
+        if (!fuzzy && e.n.indexOf(words[0].slice(0, 3)) < 0) continue;  // quick skip
+        var score = 0, typos = 0, ok = true;
+        for (var j = 0; j < words.length; j++) {
+          var m = wordMatch(words[j], e.t, typing && j === words.length - 1, fuzzy);
+          if (!m) { ok = false; break; }
+          if (m === 1) typos++;
+          score += m;
+        }
+        if (!ok) continue;
+        // A whole-name match beats a partial one, a name that starts with the query beats one that has it later, and
+        // fewer extra words is better ("Vail" over "Vail Pass Summit")
+        var bonus = e.n === phrase ? 30 : e.n.indexOf(phrase) === 0 ? 15 : (' ' + e.n).indexOf(' ' + phrase) >= 0 ? 8 : 0;
+        // Customers come for terrain: mountains, parks and ski areas get a nudge over towns of the same name
+        // (Mount Washington, New Hampshire over Mount Washington, Kentucky)
+        var town = e.r[4] === TOWN || e.r[4] === CITY;
+        hits.push({ e: e, s: e.r[5] + bonus + (town ? 0 : 12) + 3 * score - 25 * typos - 2 * Math.max(0, e.t.length - words.length) });
+      }
+      return hits;
+    }
+    var best = new Map();
+    function keep(list, plus) { list.forEach(function (h) { var s = h.s + plus, o = best.get(h.e); if (o === undefined || s > o) best.set(h.e, s); }); }
+    keep(find(all, null, false), 0);
+    // A state at the end narrows the search ("jackson wyoming", "jackson wy", "springfield, il"), but the words may also
+    // be part of a name ("mount washington", "lake michigan"), so both readings are scored and the better one counts
+    for (var k = Math.min(3, all.length - 1); k >= 1; k--) {
+      var tail = all.slice(all.length - k).join(' '), st = INDEX.stateTok[tail];
+      var rest = all.slice(0, all.length - k);
+      // "mount washington" and "lake michigan" are names, not "a mountain in Washington"
+      if (rest.every(function (w) { return GENERIC_WORDS[w]; })) break;
+      if (st && (k > 1 || tail.length > 2 || /,\s*\w+$|\s[a-z]{2}\s*$/i.test(q))) { keep(find(rest, st, false), 15); break; }
+    }
+    // Few or no matches: try again allowing a typo per word ("brekenridge", "tellurdie")
+    if (best.size < 3 && all.join(' ').length >= 4) keep(find(all, null, true), 0);
+    var hits = [];
+    best.forEach(function (s, e) { hits.push({ e: e, s: s }); });
+    hits.sort(function (a, b) { return b.s - a.s; });
+    // Related places travel together: a town's ski area or a peak's national park, named alike and close by, follows it
+    // ("Breckenridge, Colorado" then "Breckenridge Ski Resort", not a Breckenridge in Texas in between)
+    function key(e) { for (var i = 0; i < e.t.length; i++) if (!GENERIC_WORDS[e.t[i]]) return e.t[i]; return e.t[0]; }
+    var ordered = [], used = new Set(), pool = hits.slice(0, 20);
+    pool.forEach(function (h) {
+      if (used.has(h)) return;
+      ordered.push(h); used.add(h);
+      var k = key(h.e), r = h.e.r;
+      pool.forEach(function (g) {
+        if (used.has(g) || g.e.r[4] === h.e.r[4] || key(g.e) !== k) return;
+        if (Math.abs(g.e.r[2] - r[2]) < 0.25 && Math.abs(g.e.r[3] - r[3]) < 0.3) { ordered.push(g); used.add(g); }
+      });
+    });
+    hits = ordered;
+    return hits.slice(0, 8).map(function (h) {
+      var r = h.e.r, kind = INDEX.kinds[r[4]];
+      return { type: 'Feature', geometry: { type: 'Point', coordinates: [r[3], r[2]] },
+        properties: { name: r[0], state: INDEX.states[r[1]], countrycode: 'US', fromIndex: true, kindLabel: kind, town: kind === 'City' || kind === 'Town',
+          span: r.length > 6 ? INDEX.spans[r[6]] : null, osm_key: 'place', osm_value: kind === 'City' ? 'city' : 'town' } };
     });
   }
+
   // The public Photon server takes 2 to 5 seconds and sometimes refuses a burst, so answers are cached and a failure is retried once
   var cache = {};
   function photon(q, outdoor, signal) {
@@ -1877,14 +1995,27 @@ body.details .buyline { margin-top: 12px; }
   function listPlaces(q, address, local, remote, pending, failed) {
     var lq = q.toLowerCase(), seenKeys = {}, list = [];
     ALIASES.forEach(function (a) { if (a.keys.some(function (k) { return lq.indexOf(k) >= 0 || k.indexOf(lq) === 0; })) list.push({ alias: a, kind: [a.kind, -1], order: -1 }); });
+    var JUNK = /^(highway|building|amenity|shop|railway|public_transport|office|craft|emergency|man_made|aeroway|historic|club|healthcare)$/;
+    function dupOf(f) {
+      var p = f.properties, n = norm(p.name || ''), c = f.geometry.coordinates;
+      return local.some(function (g) {
+        var gn = norm(g.properties.name), d = g.geometry.coordinates;
+        return (gn === n || gn.indexOf(n) >= 0 || n.indexOf(gn) >= 0) && Math.abs(c[0] - d[0]) < 0.06 && Math.abs(c[1] - d[1]) < 0.06;
+      });
+    }
+    var extra = [];
     local.concat(remote).forEach(function (f, i) {
       var p = f.properties, kind = kindOf(p);
       var k = ([p.housenumber, p.street].filter(Boolean).join(' ') || p.name || '') + '|' + (p.city || '') + '|' + (p.state || '');
       if (seenKeys[k]) return; seenKeys[k] = 1;
-      list.push({ f: f, kind: kind, order: i });
+      if (p.fromIndex) { list.push({ f: f, kind: kind, order: i }); return; }
+      // Photon: for a name search, skip streets, shops and bus stops, and anything the index already listed
+      if (!address && (JUNK.test(p.osm_key) || kind[0] === 'Address' || dupOf(f))) return;
+      extra.push({ f: f, kind: kind, order: i });
     });
-    // Outdoor places first when searching by name; for an address, keep the geocoder's order
-    if (!address) list.sort(function (a, b) { return (a.kind[1] - b.kind[1]) || (a.order - b.order); });
+    // Photon's own extras: outdoor places first when searching by name; for an address, keep the geocoder's order
+    if (!address) extra.sort(function (a, b) { return (a.kind[1] - b.kind[1]) || (a.order - b.order); });
+    list = list.concat(extra);
     results = list.slice(0, 8); resultsFor = q;
     var box = $('suggest'); box.innerHTML = '';
     if (address) {
@@ -1916,7 +2047,7 @@ body.details .buyline { margin-top: 12px; }
     if (inflight) inflight.abort();
     var q = this.value.trim(), my = ++searchSeq;
     if (q.length < 2) { $('suggest').classList.remove('on'); results = []; return; }
-    var address = /^\d/.test(q), local = address ? [] : popular(q.toLowerCase()), remote = q.length >= 3;
+    var address = /^\d/.test(q), local = address ? [] : indexSearch(q), remote = q.length >= 3;
     listPlaces(q, address, local, [], remote, false);
     if (!remote) return;
     timer = setTimeout(function () {
@@ -1965,6 +2096,14 @@ body.details .buyline { margin-top: 12px; }
   }
   document.addEventListener('click', function (e) { if (!e.target.closest('.search')) $('suggest').classList.remove('on'); });
 
+  // A place name as a print title: a ski area goes by its mountain ("Breckenridge Ski Resort" -> BRECKENRIDGE), and a
+  // name too long for the title line is cut at a word, never mid-word
+  function fitTitle(name) {
+    var t = name.replace(/\s+(ski (resort|area)|mountain resort|ski and summer resort|resort)$/i, '').toUpperCase();
+    if (t.length <= 22) return t;
+    var cut = t.slice(0, 23).lastIndexOf(' ');
+    return cut > 0 ? t.slice(0, cut) : t.slice(0, 22);
+  }
   function choose(i) {
     var r = results[i];
     $('suggest').classList.remove('on'); $('addrErr').textContent = '';
@@ -1980,10 +2119,10 @@ body.details .buyline { margin-top: 12px; }
     $('addr').value = state.place;
     var park = /^(.*?)\s+National Park$/i.exec(p.name || '');
     if (park) { $('title').value = park[1].toUpperCase().slice(0, 22); $('sub').value = ('National Park, ' + (p.state || '')).toUpperCase().replace(/, $/, ''); }
-    else if (outdoor) { $('title').value = (p.name || '').toUpperCase().slice(0, 22); $('sub').value = (p.state || '').toUpperCase(); }
+    else if (outdoor) { $('title').value = fitTitle(p.name || ''); $('sub').value = (p.state || '').toUpperCase(); }
     else { $('title').value = (p.city || p.name || '').toUpperCase().slice(0, 22); $('sub').value = (p.state || '').toUpperCase(); }
     // Parks and wide places open wide enough to hold them, up to the widest map we print
-    var span = DEFAULT_SPAN, lat = f.geometry.coordinates[1], lon = f.geometry.coordinates[0], e = p.extent;
+    var span = p.span || DEFAULT_SPAN, lat = f.geometry.coordinates[1], lon = f.geometry.coordinates[0], e = p.extent;
     if (e && outdoor) {
       var w = Math.max((e[2] - e[0]) * 111000 * Math.cos(lat * Math.PI / 180), (e[1] - e[3]) * 111000 * 0.75);
       span = SPANS.filter(function (s) { return s >= Math.min(w, SPANS[SPANS.length - 1]); })[0] || SPANS[SPANS.length - 1];
