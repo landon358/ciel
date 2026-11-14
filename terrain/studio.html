@@ -913,7 +913,7 @@ body.details .buyline { margin-top: 12px; }
         <div class="panel" data-step="place">
           <h1 class="display">Search an Address</h1>
           <p class="lede">Search any address in the United States.</p>
-          <p class="facts" id="facts">Prints from $49, framed from $129. You approve a free preview before anything prints.</p>
+          <p class="facts" id="facts">Prints from $49, framed from $135. You approve a free preview before anything prints.</p>
           <div class="field field-search">
             <div class="label">Search</div>
             <div class="search">
@@ -1862,16 +1862,16 @@ body.details .buyline { margin-top: 12px; }
      loads when the search box is first touched and answers as each letter is typed. Photon fills in places it lacks. */
   var INDEX = null, indexWait = null;
   var ABBR = { mt: 'mount', mtn: 'mountain', mtns: 'mountains', st: 'saint', ste: 'sainte', ft: 'fort', pt: 'point', pk: 'peak', lk: 'lake', np: 'national park', nm: 'national monument', nf: 'national forest', natl: 'national', n: 'north', s: 'south', e: 'east', w: 'west' };
-  function norm(s) {
-    return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/&/g, ' and ').replace(/['’.]/g, '').replace(/[^a-z0-9]+/g, ' ').trim()
-      .split(' ').map(function (t) { return ABBR[t] || t; }).join(' ');
+  function norm(s, raw) {
+    var t = s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/&/g, ' and ').replace(/['’.]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+    return raw ? t : t.split(' ').map(function (w) { return ABBR[w] || w; }).join(' ');
   }
   function loadIndex() {
     function rows(list) { return list.map(function (r) { var n = norm(r[0]); return { r: r, n: n, t: n.split(' ') }; }); }
-    function rerun() { if ($('addr').value.trim().length >= 2 && document.activeElement === $('addr')) $('addr').dispatchEvent(new Event('input')); }
+    function rerun() { if ($('addr').value.trim().length >= 2 && (document.activeElement === $('addr') || $('suggest').classList.contains('on'))) $('addr').dispatchEvent(new Event('input')); }
     if (!indexWait) indexWait = fetch('assets/place-index.json').then(function (r) { return r.json(); }).then(function (d) {
       var stateTok = {};
-      Object.keys(d.states).forEach(function (k) { stateTok[k.toLowerCase()] = k; stateTok[norm(d.states[k])] = k; });
+      Object.keys(d.states).forEach(function (k) { stateTok[k.toLowerCase()] = k; stateTok[norm(d.states[k], true)] = k; });
       INDEX = { kinds: d.kinds, spans: d.spans, states: d.states, stateTok: stateTok, p: rows(d.p) };
       rerun();
       // Smaller towns and lesser-known peaks and lakes follow in a second file
@@ -1948,12 +1948,15 @@ body.details .buyline { margin-top: 12px; }
     keep(find(all, null, false), 0);
     // A state at the end narrows the search ("jackson wyoming", "jackson wy", "springfield, il"), but the words may also
     // be part of a name ("mount washington", "lake michigan"), so both readings are scored and the better one counts
-    for (var k = Math.min(3, all.length - 1); k >= 1; k--) {
-      var tail = all.slice(all.length - k).join(' '), st = INDEX.stateTok[tail];
-      var rest = all.slice(0, all.length - k);
-      // "mount washington" and "lake michigan" are names, not "a mountain in Washington"
-      if (rest.every(function (w) { return GENERIC_WORDS[w]; })) break;
-      if (st && (k > 1 || tail.length > 2 || /,\s*\w+$|\s[a-z]{2}\s*$/i.test(q))) { keep(find(rest, st, false), 15); break; }
+    var typed = norm(q, true).split(' ').filter(Boolean);
+    for (var k = Math.min(3, typed.length - 1); k >= 1; k--) {
+      var tail = typed.slice(typed.length - k).join(' '), st = INDEX.stateTok[tail];
+      var rest = norm(typed.slice(0, typed.length - k).join(' ')).split(' ');
+      if (st && (k > 1 || tail.length > 2 || /,\s*\w+$|\s[a-z]{2}\s*$/i.test(q))) {
+        // "mount washington" and "lake michigan" are names, not "a mountain in Washington"
+        if (rest.every(function (w) { return GENERIC_WORDS[w]; })) break;
+        keep(find(rest, st, false), 15); break;
+      }
     }
     // Few or no matches: try again allowing a typo per word ("brekenridge", "tellurdie")
     if (best.size < 3 && all.join(' ').length >= 4) keep(find(all, null, true), 0);
@@ -2015,7 +2018,13 @@ body.details .buyline { margin-top: 12px; }
     });
     // Photon's own extras: outdoor places first when searching by name; for an address, keep the geocoder's order
     if (!address) extra.sort(function (a, b) { return (a.kind[1] - b.kind[1]) || (a.order - b.order); });
-    list = list.concat(extra);
+    var want = norm(q), exact = function (x) { return norm(x.f.properties.name || '') === want; };
+    var top = list.some(function (x) { return x.f && exact(x); }) ? [] : extra.filter(function (x) { return x.kind[0] !== 'Address' && exact(x); }).slice(0, 2);
+    extra = extra.filter(function (x) { return top.indexOf(x) < 0; });
+    var aliases = list.filter(function (x) { return x.alias; }), found = list.filter(function (x) { return !x.alias; });
+    var room = 8 - aliases.length - top.length;
+    found = found.slice(0, Math.max(0, room - Math.min(2, extra.length)));
+    list = aliases.concat(top, found, extra);
     results = list.slice(0, 8); resultsFor = q;
     var box = $('suggest'); box.innerHTML = '';
     if (address) {
@@ -2751,6 +2760,7 @@ body.details .buyline { margin-top: 12px; }
   var asked = (qs.get('q') || '').trim();
   if (asked && !picked) {
     $('addr').value = asked;
+    loadIndex();
     $('addr').dispatchEvent(new Event('input'));
     // Phones: raise the card so the matches show (no keyboard yet); picking one or moving on lowers it again
     if (mobile()) document.body.classList.add('typing');
