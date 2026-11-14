@@ -1,10 +1,27 @@
 # Ciel
 
-> Ciel is a design studio making sculptural pieces for the home, operated by Napieralski Holdings LLC. Its first piece is the Onde Clock: a gloss black lacquered wall clock with three domed dials, designed and prototyped in house.
+> Ciel is a design studio operated by Napieralski Holdings LLC. It makes custom topographic map prints of any place in the United States, rendered from USGS lidar elevation data, and sculptural pieces for the home such as the Onde Clock.
 
-Products, prices and descriptions on this site load live from the Ciel Shopify store. All pieces are built to order and can be bought on the site through Shopify checkout.
+Products, prices and descriptions on this site load live from the Ciel Shopify store. Everything can be bought on the site through Shopify checkout.
 
-## Products
+## Terrain maps
+
+Custom shaded relief (topographic) map prints of any US address, town, ski mountain, national park, peak or lake. Customers design the map in an online studio: search a place, set the map width from 1.5 to 25 km, pick one of 12 color palettes or custom colors, choose shaded relief or contour lines, show or hide roads, mark a spot and edit the title. Elevation comes from the USGS 3D Elevation Program (1 meter lidar where available, 10 meter elsewhere). Every print order gets a watermarked preview by email first, with 24 hours to ask for changes. Maps show terrain, not ski runs or trails.
+
+- [Terrain maps](https://cieldesign.shop/terrain/): How the maps are made, with examples.
+- [Map studio](https://cieldesign.shop/terrain/studio.html): Design a custom map of any US place and order it.
+- [Famous places](https://cieldesign.shop/terrain/maps/): Ready-made maps of ski mountains, national parks, peaks, lakes and craters, each customizable.
+- Prices (USD): 12 x 16 in print $49, framed $135; 18 x 24 in print $69, framed $175; 24 x 32 in print $99, framed $235; digital file (7200 x 9600 pixel JPG by email) $15; custom colors add $5. A second map in the same order is 25% off. Prints are on heavyweight matte paper; framed prints use a black wood frame with shatterproof plexiglass.
+
+### Place pages
+
+- Ski mountains: [Breckenridge](https://cieldesign.shop/terrain/maps/breckenridge/), [Vail](https://cieldesign.shop/terrain/maps/vail/), [Jackson Hole](https://cieldesign.shop/terrain/maps/jackson-hole/), [Park City](https://cieldesign.shop/terrain/maps/park-city/), [Big Sky](https://cieldesign.shop/terrain/maps/big-sky/), [Aspen Mountain](https://cieldesign.shop/terrain/maps/aspen/), [Telluride](https://cieldesign.shop/terrain/maps/telluride/), [Alta and Snowbird](https://cieldesign.shop/terrain/maps/alta-snowbird/), [Mammoth Mountain](https://cieldesign.shop/terrain/maps/mammoth/), [Palisades Tahoe](https://cieldesign.shop/terrain/maps/palisades-tahoe/), [Steamboat](https://cieldesign.shop/terrain/maps/steamboat/), [Sun Valley](https://cieldesign.shop/terrain/maps/sun-valley/), [Whitefish Mountain](https://cieldesign.shop/terrain/maps/whitefish/), [Stowe](https://cieldesign.shop/terrain/maps/stowe/), [Killington](https://cieldesign.shop/terrain/maps/killington/), [Mt. Bachelor](https://cieldesign.shop/terrain/maps/mt-bachelor/)
+- National parks: [Yosemite Valley](https://cieldesign.shop/terrain/maps/yosemite-valley/), [Zion Canyon](https://cieldesign.shop/terrain/maps/zion/), [Grand Canyon](https://cieldesign.shop/terrain/maps/grand-canyon/), [Glacier National Park](https://cieldesign.shop/terrain/maps/glacier-national-park/), [Acadia](https://cieldesign.shop/terrain/maps/acadia/), [Great Smoky Mountains](https://cieldesign.shop/terrain/maps/great-smoky-mountains/)
+- Peaks and volcanoes: [Half Dome](https://cieldesign.shop/terrain/maps/half-dome/), [Grand Teton](https://cieldesign.shop/terrain/maps/grand-teton/), [Mount Rainier](https://cieldesign.shop/terrain/maps/mount-rainier/), [Mount St. Helens](https://cieldesign.shop/terrain/maps/mount-st-helens/), [Mount Hood](https://cieldesign.shop/terrain/maps/mount-hood/), [Mount Whitney](https://cieldesign.shop/terrain/maps/mount-whitney/), [Mount Shasta](https://cieldesign.shop/terrain/maps/mount-shasta/), [Pikes Peak](https://cieldesign.shop/terrain/maps/pikes-peak/), [Longs Peak](https://cieldesign.shop/terrain/maps/longs-peak/), [Mount Washington](https://cieldesign.shop/terrain/maps/mount-washington/)
+- Lakes: [Crater Lake](https://cieldesign.shop/terrain/maps/crater-lake/), [Lake Tahoe](https://cieldesign.shop/terrain/maps/lake-tahoe/)
+- Craters: [Meteor Crater](https://cieldesign.shop/terrain/maps/meteor-crater/), [SP Crater](https://cieldesign.shop/terrain/maps/sp-crater/)
+
+## Objects for the home
 
 - [Onde Clock](https://cieldesign.shop/products/onde-clock): Gloss black sculptural wall clock. Three domed dials keep the hours, minutes and seconds, each marked by a single point of light. Hand finished lacquer, LED accent lighting, silent movement. Approx. 15 x 15 x 3 in (38 x 38 x 8 cm). $2,445 USD. Built to order. Estimated shipping 2-4 weeks.
 - [Marée Catchall](https://cieldesign.shop/products/maree-catchall): Gloss black sculptural tray with rising terraces for keys, coins, rings and watches. Approx. 10.7 x 10.4 x 3.2 in (27.1 x 26.5 x 8.2 cm). $119 USD.
