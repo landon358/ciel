@@ -213,7 +213,8 @@ body::before { background: radial-gradient(60vw 50vh at 78% 8%, rgba(255,255,255
 .panel.on > * { animation: rise 0.9s var(--out) both; }
 .panel.on > *:nth-child(2) { animation-delay: 60ms; } .panel.on > *:nth-child(3) { animation-delay: 120ms; } .panel.on > *:nth-child(n+4) { animation-delay: 180ms; }
 @keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
-.panel h1 { font-size: clamp(34px, 3vw, 48px); margin-bottom: 14px; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.panel h2.display { font-size: clamp(34px, 3vw, 48px); margin-bottom: 14px; }
 .panel .lede { font-size: 15px; }
 .panel .facts { margin-top: 10px; font-size: 13px; color: var(--mute); }
 .field { margin-top: 30px; }
@@ -448,7 +449,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   .segs button:disabled { opacity: 1; }
   .segs button:disabled i { box-shadow: none; background: var(--hair2); }
   .panels { position: relative; flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 12px 18px 16px; }
-  .panel h1, .panel > .lede { display: none; }
+  .panel h2.display, .panel > .lede { display: none; }
   .panel .facts { margin-top: 0; }
   .panel .summary { margin-top: 0; }
   .panel .summary .row:first-child { padding-top: 4px; }
@@ -652,7 +653,7 @@ textarea.input { height: 112px; padding: 16px 18px; resize: vertical; line-heigh
   body.reviewing:not(.details) .dock { margin-top: 14px; }
   body.reviewing .dock .details-btn { display: inline-flex; align-items: center; justify-content: center; flex: none; height: 52px; padding: 0 18px; border: 0; border-radius: 26px; background: var(--c-field); color: var(--c-text); font: 600 15px var(--c-sys); white-space: nowrap; cursor: pointer; }
   body.details .console { max-height: 78dvh; }
-  body.details .panel[data-step="review"] h1 { display: none; }
+  body.details .panel[data-step="review"] h2.display { display: none; }
 
   /* Thinner pages: no labels the title already gives (the palette, the scope, the price), tighter padding */
   :root { --card-min: 248px; }
@@ -869,6 +870,7 @@ body.details .buyline { margin-top: 12px; }
 </header>
 
 <main class="studio-grid">
+  <h1 class="vh">Design a custom topographic map print of any US place</h1>
   <div class="stage shell" id="stage" data-step="place" aria-label="Preview">
     <div class="core">
       <button class="resetview" id="resetView" type="button" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M2.5 8a5.5 5.5 0 1 0 1.6-3.9"/><path d="M2.5 2.5v3h3"/></svg>Reset view</button>
@@ -911,7 +913,7 @@ body.details .buyline { margin-top: 12px; }
 
       <div class="panels" id="panels">
         <div class="panel" data-step="place">
-          <h1 class="display">Search an Address</h1>
+          <h2 class="display">Search an Address</h2>
           <p class="lede">Search any address in the United States.</p>
           <p class="facts" id="facts">Prints from $49, framed from $135. You approve a free preview before anything prints.</p>
           <div class="field field-search">
@@ -936,7 +938,7 @@ body.details .buyline { margin-top: 12px; }
         </div>
 
         <div class="panel" data-step="style">
-          <h1 class="display">Choose your colors and style</h1>
+          <h2 class="display">Choose your colors and style</h2>
           <p class="lede">Choose from our combinations or create your own custom colors.</p>
           <div class="field options" id="styles"></div>
           <div class="field">
@@ -957,7 +959,7 @@ body.details .buyline { margin-top: 12px; }
         </div>
 
         <div class="panel" data-step="options">
-          <h1 class="display">Options</h1>
+          <h2 class="display">Options</h2>
           <p class="lede">Change the text and toggle pin and road visibility.</p>
           <button class="edit-text" id="editText" type="button"><svg viewBox="0 0 16 16"><path d="M10.5 3l2.5 2.5L6 12.5H3.5V10z"/></svg>Edit text<span id="editTextNow"></span></button>
           <div class="field">
@@ -976,7 +978,7 @@ body.details .buyline { margin-top: 12px; }
         </div>
 
         <div class="panel" data-step="format">
-          <h1 class="display">Print or file.</h1>
+          <h2 class="display">Print or file.</h2>
           <p class="lede">We print it on premium heavyweight matte paper and ship it to you, or email you the high resolution file to print however you like.</p>
           <div class="kinds" id="kinds" role="group" aria-label="Print or file"></div>
           <div class="kinds dims" id="dims" role="group" aria-label="Print size"></div>
@@ -995,7 +997,7 @@ body.details .buyline { margin-top: 12px; }
         </div>
 
         <div class="panel" data-step="review">
-          <h1 class="display" id="reviewTitle">Your print.</h1>
+          <h2 class="display" id="reviewTitle">Your print.</h2>
           <p class="lede">Look it over. Anything can still change.</p>
           <dl class="summary" id="summary"></dl>
           <div class="bill" id="bill"></div>
@@ -2690,6 +2692,7 @@ body.details .buyline { margin-top: 12px; }
     var coded = Math.round((lineCode + byCode(cart && cart.discountAllocations)) * 100) / 100;
     var codeName = coded > 0 ? (((cart.discountCodes || []).filter(function (d) { return d.applicable; })[0] || {}).code || 'Code') : '';
     saved = Math.round((saved - lineCode) * 100) / 100;
+    cartNote(n, saved, coded, codeName);
     // One standard rate per delivery profile in the cart: framed and unframed maps ship under separate profiles
     var ship = Object.keys(SHIPPING).reduce(function (s, f) {
       return s + (lines.some(function (l) { return l.merchandise.title.indexOf(f) >= 0; }) ? SHIPPING[f] : 0);
@@ -2710,10 +2713,19 @@ body.details .buyline { margin-top: 12px; }
     var was = +l.cost.subtotalAmount.amount, now = +l.cost.totalAmount.amount;
     return (was - now > 0.005 ? '<s>' + money(was) + '</s> ' : '') + money(now);
   }
+  var cartLead = '';
+  // The line under the cart title. With a code in play Shopify keeps whichever discount saves more (they don't
+  // combine), so with two or more maps the note says which one won
+  function cartNote(n, saved, coded, codeName) {
+    var off = Math.round(EXTRA.off * 100) + '% off';
+    var nudge = n === 1 ? 'Add a second map and it is ' + off + '.'
+      : n > 1 && coded > 0 && !(saved > 0) ? codeName + ' saves you more on this order than the second map ' + off + ', so it is applied instead.'
+      : n > 1 ? 'Your second map is ' + off + ', applied to the lower priced one.' : '';
+    $('cartNote').textContent = ((cartLead ? cartLead + ' ' : '') + nudge) || 'Check out when you are ready.';
+  }
   function openCart(note) {
-    var n = mapsIn(cart).length, off = Math.round(EXTRA.off * 100) + '% off';
-    var nudge = n === 1 ? 'Add a second map and it is ' + off + '.' : n > 1 ? 'Your second map is ' + off + ', applied to the lower priced one.' : '';
-    $('cartNote').textContent = ((note ? note + ' ' : '') + nudge) || 'Check out when you are ready.';
+    cartLead = note || '';
+    cartNote(mapsIn(cart).length, 0, 0, '');
     $('cartErr').textContent = '';
     $('cartSheet').classList.add('on'); cartUI();
     setTimeout(function () { ($('cartCheckout').hidden ? $('cartMore') : $('cartCheckout')).focus(); }, 50);
